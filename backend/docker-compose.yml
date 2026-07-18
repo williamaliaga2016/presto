@@ -1,0 +1,67 @@
+services:
+
+  # ── API ────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    #image: bbva_legalizacion_api:latest
+    container_name: bbva_legalizacion_api
+    ports:
+      - "44302:8080"
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    volumes:
+      - ./Multibanca.Backend.Api/Certificados:/app/Certificados:ro
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    networks:
+      - bbva-network
+    
+    
+  frontend:
+    image: bbvalegalizacion-frontend:latest
+    container_name: bbva_legalizacion_frontend
+    environment:
+      - VITE_API_BASE_URL=http://api:44302
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    networks:
+      - bbva-network
+    
+  postgres:
+    image: postgres:17
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - C:\Docker\PostgresData:/var/lib/postgresql/data
+    networks:
+      - bbva-network
+      
+  mongo:
+    image: mongo:7
+    container_name: mongo-bbva
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: multibanca
+      MONGO_INITDB_ROOT_PASSWORD: multibanca123
+    ports:
+      - "27017:27017"
+    volumes:
+      - C:/Docker/MongoData:/data/db
+    networks:
+      - bbva-network
+      
+networks:
+  bbva-network:
+    driver: bridge

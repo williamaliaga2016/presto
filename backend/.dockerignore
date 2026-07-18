@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+.vscode/
+.git/
+**/.env
+**/appsettings.Development.json
+database/
+DbInitTool/
+README.md
+**/*.user
+**/package-lock.json
+dotnet-tools.json

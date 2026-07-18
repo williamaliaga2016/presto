@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.*" />
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="AWSSDK.S3" Version="4.0.22.1" />
+    <PackageReference Include="BoldReports.Net.Core" Version="13.*" />
+    <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="32.*" />
+    <PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="32.*" />
+    <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="32.*" />
+    <PackageReference Include="Syncfusion.SkiaSharpHelper.Net.Core" Version="32.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.27" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.*" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.*" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common.Application.Implementations\Common.Application.Implementations.csproj" />
+    <ProjectReference Include="..\Framework.WorkFlow.Application.Interfaces\Framework.WorkFlow.Application.Interfaces.csproj" />
+    <ProjectReference Include="..\Multibanca.Application.Interfaces\Multibanca.Application.Interfaces.csproj" />
+    <ProjectReference Include="..\Multibanca.Domain.Models\Multibanca.Domain.Models.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Data.Repository.Implementations\Data.Repository.Implementations.csproj" />
+    <ProjectReference Include="..\Framework.WorkFlow.Application.Implementations\Framework.WorkFlow.Application.Implementations.csproj" />
+    <ProjectReference Include="..\Framework.WorkFlow.Repository.Implementation\Framework.WorkFlow.Repository.Implementation.csproj" />
+    <ProjectReference Include="..\Framework.WorkFlow.Repository.Interface\Framework.WorkFlow.Repository.Interface.csproj" />
+    <ProjectReference Include="..\Multibanca.Application.Implementations\Multibanca.Application.Implementations.csproj" />
+    <ProjectReference Include="..\Multibanca.Application.Interfaces\Multibanca.Application.Interfaces.csproj" />
+  </ItemGroup>
+
+</Project>

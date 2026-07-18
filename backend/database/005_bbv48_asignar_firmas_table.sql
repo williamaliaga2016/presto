@@ -1,0 +1,35 @@
+CREATE TABLE IF NOT EXISTS public.asignar_firmas_peritos_abogados (
+    id                              BIGSERIAL PRIMARY KEY,
+    id_expediente                   BIGINT NOT NULL,
+    id_actividad                    VARCHAR(100) NOT NULL DEFAULT 'ACT_ASIGNAR_FIRMAS',
+    tipo_cliente                    VARCHAR(100),
+    codigo_ejecutivo_solicitante    VARCHAR(50),
+    oficina_solicitante             VARCHAR(50),
+    tipo_solicitud_avaluo           VARCHAR(50),
+    tipo_tramite_eett               VARCHAR(50),
+    nombre_firma_supervisor         VARCHAR(200),
+    telefono_firma                  VARCHAR(50),
+    email_firma                     VARCHAR(150),
+    valor_avaluo                    NUMERIC(18,2),
+    valor_total_consignar           NUMERIC(18,2),
+    opciones_recaudo                VARCHAR(200),
+    numero_recaudo                  VARCHAR(100),
+    banco                           VARCHAR(100),
+    nombre_abogado                  VARCHAR(200),
+    telefono_abogado                VARCHAR(50),
+    valor_estudio_titulos           NUMERIC(18,2),
+    tipo_cuenta_abogado             VARCHAR(50),
+    numero_cuenta_abogado           VARCHAR(100),
+    requiere_envio_notificacion     BOOLEAN,
+    checklist_documentos_solicitar  TEXT NOT NULL DEFAULT '[]',
+    observaciones                   TEXT,
+    is_active                       BOOLEAN NOT NULL DEFAULT TRUE,
+    row_status                      BOOLEAN NOT NULL DEFAULT TRUE,
+    created_by                      INTEGER NOT NULL,
+    created_date                    TIMESTAMP NOT NULL DEFAULT NOW(),
+    modified_by                     INTEGER,
+    modified_date                   TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_afpa_expediente
+    ON public.asignar_firmas_peritos_abogados(id_expediente);

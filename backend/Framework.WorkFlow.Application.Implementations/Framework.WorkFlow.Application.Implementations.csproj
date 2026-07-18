@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Connected Services\**" />
+    <EmbeddedResource Remove="Connected Services\**" />
+    <None Remove="Connected Services\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Framework.WorkFlow.Application.Interfaces\Framework.WorkFlow.Application.Interfaces.csproj" />
+    <ProjectReference Include="..\Framework.WorkFlow.Repository.Interface\Framework.WorkFlow.Repository.Interface.csproj" />
+    <ProjectReference Include="..\Multibanca.Application.Interfaces\Multibanca.Application.Interfaces.csproj" />
+    <ProjectReference Include="..\Multibanca.Common\Multibanca.Common.csproj" />
+    <ProjectReference Include="..\Multibanca.Domain.Models\Multibanca.Domain.Models.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.ServiceModel.Http" Version="8.*" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="8.*" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="8.*" />
+  </ItemGroup>
+</Project>
