@@ -1,0 +1,770 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes nf-floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes nf-fade-in-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes nf-pulse-glow {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.45; }
+}
+
+.animate-nf-floaty { animation: nf-floaty 5s ease-in-out infinite; }
+.animate-nf-fade-in-up { animation: nf-fade-in-up 0.7s ease-out both; }
+.animate-nf-glow { animation: nf-pulse-glow 6s ease-in-out infinite; }
+
+/* Base global */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #dcdcdc;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Paleta PRESTO */
+:root {
+  --color-primary: #1e3a5f;
+  --color-primary-hover: #16314f;
+  --color-border: #cfcfcf;
+  --color-text: #333;
+  --color-bg-card: #f7f7f7;
+}
+
+@layer components {
+
+  /* ===== CARDS ===== */
+  .card-presto-login {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    transition: all 0.35s ease;
+    box-shadow:
+      0 12px 30px rgba(0, 0, 0, 0.18),
+      0 0 35px rgba(15, 23, 42, 0.35),  
+      0 0 70px rgba(30, 64, 175, 0.22);  
+  }
+
+  .card-presto-login:hover {
+    box-shadow:
+      0 18px 45px rgba(0, 0, 0, 0.28),
+      0 0 45px rgba(15, 23, 42, 0.55),
+      0 0 90px rgba(30, 64, 175, 0.35);
+  }
+
+  .card-presto-form {
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  .card-presto-form .p-card-body {
+    padding: 8px !important;
+  }
+
+  .bg-presto {
+    background-color: #dcdcdc;
+  }
+
+  .card-presto {
+    @apply bg-white border rounded-lg;
+    border-color: var(--color-border);
+    padding: 40px;
+    width: 650px;
+    max-width: 100%;
+  }
+
+  /* ===== LOGIN ===== */
+  .login-layout {
+    @apply flex items-center;
+    gap: 40px;
+  }
+
+  .divider-presto {
+    width: 1px;
+    height: 200px;
+    background-color: #d9d9d9;
+  }
+
+  .title-presto {
+    font-size: 26px;
+    font-weight: 500;
+    color: black;
+  }
+
+  .label-presto {
+    font-size: 14px;
+    color: #666;
+  }
+
+  .input-presto {
+    width: 100%;
+    max-width: 260px;
+    border: 1px solid #cfcfcf;
+    border-radius: 3px;
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .btn-presto {
+    background: linear-gradient(to bottom, #4a74ff, #03298e);
+    color: white;
+    padding: 8px 25px;
+    border-radius: 4px;
+    font-size: 14px;
+    border: none;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .btn-presto:hover {
+    background: linear-gradient(to bottom, #6b8cff, #3a63ff);
+  }
+
+  .link-presto {
+    color: #2c6f94;
+    font-size: 14px;
+  }
+
+  .link-presto:hover {
+    text-decoration: underline;
+  }
+
+  /* ===== FORMULARIOS ===== */
+  .form-input-presto {
+    @apply border border-gray-300 rounded text-sm py-1 px-2;
+  }
+  .form-dropdown-presto {
+    @apply border border-gray-300 rounded text-sm;
+    height: 30px;
+  }
+
+  .form-dropdown-presto .p-dropdown-label,
+  .form-dropdown-presto .p-dropdown-placeholder {
+    line-height: 1rem;
+    font-size: 0.875rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .form-dropdown-presto .p-dropdown-trigger {
+    height: 30px;
+  }
+
+  .form-checkbox-presto {
+    vertical-align: middle;
+    margin-right: 0.5rem;
+  }
+
+  .form-textarea-presto {
+    @apply border border-gray-300 rounded resize-none py-1 px-2 text-sm;
+  }
+
+  .p-accordion-content .p-inputtext,
+  .p-accordion-content .p-inputtextarea,
+  .p-accordion-content .p-dropdown,
+  .p-accordion-content .p-inputnumber-input,
+  .card-presto-form .p-inputtext,
+  .card-presto-form .p-inputtextarea,
+  .card-presto-form .p-dropdown,
+  .card-presto-form .p-inputnumber-input {
+    width: 100%;
+    min-height: 36px;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    background-color: #ffffff !important;
+    box-shadow: none;
+  }
+
+  .p-accordion-content .p-inputtext,
+  .p-accordion-content .p-inputtextarea,
+  .p-accordion-content .p-inputnumber-input,
+  .card-presto-form .p-inputtext,
+  .card-presto-form .p-inputtextarea,
+  .card-presto-form .p-inputnumber-input {
+    padding: 0.45rem 0.65rem;
+  }
+
+  .p-accordion-content .p-dropdown .p-dropdown-label,
+  .card-presto-form .p-dropdown .p-dropdown-label {
+    padding: 0.45rem 0.65rem;
+    border: 0 !important;
+    box-shadow: none !important;
+    min-height: auto;
+    background-color: transparent !important;
+  }
+
+  .p-accordion-content .p-dropdown .p-dropdown-trigger,
+  .card-presto-form .p-dropdown .p-dropdown-trigger {
+    width: 3rem;
+    border-left: 1px solid #e2e8f0;
+    color: #64748b;
+  }
+
+  .p-accordion-content .p-dropdown:not(.p-disabled),
+  .card-presto-form .p-dropdown:not(.p-disabled) {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .p-accordion-content .p-inputtext:enabled:hover,
+  .p-accordion-content .p-inputtextarea:enabled:hover,
+  .p-accordion-content .p-dropdown:not(.p-disabled):hover,
+  .p-accordion-content .p-inputnumber-input:enabled:hover,
+  .card-presto-form .p-inputtext:enabled:hover,
+  .card-presto-form .p-inputtextarea:enabled:hover,
+  .card-presto-form .p-dropdown:not(.p-disabled):hover,
+  .card-presto-form .p-inputnumber-input:enabled:hover {
+    border-color: #94a3b8 !important;
+  }
+
+  .p-accordion-content .p-inputtext:enabled:focus,
+  .p-accordion-content .p-inputtextarea:enabled:focus,
+  .p-accordion-content .p-dropdown.p-focus,
+  .p-accordion-content .p-inputnumber-input:enabled:focus,
+  .card-presto-form .p-inputtext:enabled:focus,
+  .card-presto-form .p-inputtextarea:enabled:focus,
+  .card-presto-form .p-dropdown.p-focus,
+  .card-presto-form .p-inputnumber-input:enabled:focus {
+    border-color: #93c5fd !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.22) !important;
+  }
+
+  .p-accordion-content .p-disabled,
+  .p-accordion-content .p-inputtext:disabled,
+  .p-accordion-content .p-inputtextarea:disabled,
+  .p-accordion-content .p-inputnumber-input:disabled,
+  .card-presto-form .p-disabled,
+  .card-presto-form .p-inputtext:disabled,
+  .card-presto-form .p-inputtextarea:disabled,
+  .card-presto-form .p-inputnumber-input:disabled {
+    opacity: 1;
+    background-color: #f8fafc !important;
+    color: #334155 !important;
+  }
+
+  /* ===== FORM LAYOUT RESPONSIVE ===== */
+  .form-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
+
+  .form-col-full {
+    @apply col-span-1 sm:col-span-2 lg:col-span-3;
+  }
+
+  .form-checkbox-container {
+    @apply flex items-center gap-2 sm:mt-6 col-span-1 sm:col-span-2 lg:col-span-1;
+  }
+
+  .form-actions {
+    @apply flex flex-col sm:flex-row sm:justify-end items-center gap-3 mt-6;
+  }
+
+  /* ===== BOTONES RESPONSIVE ===== */
+  .btn-responsive {
+    @apply flex justify-center items-center;
+  }
+
+  .p-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: visible !important;
+  }
+
+  .p-button .p-button-label {
+    text-align: center !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-left: 0 !important;
+  }
+
+  .p-button .p-button-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .p-button.p-button-icon-only {
+    width: 2.5rem !important;
+    min-width: 2.5rem !important;
+    height: 2.5rem !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .p-button.p-button-icon-only .p-button-icon,
+  .p-button.p-button-icon-only svg,
+  .p-button.p-button-icon-only i {
+    margin: 0 !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: visible !important;
+  }
+
+  /* Estilo de checkbox PRESTO */
+  .form-checkbox-presto .p-checkbox-box { 
+    border: 1px solid #cfcfcf !important; 
+    border-radius: 3px !important;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Estilo de radiobutton PRESTO reutilizable */
+  .form-radio-presto .p-radiobutton-box {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #9ca3af !important; /* gris visible sobre fondo blanco */
+    background: #ffffff !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .form-radio-presto .p-radiobutton-box .p-radiobutton-icon {
+    width: 9px;
+    height: 9px;
+    display: block;
+    margin: 0;
+    background: #2563eb !important;
+  }
+
+  .form-radio-presto .p-radiobutton-box.p-highlight {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  }
+
+  .form-radio-presto:not(.p-disabled):hover .p-radiobutton-box {
+    border-color: #6b7280 !important;
+  }
+}
+
+/* ===== MEDIA QUERIES ===== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .card-presto {
+    width: 90%;
+    padding: 30px;
+  }
+  .login-layout {
+    flex-direction: column;
+    gap: 25px;
+  }
+  .divider-presto {
+    display: none;
+  }
+}
+
+/* Celular */
+@media (max-width: 767px) {
+  body { padding: 0; }
+  .card-presto { width: 100% !important; padding: 18px; border-radius: 12px; }
+  .title-presto { font-size: 22px; text-align: center; }
+  .btn-presto { padding: 10px; }
+
+  /* BOTONES 2 POR FILA
+     Importante: no aplicar ancho global a .p-button porque rompe botones con ícono
+     en grillas/acciones. Solo se aplica a botones marcados como responsive. */
+  .btn-responsive {
+    width: 48% !important;
+    margin-bottom: 8px;
+  }
+
+  .p-button.btn-responsive {
+    width: 48% !important;
+    margin-bottom: 8px;
+  }
+
+  .p-button.p-button-icon-only {
+    width: 2.5rem !important;
+    min-width: 2.5rem !important;
+    height: 2.5rem !important;
+    padding: 0 !important;
+  }
+
+  .input-presto,
+  .form-input-presto,
+  .form-textarea-presto,
+  .form-dropdown-presto{
+    width: 100% !important;
+  }
+
+.p-dropdown-panel {
+  min-width: unset !important;
+  width: auto !important;
+  max-width: auto !important;
+}
+
+.p-dropdown-items-wrapper {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.p-dropdown-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mi-tabview .p-tabview .p-tabview-panels {
+  padding: 1.25rem 0;
+}
+.mi-tabview .p-tabview-panels {
+  padding: 1.25rem 0;
+}
+.p-card .p-card-body {
+    padding: 0.75rem;
+}
+}
+
+/* Celular muy pequeño */
+@media (max-width: 420px) {
+  .card-presto { padding: 15px; }
+  .title-presto { font-size: 20px; }
+  
+.mi-tabview .p-tabview-panels {
+  padding: 1.25rem 0;
+}
+.p-card .p-card-body {
+    padding: 0.75rem;
+}
+}
+
+/* ===== ACCORDION ===== */
+.p-accordion .p-accordion-content {
+  padding: 1rem;
+}
+
+@media (max-width: 767px) {
+  .p-accordion .p-accordion-content {
+    padding: 0.5rem;
+  }
+  .p-accordion .p-accordion-header .p-accordion-header-link {
+    padding: 0.75rem;
+  }
+}
+
+/* ===== DATATABLE ===== */
+.p-paginator { justify-content: end; }
+.p-paginator .p-paginator-page.p-highlight {
+  background-color: #03298e; 
+  color: white;
+  border-radius: 50%;
+}
+.p-datatable .p-datatable-thead > tr > th {
+  background-color: #03298e;
+  color: white;
+  font-weight: 600;
+  text-align: center; 
+}
+.p-datatable .p-datatable-tbody > tr:hover td { background-color: #e2e8f0; }
+
+/* ===== ACCORDION PRESTO ===== */
+.p-accordion .p-accordion-header:not(.p-highlight) .p-accordion-header-link {
+  background-color: #03298e;
+  color: white;
+  border-radius: 6px;
+  font-weight: 600;
+  padding: 8px 12px;   
+}
+.p-accordion .p-accordion-header-link span {
+  color: white;
+  font-size: 14px;    
+}
+.p-accordion .p-accordion-header-link .p-accordion-toggle-icon {
+  color: white;
+  font-size: 14px;
+}
+.p-accordion .p-accordion-header:not(.p-highlight) .p-accordion-header-link:hover {
+  background-color: #03298e;
+}
+.p-accordion .p-accordion-header.p-highlight .p-accordion-header-link {
+  background-color: #03298e;
+  color: white;
+  border-radius: 6px 6px 0 0;
+  font-weight: 600;
+  padding: 8px 12px;   /* mismo padding cuando está abierto */
+}
+
+.presto-section-header {
+  background-color: #03298e;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 8px 16px;
+}
+
+.calcular-uf-button.p-button {
+  background: #0d6efd !important;
+  border: 1px solid #0a58ca !important;
+  color: #ffffff !important;
+  min-height: 31px;
+}
+
+.calcular-uf-button.p-button:enabled:hover {
+  background: #0b5ed7 !important;
+  border-color: #084298 !important;
+}
+
+.calcular-uf-button.p-button:disabled {
+  opacity: 0.65;
+}
+
+.calculo-checkbox-visible.p-checkbox .p-checkbox-box {
+  width: 18px !important;
+  height: 18px !important;
+  border: 2px solid #1f2937 !important;
+  border-radius: 2px !important;
+  background: #f8fafc !important;
+  position: relative;
+}
+
+.calculo-checkbox-visible.p-checkbox .p-checkbox-box.p-highlight,
+.calculo-checkbox-visible.p-checkbox.p-highlight .p-checkbox-box,
+.calculo-checkbox-visible.p-checkbox.p-checkbox-checked .p-checkbox-box,
+.calculo-checkbox-visible.p-checkbox .p-checkbox-box[data-p-highlight="true"] {
+  background: #1d4ed8 !important;
+  border-color: #1d4ed8 !important;
+}
+
+.calculo-checkbox-visible.p-checkbox .p-checkbox-icon {
+  display: none !important;
+}
+
+.calculo-checkbox-visible.p-checkbox .p-checkbox-box.p-highlight::after,
+.calculo-checkbox-visible.p-checkbox.p-highlight .p-checkbox-box::after,
+.calculo-checkbox-visible.p-checkbox.p-checkbox-checked .p-checkbox-box::after,
+.calculo-checkbox-visible.p-checkbox .p-checkbox-box[data-p-highlight="true"]::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 9px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.calculo-checkbox-visible.p-checkbox.p-disabled .p-checkbox-box {
+  opacity: 0.75;
+}
+
+/* Inputs PrimeReact full width */
+.p-inputnumber{
+  width: 100% !important;
+}
+
+/*********************************************/
+@media (max-width: 30em) {
+  .menu-cab {
+    font-size: small;
+  }
+
+  .p-datatable {
+    font-size: 0.85rem;
+  }
+
+  .p-datatable .p-datatable-thead > tr > th {
+    font-size: 0.85rem;
+  }
+
+  .p-datatable .p-datatable-thead {
+    display: none;
+  }
+
+  .p-datatable .p-datatable-tbody > tr {
+    display: block;
+    border: 1px solid grey;
+    padding: 1em;
+    margin-bottom: 1em;
+    background: #fff;
+  }
+
+  .p-datatable .p-datatable-tbody > tr > td {
+    display: block;
+    width: 100%;
+    border: none;
+    padding: 0.35rem 0;
+    text-align: left !important;
+    font-size: 0.85rem;
+  }
+
+  .p-datatable .p-datatable-tbody > tr > td [data-titulo] {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    word-break: break-word;
+    font-size: 0.85rem;
+  }
+
+  .p-datatable .p-datatable-tbody > tr > td [data-titulo]::before {
+    content: attr(data-titulo);
+    width: 98px;
+    color: blue;
+    font-weight: bold;
+    flex-shrink: 0;
+    margin-right: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .p-datatable .p-paginator {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+  }
+}
+/*********************************************/
+
+/*Funciones Transversales*/
+/*********************************************/
+.mi-tabview .p-tabview-nav li .p-tabview-nav-link {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;       
+}
+.mi-tabview .p-tabview-nav {
+  gap: 0.3rem; 
+}
+.mi-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+  background-color: #03298e !important;
+  color: #ffffff !important;
+  border-radius: 4px;
+}
+
+.mi-tabview .p-tabview-nav li .p-tabview-nav-link:hover {
+  background-color: #e5e7eb;
+}
+
+.mi-tabview .p-tabview-nav .p-tabview-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+@media (max-width: 1280px) {
+  .mi-tabview .p-tabview-nav {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding-bottom: 0.2rem;
+  }
+}
+.p-tooltip .p-tooltip-text {
+  font-size: 0.75rem;
+  padding: 0.5rem 0.5rem;
+}
+/*********************************************/
+
+
+/* ============================================================
+   FIX GLOBAL PRIME ICON BUTTONS
+   Mantiene centrados y completos los íconos en botones de acciones.
+   Evita que estilos responsive afecten todos los .p-button.
+   ============================================================ */
+.p-button.p-button-icon-only {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 2.5rem !important;
+  min-width: 2.5rem !important;
+  height: 2.5rem !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.p-button.p-button-icon-only .p-button-icon,
+.p-button.p-button-icon-only svg,
+.p-button.p-button-icon-only i {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 1rem !important;
+  height: 1rem !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+  overflow: visible !important;
+}
+
+.p-button .p-button-icon {
+  flex-shrink: 0 !important;
+  line-height: 1 !important;
+}
+
+.p-button:not(.p-button-icon-only) .p-button-icon-left {
+  margin-right: 0.5rem !important;
+}
+
+.p-button:not(.p-button-icon-only) .p-button-icon-right {
+  margin-left: 0.5rem !important;
+}
+
+@media (max-width: 767px) {
+  .p-button:not(.btn-responsive):not(.presto-login-submit):not(.p-button-icon-only) {
+    width: auto !important;
+  }
+
+  .p-button.p-button-icon-only {
+    width: 2.5rem !important;
+    min-width: 2.5rem !important;
+    height: 2.5rem !important;
+    padding: 0 !important;
+  }
+}
+
+/* Radio buttons PRESTO visibles en formularios */
+.form-radio-presto.p-radiobutton {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.form-radio-presto.p-radiobutton .p-radiobutton-box {
+  width: 20px !important;
+  height: 20px !important;
+  border: 2px solid #64748b !important;
+  border-radius: 9999px !important;
+  background: #ffffff !important;
+  box-shadow: inset 0 0 0 2px #ffffff !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.form-radio-presto.p-radiobutton .p-radiobutton-box.p-highlight,
+.form-radio-presto.p-radiobutton.p-highlight .p-radiobutton-box,
+.form-radio-presto.p-radiobutton .p-radiobutton-box[data-p-highlight="true"] {
+  border-color: #1d4ed8 !important;
+  background: #ffffff !important;
+}
+
+.form-radio-presto.p-radiobutton .p-radiobutton-box.p-highlight .p-radiobutton-icon,
+.form-radio-presto.p-radiobutton.p-highlight .p-radiobutton-icon,
+.form-radio-presto.p-radiobutton .p-radiobutton-box[data-p-highlight="true"] .p-radiobutton-icon {
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 9999px !important;
+  background: #1d4ed8 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
