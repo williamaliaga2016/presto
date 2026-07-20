@@ -9,8 +9,6 @@ export interface ControlesValidarInformacion {
   departamento: CatalogoOption[];
   municipio: CatalogoOption[];
   situacion_laboral: CatalogoOption[];
-  canal_contacto: CatalogoOption[];
-  resultado_contacto: CatalogoOption[];
   tipo_credito: CatalogoOption[];
 }
 
@@ -22,7 +20,5 @@ export const EMPTY_CONTROLES_VALIDAR_INFORMACION: ControlesValidarInformacion = 
   departamento:       [],
   municipio:          [],
   situacion_laboral:  [],
-  canal_contacto:     [],
-  resultado_contacto: [],
   tipo_credito:       [],
 };

@@ -30,6 +30,9 @@ export interface ValidarInformacionBBVA {
   celular_t3?: string | null;
   email_t3?: string | null;
 
+  // Titulares adicionales (4-10)
+  titulares_adicionales?: TitularBBVA[] | null;
+
   // Inmueble
   inmueble_definido?: boolean | null;
   tipo_inmueble?: string | null;
@@ -40,19 +43,26 @@ export interface ValidarInformacionBBVA {
   descripcion_proyecto?: string | null;
   departamento_inmueble?: string | null;
   municipio_inmueble?: string | null;
+  fecha_estimada_entrega?: string | null;
 
   // Crédito
   tipo_credito?: string | null;
   tiene_garantia?: boolean | null;
+  garantia_constituida?: boolean | null;
   monto_otorgado_vi?: number | null;
+  monto_otorgado_vivienda_original?: number | null;
 
   // Datos Comerciales
   correo_declarativo?: string | null;
   telefono_declarativo?: string | null;
+  codigo_oficina?: string | null;
+  descripcion_oficina?: string | null;
+  codigo_asesor?: string | null;
 
   // Estatus y flags
   estatus_general?: string | null;
   motivo_devolucion?: string | null;
+  origen_devolucion?: string | null;
   observaciones?: string | null;
   requiere_definir_inmueble?: boolean | null;
   requiere_carga_cliente?: boolean | null;
@@ -67,15 +77,20 @@ export interface ValidarInformacionBBVA {
   modified_date?: string | null;
 }
 
-export interface RegistroContactoBBVA {
+export interface TitularBBVA {
   id?: number;
   id_expediente: number;
-  id_actividad: string;
-  id_usuario?: number;
-  canal_contacto: string;
-  resultado_contacto: string;
-  observaciones?: string | null;
-  fecha_contacto?: string;
+  id_actividad?: string | null;
+  numero_titular?: number;
+  tipo_identificacion?: string | null;
+  numero_identificacion?: string | null;
+  nombre_completo?: string | null;
+  celular_cliente?: string | null;
+  telefono_residente?: string | null;
+  email?: string | null;
+  direccion_residencia?: string | null;
+  telefono_declarativo?: string | null;
+  correo_declarativo?: string | null;
 }
 
 export const EMPTY_VALIDAR_INFORMACION = (
@@ -84,7 +99,7 @@ export const EMPTY_VALIDAR_INFORMACION = (
   id_expediente,
   id_actividad: 'ACT_VALIDAR_INFO',
   inmueble_definido: false,
-  estatus_general: 'SIN_INM',
+  estatus_general: 'SIN_INMUEBLE_DEFINIDO',
   requiere_definir_inmueble: false,
   requiere_carga_cliente: false,
   requiere_carga_constructora: false,

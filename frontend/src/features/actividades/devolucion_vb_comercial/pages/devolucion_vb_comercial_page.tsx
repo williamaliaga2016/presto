@@ -49,7 +49,7 @@ export default function DevolucionVbComercialPage() {
 
   const { data, isLoading } = useDevolucionVbComercial(id_expediente);
 
-  const { data: controlesData } = useControlesDevolucionVbComercial(id_expediente);
+  const { data: controlesData } = useControlesDevolucionVbComercial();
   const controles = controlesData?.detail ?? EMPTY_CONTROLES_DEVOLUCION_VB_COMERCIAL;
 
   const controlesDevolucionForm: DevolucionVbComercialFormControles = {

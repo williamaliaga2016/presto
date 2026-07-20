@@ -8,5 +8,6 @@ export function useControlesDatosCredito(enabled = true) {
     queryKey: ['datos_operacion_controles_datos_credito'],
     queryFn: () => revisarIngresoDatosCreditoService.getControlesDatosCredito(),
     enabled,
+    staleTime: 1000 * 60 * 10,
   });
 }

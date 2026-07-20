@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { Button } from 'primereact/button';
-import { Checkbox } from 'primereact/checkbox';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
@@ -10,6 +9,13 @@ import { InputText } from 'primereact/inputtext';
 
 import type { ControlesAntecedenteComprador } from '../models/catalogo';
 import type { CargaOperacionBancoAntecedenteComprador } from '../models/carga_operacion_banco';
+import {
+  filterNumeroIdentificacion,
+  isPasaporte,
+  isValidEmail,
+  onlyDigits,
+  onlyLetters,
+} from '../utils/inputFilters';
 
 interface AntecedentesCompradorSectionProps {
   value: CargaOperacionBancoAntecedenteComprador[];
@@ -31,6 +37,7 @@ interface AntecedentesCompradorSectionProps {
 type DialogMode = 'view' | 'edit' | 'create';
 
 const emptyMessage = 'Sin registros';
+const MAX_TITULARES = 4;
 
 const now = () => new Date().toISOString();
 
@@ -98,6 +105,9 @@ export default function AntecedentesCompradorSection({
 
   const isDialogReadOnly = dialogMode === 'view' || !canModifyRows;
 
+  const draftEsPasaporte = isPasaporte(draft.tipo_documento_id, controles.tipo_documento_id);
+  const draftEmailValido = isValidEmail(draft.email);
+
   const rows = useMemo(
     () => (value ?? []).filter((comprador) => comprador.row_status !== false),
     [value],
@@ -105,6 +115,11 @@ export default function AntecedentesCompradorSection({
 
   const openNew = () => {
     if (!canModifyRows) return;
+
+    if (rows.length >= MAX_TITULARES) {
+      onWarn?.(`Solo se permite un máximo de ${MAX_TITULARES} titulares.`);
+      return;
+    }
 
     setEditingIndex(null);
     setDialogMode('create');
@@ -330,7 +345,8 @@ export default function AntecedentesCompradorSection({
             Datos de los Titulares
           </h3>
           <p className="text-sm text-gray-500">
-            Agregue el Titular 1 y, si aplica, los co-titulares asociados al crédito.
+            Agregue el Titular 1 y, si aplica, los co-titulares asociados al crédito
+            (máximo {MAX_TITULARES} titulares).
           </p>
         </div>
 
@@ -341,7 +357,7 @@ export default function AntecedentesCompradorSection({
           severity="success"
           outlined
           onClick={openNew}
-          disabled={!canModifyRows}
+          disabled={!canModifyRows || rows.length >= MAX_TITULARES}
           className="btn-responsive"
         />
       </div>
@@ -404,10 +420,17 @@ export default function AntecedentesCompradorSection({
             <label className="font-semibold text-sm">N° Identificación *</label>
             <InputText
               value={draft.numero_identificacion ?? ''}
-              onChange={(e) => updateDraft('numero_identificacion', e.target.value)}
+              onChange={(e) =>
+                updateDraft(
+                  'numero_identificacion',
+                  filterNumeroIdentificacion(e.target.value, draftEsPasaporte),
+                )
+              }
               disabled={isDialogReadOnly}
               className="form-input-presto w-full"
-              placeholder="Ingrese N° de identificación"
+              placeholder={
+                draftEsPasaporte ? 'Ingrese N° de pasaporte' : 'Ingrese N° de identificación'
+              }
             />
           </div>
 
@@ -415,7 +438,7 @@ export default function AntecedentesCompradorSection({
             <label className="font-semibold text-sm">Nombre Completo *</label>
             <InputText
               value={draft.nombre_completo ?? ''}
-              onChange={(e) => updateDraft('nombre_completo', e.target.value)}
+              onChange={(e) => updateDraft('nombre_completo', onlyLetters(e.target.value))}
               disabled={isDialogReadOnly}
               className="form-input-presto w-full"
               placeholder="Ingrese nombre completo"
@@ -426,21 +449,12 @@ export default function AntecedentesCompradorSection({
             <label className="font-semibold text-sm">Celular Cliente</label>
             <InputText
               value={draft.celular ?? ''}
-              onChange={(e) => updateDraft('celular', e.target.value)}
+              onChange={(e) => updateDraft('celular', onlyDigits(e.target.value))}
               disabled={isDialogReadOnly}
               className="form-input-presto w-full"
+              maxLength={10}
+              inputMode="numeric"
               placeholder="Ingrese celular"
-            />
-          </div>
-
-          <div className="flex flex-col gap-1 md:col-span-2">
-            <label className="font-semibold text-sm">Dirección Residencia</label>
-            <InputText
-              value={draft.direccion ?? ''}
-              onChange={(e) => updateDraft('direccion', e.target.value)}
-              disabled={isDialogReadOnly}
-              className="form-input-presto w-full"
-              placeholder="Ingrese dirección de residencia"
             />
           </div>
 
@@ -448,9 +462,11 @@ export default function AntecedentesCompradorSection({
             <label className="font-semibold text-sm">Teléfono Residente</label>
             <InputText
               value={draft.telefono ?? ''}
-              onChange={(e) => updateDraft('telefono', e.target.value)}
+              onChange={(e) => updateDraft('telefono', onlyDigits(e.target.value))}
               disabled={isDialogReadOnly}
               className="form-input-presto w-full"
+              maxLength={10}
+              inputMode="numeric"
               placeholder="Ingrese teléfono residente"
             />
           </div>
@@ -460,9 +476,24 @@ export default function AntecedentesCompradorSection({
             <InputText
               value={draft.email ?? ''}
               onChange={(e) => updateDraft('email', e.target.value)}
+              type="email"
+              disabled={isDialogReadOnly}
+              className={`form-input-presto w-full ${!draftEmailValido ? 'p-invalid' : ''}`}
+              placeholder="Ingrese email"
+            />
+            {!draftEmailValido && (
+              <span className="text-xs text-red-600">Ingrese un correo con formato válido.</span>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1 md:col-span-3">
+            <label className="font-semibold text-sm">Dirección Residencia</label>
+            <InputText
+              value={draft.direccion ?? ''}
+              onChange={(e) => updateDraft('direccion', e.target.value)}
               disabled={isDialogReadOnly}
               className="form-input-presto w-full"
-              placeholder="Ingrese email"
+              placeholder="Ingrese dirección de residencia"
             />
           </div>
 
@@ -481,18 +512,6 @@ export default function AntecedentesCompradorSection({
               emptyMessage="Sin resultados"
               showClear
             />
-          </div>
-
-          <div className="flex items-center gap-2 mt-4">
-            <Checkbox
-              inputId="cliente_nomina"
-              checked={draft.cliente_nomina ?? false}
-              onChange={(e) => updateDraft('cliente_nomina', e.checked ?? false)}
-              disabled={isDialogReadOnly}
-            />
-            <label htmlFor="cliente_nomina" className="text-sm cursor-pointer">
-              Cliente Nómina
-            </label>
           </div>
         </div>
       </Dialog>

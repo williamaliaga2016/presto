@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { Column } from 'primereact/column';
@@ -27,6 +27,8 @@ type ExpedienteDigitalPageProps = {
   locked_categoria_id?: number;
   locked_documento_id?: number;
   read_only?: boolean;
+  onDocumentUploaded?: () => void;
+  onDocumentsLoaded?: (docs: { id_tipo_documento: number; estado: string }[]) => void;
 };
 
 type SelectOption = {
@@ -92,6 +94,8 @@ export default function ExpedienteDigitalPage({
   locked_categoria_id,
   locked_documento_id,
   read_only = false,
+  onDocumentUploaded,
+  onDocumentsLoaded,
 }: ExpedienteDigitalPageProps) {
   const expediente_id = Number(id_expediente ?? 0);
 
@@ -157,6 +161,16 @@ export default function ExpedienteDigitalPage({
       ),
     }));
   }, [archivos_response, selected_archivos]);
+
+  // Notificar al padre cuando la lista de archivos cambia (CA5)
+  useEffect(() => {
+    if (!onDocumentsLoaded) return;
+    const mapped = archivos.map((a) => ({
+      id_tipo_documento: Number(a.id_documento ?? 0),
+      estado: a.is_active ? 'CARGADO' : 'INACTIVO',
+    }));
+    onDocumentsLoaded(mapped);
+  }, [archivos, onDocumentsLoaded]);
 
   const documento_options = useMemo<SelectOption[]>(() => {
     const options = documentos.map((documento) => ({
@@ -294,6 +308,8 @@ export default function ExpedienteDigitalPage({
     limpiarFormulario();
     setSelectedArchivos([]);
     await refetchArchivos();
+    // CA5: Notificar al padre que un documento fue cargado exitosamente
+    onDocumentUploaded?.();
   };
 
   const confirmarLimpiar = () => {

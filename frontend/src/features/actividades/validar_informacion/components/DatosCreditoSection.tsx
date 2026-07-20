@@ -23,19 +23,19 @@ export default function DatosCreditoSection({
       <div className="flex flex-col gap-1">
         <label className="text-xs text-gray-500">Scoring</label>
         <p className="text-sm font-medium py-2 px-3 bg-gray-50 rounded border border-gray-200">
-          {encabezado.scoring ?? '—'}
+          {encabezado.scoring ?? '-'}
         </p>
       </div>
 
       <div className="flex flex-col gap-1">
         <label className="text-xs text-gray-500">Subproducto</label>
         <p className="text-sm font-medium py-2 px-3 bg-gray-50 rounded border border-gray-200">
-          {encabezado.id_tipo_sub_producto ?? '—'}
+          {encabezado.id_tipo_sub_producto ?? '-'}
         </p>
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-xs text-gray-500">Tipo de Crédito *</label>
+        <label className="text-xs text-gray-500">Tipo de Credito *</label>
         <Dropdown
           value={data.tipo_credito}
           options={controles.tipo_credito}
@@ -47,29 +47,30 @@ export default function DatosCreditoSection({
           className={`w-full${inv('tipo_credito') ? ' p-invalid' : ''}`}
         />
         {inv('tipo_credito') && (
-          <small className="p-error">El tipo de crédito es requerido</small>
+          <small className="p-error">El tipo de credito es requerido</small>
         )}
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-xs text-gray-500">¿Tiene Garantía? *</label>
+        <label className="text-xs text-gray-500">Tiene Garantia? *</label>
         <div
           className={`flex items-center gap-3 py-2 px-3 rounded border ${
             inv('tiene_garantia') ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-gray-50'
           }`}
         >
           <Checkbox
+            className="calculo-checkbox-visible"
             inputId="tiene_garantia"
             checked={data.tiene_garantia ?? false}
             disabled={!isEditing}
             onChange={(e) => onChange('tiene_garantia', e.checked ?? false)}
           />
           <label htmlFor="tiene_garantia" className="text-sm cursor-pointer">
-            {data.tiene_garantia ? 'Sí tiene garantía' : 'No tiene garantía'}
+            {data.tiene_garantia ? 'Si tiene garantia' : 'No tiene garantia'}
           </label>
         </div>
         {inv('tiene_garantia') && (
-          <small className="p-error">Debe indicar si tiene garantía</small>
+          <small className="p-error">Debe indicar si tiene garantia</small>
         )}
       </div>
     </div>

@@ -1,7 +1,7 @@
-import { axiosClient } from '@/core/api/axiosClient';
-import type { ApiResponse } from '@/core/api/models/ApiResponse';
+import { axiosClient } from "@/core/api/axiosClient";
+import type { ApiResponse } from "@/core/api/models/ApiResponse";
 
-const BASE_URL = '/api/CartaAprobacionBbva';
+const baseUrl = "/api/CartaAprobacionBbva";
 
 export interface CartaAprobacionBbva {
   id: number;
@@ -20,24 +20,33 @@ export interface CartaAprobacionBbva {
 }
 
 export const cartaAprobacionBbvaService = {
-  async getByExpediente(idExpediente: number): Promise<ApiResponse<CartaAprobacionBbva | null>> {
-    const response = await axiosClient.get<ApiResponse<CartaAprobacionBbva | null>>(
-      `${BASE_URL}/${idExpediente}`,
-    );
+  async getByExpediente(
+    id_expediente: number,
+  ): Promise<ApiResponse<CartaAprobacionBbva | null>> {
+    const response = await axiosClient.get<
+      ApiResponse<CartaAprobacionBbva | null>
+    >(`${baseUrl}/GetByExpediente/${id_expediente}`);
+
     return response.data;
   },
 
-  async getHistorico(idExpediente: number): Promise<ApiResponse<CartaAprobacionBbva[]>> {
-    const response = await axiosClient.get<ApiResponse<CartaAprobacionBbva[]>>(
-      `${BASE_URL}/${idExpediente}/historico`,
-    );
+  async getHistorico(
+    id_expediente: number,
+  ): Promise<ApiResponse<CartaAprobacionBbva[]>> {
+    const response = await axiosClient.get<
+      ApiResponse<CartaAprobacionBbva[]>
+    >(`${baseUrl}/Historico/${id_expediente}`);
+
     return response.data;
   },
 
-  async generar(idExpediente: number): Promise<ApiResponse<null>> {
+  async generar(
+    id_expediente: number,
+  ): Promise<ApiResponse<null>> {
     const response = await axiosClient.get<ApiResponse<null>>(
-      `${BASE_URL}/${idExpediente}/generar`,
+      `${baseUrl}/Generar/${id_expediente}`,
     );
+
     return response.data;
   },
 };

@@ -1,11 +1,15 @@
 import { axiosClient } from '@/core/api/axiosClient';
 import type { ApiResponse } from '@/core/api/models/ApiResponse';
-import type { DevolucionVbComercialData } from '../models/devolucion_vb_comercial';
-import type { DevolucionVbComercialCatalogos } from '../models/catalogos';
+import type { DevolucionVbComercialData } from
+  '../models/devolucion_vb_comercial';
+import type { DevolucionVbComercialCatalogos } from
+  '../models/catalogos';
 import type {
   AvanzarDevolucionVbComercialResponse,
   DevolucionVbComercialApiDetail,
 } from '../models/devolucion_vb_comercial.response';
+
+const baseUrl = '/api/DevolucionVbComercial';
 
 export const devolucionVbComercialService = {
   async getByExpediente(
@@ -13,17 +17,17 @@ export const devolucionVbComercialService = {
   ): Promise<ApiResponse<DevolucionVbComercialApiDetail | null>> {
     const response = await axiosClient.get<
       ApiResponse<DevolucionVbComercialApiDetail | null>
-    >(`/api/DevolucionVbComercial/${id_expediente}`);
+    >(`${baseUrl}/${id_expediente}`);
 
     return response.data;
   },
 
-  async getControles(
-    id_expediente: number,
-  ): Promise<ApiResponse<DevolucionVbComercialCatalogos>> {
+  async getControles(): Promise<
+    ApiResponse<DevolucionVbComercialCatalogos>
+  > {
     const response = await axiosClient.get<
       ApiResponse<DevolucionVbComercialCatalogos>
-    >(`/api/DevolucionVbComercial/${id_expediente}/controles`);
+    >(`${baseUrl}/controles`);
 
     return response.data;
   },
@@ -33,7 +37,7 @@ export const devolucionVbComercialService = {
   ): Promise<ApiResponse<DevolucionVbComercialData>> {
     const response = await axiosClient.post<
       ApiResponse<DevolucionVbComercialData>
-    >('/api/DevolucionVbComercial/guardar', payload);
+    >(`${baseUrl}/Save`, payload);
 
     return response.data;
   },
@@ -44,10 +48,9 @@ export const devolucionVbComercialService = {
   ): Promise<ApiResponse<AvanzarDevolucionVbComercialResponse>> {
     const response = await axiosClient.post<
       ApiResponse<AvanzarDevolucionVbComercialResponse>
-    >(
-      `/api/DevolucionVbComercial/${id_expediente}/avanzar?confirmar_cierre=${confirmar_cierre}`,
-      {},
-    );
+    >(`${baseUrl}/Avanzar/${id_expediente}`, null, {
+      params: { confirmar_cierre },
+    });
 
     return response.data;
   },

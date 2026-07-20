@@ -18,6 +18,7 @@ export default function DatosInmuebleSection({
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="flex items-center gap-2">
         <Checkbox
+          className="calculo-checkbox-visible"
           checked={data.inmueble_definido ?? false}
           disabled={!isEditing}
           onChange={(e) => onChange('inmueble_definido', e.checked)}
@@ -54,6 +55,7 @@ export default function DatosInmuebleSection({
           </div>
           <div className="flex items-center gap-2">
             <Checkbox
+              className="calculo-checkbox-visible"
               checked={data.es_constructora_vip ?? false}
               disabled={!isEditing}
               onChange={(e) => onChange('es_constructora_vip', e.checked)}

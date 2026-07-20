@@ -37,6 +37,8 @@ export interface EncabezadoDTO {
   // Crédito
   id_tipo_sub_producto?: string | null;
   monto_otorgado?: number | null;
+  plazo_otorgado?: string | number | null;
+  tasa?: string | number | null;
   canal_originacion?: string | null;
   fecha_aprobacion?: string | null;
 

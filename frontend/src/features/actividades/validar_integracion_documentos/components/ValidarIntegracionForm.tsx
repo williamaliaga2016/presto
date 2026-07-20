@@ -4,15 +4,14 @@ import { InputNumber } from "primereact/inputnumber";
 import { InputTextarea } from "primereact/inputtextarea";
 import { SelectButton } from "primereact/selectbutton";
 
-import type { ValidarIntegracionDocumentosData } from "../models/validar_integracion_documentos";
+import type { ValidarIntegracionDocumentosFormulario } from "../models/validar_integracion_documentos";
 import { ValidarIntegracionFormControles } from "../models/catalogo";
 import { useDropdownTooltip } from "@/shared/hooks/useDropdownTooltip";
 
 interface ValidarIntegracionFormProps {
-  form: ValidarIntegracionDocumentosData;
+  form: ValidarIntegracionDocumentosFormulario;
   isDisabled: boolean;
-  updateField: <K extends keyof ValidarIntegracionDocumentosData>(field: K, value: ValidarIntegracionDocumentosData[K]) => void;
-  onOpenModal: () => void;
+  updateField: <K extends keyof ValidarIntegracionDocumentosFormulario>(field: K, value: ValidarIntegracionDocumentosFormulario[K]) => void;
   controles: ValidarIntegracionFormControles;
 }
 
@@ -20,47 +19,45 @@ export default function ValidarIntegracionForm({
   form,
   isDisabled,
   updateField,
-  onOpenModal,
   controles
 }: ValidarIntegracionFormProps) {
-  
-  const opcionesBinarias = [
-    { label: 'Sí', value: true },
-    { label: 'No', value: false }
-  ];
 
   const { itemTemplate, valueTemplate } = useDropdownTooltip('description');
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {/* Campo ID Expediente (Solo Lectura) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+        {/* Selector ¿Documentos Correctos? (Funcionamiento Toggle) */}
         <div className="flex flex-col gap-1">
-          <label className="font-semibold text-sm">Expediente</label>
-          <InputNumber value={form.idExpediente} className="form-input-presto w-full" useGrouping={false} disabled />
+          <div className="flex items-center justify-between mb-1">
+            <label className="font-semibold text-sm">¿Documentos Correctos? *</label>
+            <label
+              className={`relative inline-flex items-center ${isDisabled ? "opacity-60" : "cursor-pointer"}`}
+            >
+              <input 
+                type="checkbox" 
+                id="toggle-val-integracion-docs" 
+                checked={form.documentos_correctos ?? false}
+                disabled={isDisabled}
+                onChange={(e) => updateField("documentos_correctos", e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600 disabled:opacity-60"></div>
+            </label>
+          </div>
         </div>
 
-        {/* Selector ¿Documentos Correctos? */}
-        <div className="flex flex-col gap-1 md:col-span-3">
-          <label className="font-semibold text-sm">¿Los documentos están correctos y completos? *</label>
-          <SelectButton 
-            value={form.documentosCorrectos}
-            options={opcionesBinarias} 
-            onChange={(e) => updateField("documentosCorrectos", e.value)}
-            disabled={isDisabled}
-          />
-        </div>
-
-        {/* Condicional: Dropdown de Motivo de Devolución */}
-        {form.documentosCorrectos === false && (
+        {/* Condicional: Dropdown de Motivo de Devolución con tus estilos originales */}
+        {form.documentos_correctos === false && (
           <div className="flex flex-col gap-1 md:col-span-3">
             <label className="font-semibold text-sm">Motivo de Devolución *</label>
             <Dropdown
-              value={form.motivoDevolucion}
+              value={form.motivo_devolucion}
               options={controles.motivo_devolucion}
               optionLabel="description"
               optionValue="code"
-              onChange={(e) => updateField("motivoDevolucion", e.value)}
+              onChange={(e) => updateField("motivo_devolucion", e.value)}
               placeholder="Seleccione un motivo"
               className="w-full md:w-64 form-dropdown-presto"
               disabled={isDisabled}
@@ -70,18 +67,26 @@ export default function ValidarIntegracionForm({
           </div>
         )}
 
-        {/* Selector ¿Crédito Condicionado? */}
+        {/* Selector ¿Crédito Condicionado? (Funcionamiento Select HTML con tus fuentes) */}
         <div className="flex flex-col gap-1 md:col-span-3">
-          <label className="font-semibold text-sm">¿Es un Crédito Condicionado? *</label>
-          <SelectButton 
-            value={form.creditoCondicionado} 
-            options={opcionesBinarias} 
-            onChange={(e) => updateField("creditoCondicionado", Boolean(e.value))}
+          <label className="font-semibold text-sm">¿Crédito Condicionado? *</label>
+          <Dropdown
+            id="select-credito-condicionado"
+            value={form.credito_condicionado}
+            options={[
+              { label: 'Sí', value: true },
+              { label: 'No', value: false }
+            ]}
+            optionLabel="label"
+            optionValue="value"
             disabled={isDisabled}
+            onChange={(e) => updateField("credito_condicionado", e.value)}
+            placeholder="Seleccione..."
+            className="w-full md:w-64 form-dropdown-presto"
           />
         </div>
 
-        {/* Cuadro de texto de Observaciones */}
+        {/* Cuadro de texto de Observaciones original */}
         <div className="flex flex-col gap-1 md:col-span-3">
           <label className="font-semibold text-sm">Observaciones *</label>
           <InputTextarea
@@ -94,18 +99,6 @@ export default function ValidarIntegracionForm({
             placeholder="Escriba los comentarios o aclaraciones finales sobre el expediente..."
           />
         </div>
-      </div>
-
-      {/* Botón Secundario Adicionar Interviniente */}
-      <div className="mt-4">
-        <Button 
-          type="button" 
-          label="Adicionar Interviniente/Apoderado" 
-          icon="pi pi-user-plus" 
-          severity="secondary" 
-          outlined 
-          onClick={onOpenModal} 
-        />
       </div>
     </div>
   );

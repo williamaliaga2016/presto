@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { AxiosError } from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Button } from 'primereact/button';
@@ -16,9 +17,8 @@ import CondicionesFinancierasSection from '../components/CondicionesFinancierasS
 import DatosInmuebleSection from '../components/DatosInmuebleSection';
 import DatosComercialesSection from '../components/DatosComercialesSection';
 import EstatusGeneralSection from '../components/EstatusGeneralSection';
-import RegistroContactoSection from '../components/RegistroContactoSection';
-import { useValidarInformacion } from '../hooks/useValidarInformacion';
-import { useEncabezado } from '@/features/encabezado/hooks/useEncabezado';
+import { useValidarInformacionConEncabezado } from
+  '../hooks/useValidarInformacionConEncabezado';
 import { useUpsertValidarInformacion } from '../hooks/useUpsertValidarInformacion';
 import { useAvanzarValidarInformacion } from '../hooks/useAvanzarValidarInformacion';
 import { useControlesValidarInformacion } from '../hooks/useControlesValidarInformacion';
@@ -26,9 +26,57 @@ import {
   EMPTY_VALIDAR_INFORMACION,
   type ValidarInformacionBBVA,
 } from '../models/validar_informacion';
+import {
+  EMPTY_ENCABEZADO_VALIDAR_INFORMACION,
+} from '../models/encabezado_validar_informacion';
 import { EMPTY_CONTROLES_VALIDAR_INFORMACION } from '../models/catalogo';
 
 const ACTIVIDAD_ID = 'ACT_VALIDAR_INFO';
+
+type RequiredFieldsError = {
+  detail?: string;
+  message?: string;
+  campos_faltantes?: string[];
+};
+
+function getRequiredFieldsFromError(error: unknown): string[] {
+  const axiosError = error as AxiosError<RequiredFieldsError>;
+  const data = axiosError.response?.data;
+
+  if (Array.isArray(data?.campos_faltantes)) {
+    return data.campos_faltantes;
+  }
+
+  const detail = data?.detail ?? data?.message ?? axiosError.message;
+  const match = detail?.match(/Datos Obligatorios Faltantes:\s*(.+)$/i);
+  if (!match?.[1]) return [];
+
+  return match[1]
+    .split(',')
+    .map((field) => field.trim())
+    .filter(Boolean);
+}
+
+function formatFieldName(field: string): string {
+  const names: Record<string, string> = {
+    telefono_t1: 'Teléfono Residente T1',
+    direccion_t1: 'Dirección Residencia T1',
+    tipo_id_t1: 'Tipo de Identificación T1',
+    numero_id_t1: 'Número de Identificación T1',
+    nombre_completo_t1: 'Nombre Completo T1',
+    celular_t1: 'Celular Cliente T1',
+    email_t1: 'Email T1',
+    tipo_credito: 'Tipo de Crédito',
+    tiene_garantia: '¿Tiene Garantía Constituida?',
+    monto_otorgado_vi: 'Monto Otorgado para Vivienda',
+    correo_declarativo: 'Correo Declarativo',
+    telefono_declarativo: 'Teléfono Declarativo',
+    estatus_general: 'Estatus General',
+    motivo_devolucion: 'Motivo de Devolución',
+  };
+
+  return names[field] ?? field.replaceAll('_', ' ');
+}
 
 function validateRequiredFields(
   form: ValidarInformacionBBVA,
@@ -40,7 +88,9 @@ function validateRequiredFields(
   if (!form.numero_id_t1) missing.add('numero_id_t1');
   if (!form.nombre_completo_t1) missing.add('nombre_completo_t1');
   if (!form.celular_t1) missing.add('celular_t1');
+  if (!form.telefono_t1) missing.add('telefono_t1');
   if (!form.email_t1) missing.add('email_t1');
+  if (!form.direccion_t1) missing.add('direccion_t1');
 
   if (!form.tipo_credito) missing.add('tipo_credito');
   if (form.tiene_garantia === null || form.tiene_garantia === undefined) {
@@ -80,23 +130,24 @@ export default function ValidarInformacionPage() {
     EMPTY_VALIDAR_INFORMACION(id_expediente),
   );
 
-  const { data: actividadData, isLoading: isLoadingActividad } =
-    useValidarInformacion(id_expediente);
-  const { data: encabezadoData, isLoading: isLoadingEncabezado } =
-    useEncabezado(id_expediente, ACTIVIDAD_ID);
+  const { data: conEncabezadoData, isLoading } =
+    useValidarInformacionConEncabezado(id_expediente);
   const { data: controlesData } = useControlesValidarInformacion(id_expediente);
   const { mutate: guardar, isPending: isGuardando } = useUpsertValidarInformacion();
   const { mutate: avanzar, isPending: isAvanzando } = useAvanzarValidarInformacion();
 
-  const encabezado = encabezadoData?.detail ?? null;
+  const encabezado =
+    conEncabezadoData?.detail?.encabezado ?? EMPTY_ENCABEZADO_VALIDAR_INFORMACION;
   const controles = controlesData?.detail ?? EMPTY_CONTROLES_VALIDAR_INFORMACION;
 
   useEffect(() => {
-    const formulario = actividadData?.detail;
+    const formulario = conEncabezadoData?.detail?.formulario;
     if (formulario) {
+      // La pantalla edita una copia local del formulario recibido desde el endpoint.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm(formulario);
     }
-  }, [actividadData]);
+  }, [conEncabezadoData]);
 
   const updateField = (field: keyof ValidarInformacionBBVA, value: unknown) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -138,14 +189,14 @@ export default function ValidarInformacionPage() {
    * @returns No retorna valor; actualiza estado visual y notificaciones.
    */
   const handleAvanzar = () => {
-    const missing = validateRequiredFields(form, encabezado?.monto_otorgado);
+    const missing = validateRequiredFields(form, encabezado.monto_otorgado_original);
     if (missing.size > 0) {
       setInvalidFields(missing);
       toast.current?.show({
         severity: 'warn',
-        summary: 'Campos requeridos',
-        detail: 'Complete todos los campos obligatorios antes de avanzar.',
-        life: 5000,
+        summary: 'Datos Obligatorios Faltantes',
+        detail: Array.from(missing).map(formatFieldName).join(', '),
+        life: 7000,
       });
       return;
     }
@@ -173,6 +224,18 @@ export default function ValidarInformacionPage() {
         navigate('/home/bandeja');
       },
       onError: (error) => {
+        const backendMissing = getRequiredFieldsFromError(error);
+        if (backendMissing.length > 0) {
+          setInvalidFields(new Set(backendMissing));
+          toast.current?.show({
+            severity: 'warn',
+            summary: 'Datos Obligatorios Faltantes',
+            detail: backendMissing.map(formatFieldName).join(', '),
+            life: 7000,
+          });
+          return;
+        }
+
         toast.current?.show({
           severity: 'error',
           summary: 'Error al avanzar',
@@ -209,13 +272,15 @@ export default function ValidarInformacionPage() {
     }
   };
 
-  if (isLoadingActividad || isLoadingEncabezado) {
-    return <div className="p-4">Cargando...</div>;
-  }
+  if (isLoading) return <div className="p-4">Cargando...</div>;
 
   return (
     <div className="flex flex-col gap-4 p-4">
       <Toast ref={toast} />
+
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+        Validar Información
+      </h2>
 
       <Dialog
         header="Link de acceso temporal"
@@ -253,115 +318,100 @@ export default function ValidarInformacionPage() {
         </div>
       </Dialog>
 
-      <Card>
-        <Accordion multiple activeIndex={[0]}>
-          <AccordionTab header="Información del Expediente">
-            <EncabezadoActividad
-              idExpediente={id_expediente}
-              activityID={ACTIVIDAD_ID}
+      <div className="grid grid-cols-1 gap-4">
+        <div>
+          <Accordion multiple activeIndex={[0]}>
+            <AccordionTab header="Información General">
+              <EncabezadoActividad
+                idExpediente={id_expediente}
+                activityID={ACTIVIDAD_ID}
+              />
+            </AccordionTab>
+            <AccordionTab header="Funciones Transversales">
+              <FuncionesTransversales
+                idExpediente={id_expediente}
+                idActividad={ACTIVIDAD_ID}
+              />
+            </AccordionTab>
+            <AccordionTab header="Datos Titular">
+              <DatosTitularSection
+                id_expediente={id_expediente}
+                data={form}
+                controles={controles}
+                isEditing={true}
+                onChange={updateField}
+                invalidFields={invalidFields}
+              />
+            </AccordionTab>
+
+            <AccordionTab header="Datos del Crédito">
+              <DatosCreditoSection
+                data={form}
+                encabezado={encabezado}
+                controles={controles}
+                isEditing={true}
+                onChange={updateField}
+                invalidFields={invalidFields}
+              />
+            </AccordionTab>
+
+            <AccordionTab header="Condiciones Financieras">
+              <CondicionesFinancierasSection
+                data={form}
+                encabezado={encabezado}
+                isEditing={true}
+                onChange={updateField}
+                invalidFields={invalidFields}
+              />
+            </AccordionTab>
+
+            <AccordionTab header="Datos del Inmueble">
+              <DatosInmuebleSection
+                data={form}
+                controles={controles}
+                isEditing={true}
+                onChange={updateField}
+              />
+            </AccordionTab>
+
+            <AccordionTab header="Datos Comerciales">
+              <DatosComercialesSection
+                data={form}
+                encabezado={encabezado}
+                isEditing={true}
+                onChange={updateField}
+                invalidFields={invalidFields}
+              />
+            </AccordionTab>
+
+            <AccordionTab header="Estatus General">
+              <EstatusGeneralSection
+                data={form}
+                controles={controles}
+                isEditing={true}
+                onChange={updateField}
+                invalidFields={invalidFields}
+              />
+            </AccordionTab>
+          </Accordion>
+
+          <div className="flex justify-end gap-3 mt-4 pt-4 border-t">
+            <Button
+              label="Guardar"
+              icon="pi pi-save"
+              severity="secondary"
+              loading={isGuardando}
+              disabled={!isEditing}
+              onClick={handleGuardar}
             />
-          </AccordionTab>
-        </Accordion>
-      </Card>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2">
-          <Card>
-            <Accordion multiple>
-              <AccordionTab header="Datos Titular">
-                <DatosTitularSection
-                  data={form}
-                  controles={controles}
-                  isEditing={true}
-                  onChange={updateField}
-                  invalidFields={invalidFields}
-                />
-              </AccordionTab>
-
-              <AccordionTab header="Datos del Crédito">
-                <DatosCreditoSection
-                  data={form}
-                  encabezado={encabezado}
-                  controles={controles}
-                  isEditing={true}
-                  onChange={updateField}
-                  invalidFields={invalidFields}
-                />
-              </AccordionTab>
-
-              <AccordionTab header="Condiciones Financieras">
-                <CondicionesFinancierasSection
-                  data={form}
-                  encabezado={encabezado}
-                  isEditing={true}
-                  onChange={updateField}
-                  invalidFields={invalidFields}
-                />
-              </AccordionTab>
-
-              <AccordionTab header="Datos del Inmueble">
-                <DatosInmuebleSection
-                  data={form}
-                  controles={controles}
-                  isEditing={true}
-                  onChange={updateField}
-                />
-              </AccordionTab>
-
-              <AccordionTab header="Datos Comerciales">
-                <DatosComercialesSection
-                  data={form}
-                  encabezado={encabezado}
-                  isEditing={true}
-                  onChange={updateField}
-                  invalidFields={invalidFields}
-                />
-              </AccordionTab>
-
-              <AccordionTab header="Registro Contacto">
-                <RegistroContactoSection
-                  id_expediente={id_expediente}
-                  id_actividad={ACTIVIDAD_ID}
-                  controles={controles}
-                />
-              </AccordionTab>
-
-              <AccordionTab header="Estatus General">
-                <EstatusGeneralSection
-                  data={form}
-                  controles={controles}
-                  isEditing={true}
-                  onChange={updateField}
-                  invalidFields={invalidFields}
-                />
-              </AccordionTab>
-            </Accordion>
-
-            <div className="flex justify-end gap-3 mt-4 pt-4 border-t">
-              <Button
-                label="Guardar"
-                icon="pi pi-save"
-                severity="secondary"
-                loading={isGuardando}
-                disabled={!isEditing}
-                onClick={handleGuardar}
-              />
-              <Button
-                label="Avanzar"
-                icon="pi pi-arrow-right"
-                loading={isAvanzando}
-                disabled={isEditing}
-                onClick={handleAvanzar}
-              />
-            </div>
-          </Card>
-        </div>
-
-        <div className="lg:col-span-1">
-          <FuncionesTransversales
-            idExpediente={id_expediente}
-            idActividad={ACTIVIDAD_ID}
-          />
+            <Button
+              label="Avanzar"
+              icon="pi pi-arrow-right"
+              loading={isAvanzando}
+              disabled={isEditing}
+              onClick={handleAvanzar}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -147,10 +147,17 @@ export const cargaOperacionBancoService = {
 
   async save(
     payload: CargaOperacionBanco,
+    idempotencyKey?: string,
   ): Promise<ApiResponse<CargaOperacionBanco>> {
+    const headers: Record<string, string> = {};
+    if (idempotencyKey) {
+      headers['Idempotency-Key'] = idempotencyKey;
+    }
+
     const response = await axiosClient.post<ApiResponse<CargaOperacionBanco>>(
       `${baseUrl}/Save`,
       payload,
+      { headers },
     );
 
     return response.data;

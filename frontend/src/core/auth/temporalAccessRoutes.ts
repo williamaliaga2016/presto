@@ -1,29 +1,53 @@
-import { matchPath } from 'react-router-dom';
-import type { AuthTokenClaims } from './tokenClaims';
+import { matchPath } from "react-router-dom";
+import type { AuthTokenClaims } from "./tokenClaims";
 
 const temporalActivityRoutes: Record<string, string> = {
-  ACT_DOCS_CLIENTE: '/home/cargar_documentos_cliente/:id_expediente',
-  ACT_SOPORTES_PAGO: '/home/cargar_soportes_pago/:id_expediente',
+  ACT_DOCS_CLIENTE:
+    "/home/cargar_documentos_cliente/:id_expediente",
+
+  BBVA_CONTACTO_CARGAR_DOCUMENTOS_CLIENTE_CBF7A738:
+    "/home/cargar_documentos_cliente/:id_expediente",
+
+  ACT_SOPORTES_PAGO:
+    "/home/cargar_soportes_pago/:id_expediente",
+
+  BBVA_CONTACTO_CARGAR_SOPORTES_DE_PAGO_899F408B:
+    "/home/cargar_soportes_pago/:id_expediente",
 };
 
-/**
- * Valida que la sesion temporal navegue solo hacia la ruta autorizada por el token.
- *
- * @param claims Claims publicos extraidos del JWT temporal.
- * @param pathname Ruta actual del navegador.
- * @returns `true` cuando la ruta coincide con la actividad y expediente del token.
- */
+export function getTemporalActivityRoute(
+  id_actividad: string,
+  id_expediente: number,
+): string {
+  const route = temporalActivityRoutes[id_actividad];
+
+  if (!route) {
+    return "/home/bandeja";
+  }
+
+  return route.replace(
+    ":id_expediente",
+    String(id_expediente),
+  );
+}
+
 export function isAllowedTemporalRoute(
   claims: AuthTokenClaims | null,
   pathname: string,
 ): boolean {
-  const activityId = claims?.id_actividad;
-  const expedienteId = claims?.id_expediente;
+  const id_actividad = claims?.id_actividad;
+  const id_expediente = claims?.id_expediente;
 
-  if (!activityId || !expedienteId) return false;
+  if (!id_actividad || !id_expediente) {
+    return false;
+  }
 
-  const routePattern = temporalActivityRoutes[activityId];
-  if (!routePattern) return false;
+  const routePattern =
+    temporalActivityRoutes[id_actividad];
+
+  if (!routePattern) {
+    return false;
+  }
 
   const match = matchPath(
     {
@@ -33,5 +57,8 @@ export function isAllowedTemporalRoute(
     pathname,
   );
 
-  return match?.params.id_expediente === expedienteId;
+  return (
+    match?.params.id_expediente ===
+    String(id_expediente)
+  );
 }

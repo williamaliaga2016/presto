@@ -5,13 +5,15 @@ import { cargaOperacionBancoService } from '../api/cargaOperacionBancoService';
 
 export interface UpsertCargaOperacionBancoVariables {
   payload: CargaOperacionBanco;
+  idempotencyKey?: string;
 }
 
 export function useUpsertCargaOperacionBanco() {
   const queryClient = useQueryClient();
 
   return useMutation<ApiResponse<CargaOperacionBanco>, unknown, UpsertCargaOperacionBancoVariables>({
-    mutationFn: ({ payload }) => cargaOperacionBancoService.save(payload),
+    mutationFn: ({ payload, idempotencyKey }) =>
+      cargaOperacionBancoService.save(payload, idempotencyKey),
     onSuccess: (_, { payload }) => {
       queryClient.invalidateQueries({
         queryKey: ['carga_operacion_banco', payload.id_expediente],

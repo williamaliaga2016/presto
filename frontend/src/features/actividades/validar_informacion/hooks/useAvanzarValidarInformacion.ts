@@ -1,20 +1,17 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import type { ApiResponse } from '@/core/api/models/ApiResponse';
 import { validarInformacionService } from '../api/validarInformacionService';
 import type { AvanzarValidarInformacionResponse } from
   '../models/avanzar_validar_informacion';
-import { validarInformacionQueryKeys } from './useValidarInformacion';
 
+/**
+ * Ejecuta el avance de Validar Informacion y expone el acceso temporal generado cuando aplica.
+ *
+ * @returns Mutacion para avanzar el expediente actual.
+ */
 export function useAvanzarValidarInformacion() {
-  const queryClient = useQueryClient();
-
   return useMutation<ApiResponse<AvanzarValidarInformacionResponse>, Error, number>({
     mutationFn: (id_expediente) =>
       validarInformacionService.avanzar(id_expediente),
-    onSuccess: (_, id_expediente) => {
-      void queryClient.invalidateQueries({
-        queryKey: validarInformacionQueryKeys.actividad(id_expediente),
-      });
-    },
   });
 }

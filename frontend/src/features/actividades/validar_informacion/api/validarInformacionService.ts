@@ -1,6 +1,6 @@
 import { axiosClient } from '@/core/api/axiosClient';
 import type { ApiResponse } from '@/core/api/models/ApiResponse';
-import type { ValidarInformacionBBVA, RegistroContactoBBVA } from
+import type { ValidarInformacionBBVA } from
   '../models/validar_informacion';
 import type { ControlesValidarInformacion } from '../models/catalogo';
 import type { ValidarInformacionConEncabezadoDTO } from
@@ -65,23 +65,4 @@ export const validarInformacionService = {
     return response.data;
   },
 
-  async getRegistrosContacto(
-    id_expediente: number,
-    id_actividad: string,
-  ): Promise<ApiResponse<RegistroContactoBBVA[]>> {
-    const response = await axiosClient.get<ApiResponse<RegistroContactoBBVA[]>>(
-      `/api/registro-contacto/${id_expediente}/${id_actividad}`,
-    );
-    return response.data;
-  },
-
-  async crearRegistroContacto(
-    payload: RegistroContactoBBVA,
-  ): Promise<ApiResponse<RegistroContactoBBVA>> {
-    const response = await axiosClient.post<ApiResponse<RegistroContactoBBVA>>(
-      '/api/registro-contacto',
-      payload,
-    );
-    return response.data;
-  },
 };

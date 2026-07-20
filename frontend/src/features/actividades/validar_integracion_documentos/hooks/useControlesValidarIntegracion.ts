@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { validarIntegracionDocumentosService } from '../api/validarIntegracionDocumentosService';
-import { validarIntegracionQueryKeys } from './useValidarIntegracionDocumentos';
+import { validarIntegracionDocumentosService } from
+  '../api/validarIntegracionDocumentosService';
 
-export function useControlesValidarIntegracion(id_expediente: number) {
+export function useControlesValidarIntegracion() {
   return useQuery({
-    queryKey: validarIntegracionQueryKeys.controles(id_expediente),
-    queryFn: () => validarIntegracionDocumentosService.getControles(id_expediente),
-    enabled: id_expediente > 0,
+    queryKey: ['validar-integracion-controles'],
+    queryFn: () =>
+      validarIntegracionDocumentosService.getControles(),
   });
 }

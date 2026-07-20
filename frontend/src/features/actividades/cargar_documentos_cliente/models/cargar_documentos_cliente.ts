@@ -36,7 +36,7 @@ export const EMPTY_CARGAR_DOCUMENTOS_CLIENTE = (
   id_expediente: number,
 ): CargarDocumentosCliente => ({
   id_expediente,
-  id_actividad: 'ACT_DOCS_CLIENTE',
+  id_actividad: 'BBVA_CONTACTO_CARGAR_DOCUMENTOS_CLIENTE_CBF7A738',
   documentos_adjuntos: false,
   observaciones: '',
   is_active: true,

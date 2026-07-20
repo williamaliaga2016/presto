@@ -1,28 +1,26 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Accordion, AccordionTab } from "primereact/accordion";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Checkbox } from "primereact/checkbox";
 import type { CheckboxChangeEvent } from "primereact/checkbox";
-import { InputNumber } from "primereact/inputnumber";
 import { InputTextarea } from "primereact/inputtextarea";
-import { TabView, TabPanel } from "primereact/tabview";
 import { Toast } from "primereact/toast";
-
 import EncabezadoActividad from "@/features/encabezado/pages/EncabezadoActividad";
-import ExpedienteDigitalPage from "@/features/funciones_transversales/components/expediente_digital/pages/ExpedienteDigital";
+import FuncionesTransversales from "@/features/funciones_transversales/pages/FuncionesTransversales";
 import { useValidarInformacion } from "@/features/actividades/validar_informacion/hooks/useValidarInformacion";
 import type { CargarDocumentosConstructora } from "../models/cargar_documentos_constructora";
 import {
   buildInitialState,
   normalizeCargarDocumentosConstructora,
   validateAvanzarFields,
-} from "../models/cargar_documentos_constructora.form";
+} from "../models/cargar_documentos_constructora";
 import { useCargarDocumentosConstructora } from "../hooks/useCargarDocumentosConstructora";
 import { useUpsertCargarDocumentosConstructora } from "../hooks/useUpsertCargarDocumentosConstructora";
 import { useAvanzarCargarDocumentosConstructora } from "../hooks/useAvanzarCargarDocumentosConstructora";
 
-const ACTIVIDAD_ID = 'ACT_DOCS_CONSTRUCTORA';
+const ACTIVIDAD_ID = 'BBVA_CONTACTO_CARGAR_DOCUMENTOS_CONSTRUCTORA_45B34EE0';
 const LOCKED_CATEGORIA_ID = 100;
 const LOCKED_DOCUMENTO_ID = 1001;
 
@@ -41,6 +39,8 @@ export default function CargarDocumentosConstructoraPage() {
   const [isDisabled, setIsDisabled] = useState(true);
   const [canAdvance, setCanAdvance] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
+  // CA5: Controla si el documento "Promesa de Compraventa" fue cargado
+  const [promesaCargada, setPromesaCargada] = useState(false);
 
   const hasHydratedRef = useRef(false);
   const currentExpedienteRef = useRef<number>(id_expediente);
@@ -72,6 +72,7 @@ export default function CargarDocumentosConstructoraPage() {
       setInvalidFields(new Set());
       setIsDisabled(true);
       setCanAdvance(false);
+      setPromesaCargada(false);
     }
   }, [id_expediente]);
 
@@ -121,7 +122,18 @@ export default function CargarDocumentosConstructoraPage() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  // CA5: Validar que la Promesa de Compraventa esté cargada antes de marcar el check
   const handleAvanzarValidarDocumentosChange = (e: CheckboxChangeEvent) => {
+    if (e.checked && !promesaCargada) {
+      updateField("avanzar_validar_documentos", false);
+      toast.current?.show({
+        severity: "error",
+        summary: "Documento Faltante",
+        detail: "Debe cargar la Promesa de Compraventa en el Expediente Digital antes de avanzar",
+        life: 5000,
+      });
+      return;
+    }
     clearInvalidField("avanzar_validar_documentos");
     updateField("avanzar_validar_documentos", Boolean(e.checked));
   };
@@ -201,6 +213,17 @@ export default function CargarDocumentosConstructoraPage() {
 
     if (isFolioBlocked) return;
 
+    // CA5: Verificar documento cargado antes de avanzar
+    if (!promesaCargada) {
+      toast.current?.show({
+        severity: "error",
+        summary: "Documento Faltante",
+        detail: "Debe cargar la Promesa de Compraventa en el Expediente Digital antes de avanzar",
+        life: 5000,
+      });
+      return;
+    }
+
     const missing = validateAvanzarFields(form);
     if (missing.size > 0) {
       setInvalidFields(missing);
@@ -266,6 +289,7 @@ export default function CargarDocumentosConstructoraPage() {
         Cargar Documentos Constructora
       </h2>
 
+      {/* Alertas de estado del folio */}
       {isLoadingValidarInfo && id_expediente > 0 && (
         <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
           Validando elegibilidad del folio...
@@ -278,146 +302,160 @@ export default function CargarDocumentosConstructoraPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2 flex flex-col gap-4">
-            <TabView>
-              <TabPanel header="Expediente Digital" leftIcon="pi pi-list">
-                <ExpedienteDigitalPage
-                  id_expediente={id_expediente}
-                  activity_id={ACTIVIDAD_ID}
-                  filter_by_activity={true}
-                  locked_categoria_id={LOCKED_CATEGORIA_ID}
-                  locked_documento_id={LOCKED_DOCUMENTO_ID}
-                  read_only={isFolioBlocked}
-                />
-              </TabPanel>
-            </TabView>
+      <Accordion activeIndex={[0, 2]} multiple>
 
-            <Card className="w-full shadow-md card-presto-form">
-          {isLoading && id_expediente > 0 && (
-            <div className="mb-4 text-sm text-blue-600">
-              Cargando información...
-            </div>
-          )}
+        {/* CA2: Acordeón 1 - Información General */}
+        <AccordionTab
+          header="Información General"
+          disabled={!id_expediente || id_expediente <= 0}
+        >
+          <EncabezadoActividad
+            idExpediente={id_expediente}
+            activityID={ACTIVIDAD_ID}
+          />
+        </AccordionTab>
 
-          {errorMessage && (
-            <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {errorMessage}
-            </div>
-          )}
+        {/* CA3: Acordeón 2 - Funciones Transversales / Expediente Digital */}
+        <AccordionTab
+          header="Funciones Transversales"
+          disabled={!id_expediente || id_expediente <= 0}
+        >
+          <FuncionesTransversales
+            idExpediente={id_expediente}
+            idActividad={ACTIVIDAD_ID}
+            filter_by_activity={true}
+            locked_categoria_id={LOCKED_CATEGORIA_ID}
+            locked_documento_id={LOCKED_DOCUMENTO_ID}
+            show_bitacora={false}
+            show_carta_aprobacion={false}
+            show_carta_compromiso={false}
+            onDocumentUploaded={() => setPromesaCargada(true)}
+            onDocumentsLoaded={(docs) =>
+              setPromesaCargada(
+                docs?.some((d) =>
+                  d.id_tipo_documento === LOCKED_DOCUMENTO_ID && d.estado === "CARGADO"
+                ) ?? false
+              )
+            }
+          />
+        </AccordionTab>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div className="flex flex-col gap-1">
-              <label className="font-semibold text-sm">Expediente</label>
-              <InputNumber
-                value={form.id_expediente}
-                className="form-input-presto w-full"
-                useGrouping={false}
-                disabled
-              />
-            </div>
+        {/* CA4: Acordeón 3 - Gestión de Actividad */}
+        <AccordionTab header="Gestión de Actividad">
+          <Card className="w-full shadow-md card-presto-form">
 
-            <div className="flex flex-col gap-2 md:col-span-3">
-              <label className="font-semibold text-sm">Confirmación de documentos</label>
-              <div
-                className={`flex items-center gap-2 h-11 rounded-md px-2 ${
-                  isInvalid("avanzar_validar_documentos")
-                    ? "border border-red-500 bg-red-50"
-                    : ""
-                }`}
-              >
-                <Checkbox
-                  className="form-checkbox-presto"
-                  inputId="avanzar_validar_documentos"
-                  checked={form.avanzar_validar_documentos}
-                  onChange={handleAvanzarValidarDocumentosChange}
-                  disabled={isDisabled || isFolioBlocked}
-                />
-                <label htmlFor="avanzar_validar_documentos" className="text-sm">
-                  Confirmo que los documentos de la constructora han sido cargados correctamente en el Expediente Digital
-                </label>
+            {isLoading && id_expediente > 0 && (
+              <div className="mb-4 text-sm text-blue-600">
+                Cargando información...
               </div>
-              {isInvalid("avanzar_validar_documentos") && (
-                <small className="text-red-600">Campo obligatorio</small>
-              )}
+            )}
+
+            {errorMessage && (
+              <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {errorMessage}
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 gap-5">
+
+              {/* CA4: Check de Confirmación obligatorio */}
+              <div className="flex flex-col gap-2">
+                <label className="font-semibold text-sm">
+                  Documentos Adjuntos <span className="text-red-500">*</span>
+                </label>
+                <div
+                  className={`flex items-center gap-2 h-11 rounded-md px-2 ${
+                    isInvalid("avanzar_validar_documentos")
+                      ? "border border-red-500 bg-red-50"
+                      : "border border-gray-200"
+                  }`}
+                >
+                  <Checkbox
+                    className="form-checkbox-presto"
+                    inputId="avanzar_validar_documentos"
+                    checked={form.avanzar_validar_documentos}
+                    onChange={handleAvanzarValidarDocumentosChange}
+                    disabled={isDisabled || isFolioBlocked}
+                  />
+                  <label htmlFor="avanzar_validar_documentos" className="text-sm cursor-pointer">
+                    Avanzar a Validar Documentos
+                  </label>
+                </div>
+                {isInvalid("avanzar_validar_documentos") && (
+                  <small className="text-red-600">Campo obligatorio</small>
+                )}
+              </div>
+
+              {/* CA4: Observaciones obligatorio */}
+              <div className="flex flex-col gap-1">
+                <label className="font-semibold text-sm">
+                  Observaciones <span className="text-red-500">*</span>
+                </label>
+                <InputTextarea
+                  value={form.observaciones ?? ""}
+                  onChange={(e) => updateField("observaciones", e.target.value)}
+                  rows={5}
+                  autoResize
+                  className={`form-textarea-presto w-full${
+                    isInvalid("observaciones") ? " p-invalid" : ""
+                  }`}
+                  disabled={isDisabled || isFolioBlocked}
+                  placeholder="Ingrese observaciones"
+                />
+                {isInvalid("observaciones") && (
+                  <small className="text-red-600">Campo obligatorio</small>
+                )}
+              </div>
             </div>
 
-            <div className="flex flex-col gap-1 md:col-span-3">
-              <label className="font-semibold text-sm">Observaciones</label>
-              <InputTextarea
-                value={form.observaciones ?? ""}
-                onChange={(e) => updateField("observaciones", e.target.value)}
-                rows={5}
-                autoResize
-                className={`form-textarea-presto w-full${
-                  isInvalid("observaciones") ? " p-invalid" : ""
-                }`}
-                disabled={isDisabled || isFolioBlocked}
-                placeholder="Ingrese observaciones"
+            {/* CA6: Botones de acción */}
+            <div className="form-actions">
+              <Button
+                type="button"
+                label="Editar"
+                icon="pi pi-pencil"
+                severity="info"
+                outlined
+                onClick={handleEditar}
+                disabled={isOperationDisabled || !isDisabled}
+                className="btn-responsive"
               />
-              {isInvalid("observaciones") && (
-                <small className="text-red-600">Campo obligatorio</small>
-              )}
+
+              <Button
+                type="button"
+                label={saveMutation.isPending ? "Guardando..." : "Guardar"}
+                icon="pi pi-save"
+                severity="success"
+                onClick={handleGuardar}
+                disabled={isOperationDisabled || isDisabled}
+                className="btn-responsive"
+              />
+
+              <Button
+                type="button"
+                label={avanzarMutation.isPending ? "Avanzando..." : "Avanzar"}
+                icon="pi pi-arrow-right"
+                severity="warning"
+                onClick={handleAvanzar}
+                disabled={isOperationDisabled || !canAdvance}
+                className="btn-responsive"
+              />
+
+              <Button
+                type="button"
+                label="Salir"
+                icon="pi pi-sign-out"
+                severity="secondary"
+                outlined
+                onClick={handleSalir}
+                disabled={isBusy}
+                className="btn-responsive"
+              />
             </div>
-          </div>
+          </Card>
+        </AccordionTab>
 
-          <div className="form-actions">
-            <Button
-              type="button"
-              label="Editar"
-              icon="pi pi-pencil"
-              severity="info"
-              outlined
-              onClick={handleEditar}
-              disabled={isOperationDisabled || !isDisabled}
-              className="btn-responsive"
-            />
-
-            <Button
-              type="button"
-              label={saveMutation.isPending ? "Guardando..." : "Guardar"}
-              icon="pi pi-save"
-              severity="success"
-              onClick={handleGuardar}
-              disabled={isOperationDisabled || isDisabled}
-              className="btn-responsive"
-            />
-
-            <Button
-              type="button"
-              label={avanzarMutation.isPending ? "Avanzando..." : "Avanzar"}
-              icon="pi pi-arrow-right"
-              severity="warning"
-              onClick={handleAvanzar}
-              disabled={isOperationDisabled || !canAdvance}
-              className="btn-responsive"
-            />
-
-            <Button
-              type="button"
-              label="Salir"
-              icon="pi pi-sign-out"
-              severity="secondary"
-              outlined
-              onClick={handleSalir}
-              disabled={isBusy}
-              className="btn-responsive"
-            />
-          </div>
-        </Card>
-          </div>
-
-          <div className="lg:col-span-1">
-            <Card className="shadow-md card-presto-form">
-              <h3 className="text-lg font-semibold mb-3">Información General</h3>
-              <EncabezadoActividad
-                idExpediente={id_expediente}
-                activityID={ACTIVIDAD_ID}
-              />
-            </Card>
-          </div>
-        </div>
+      </Accordion>
     </>
   );
 }
-

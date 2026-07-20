@@ -1,16 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '@/app/providers/AuthProvider';
 import { Accordion, AccordionTab } from 'primereact/accordion';
+import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { Toast } from 'primereact/toast';
 
-import EncabezadoActividad from '@/features/encabezado/pages/EncabezadoActividad';
-import FuncionesTransversales from '@/features/funciones_transversales/pages/FuncionesTransversales';
-import { ActivityActionBar } from '@/shared/components/activity/ActivityActionBar';
 import AntecedenteCreditoSection from '../components/AntecedenteCreditoSection';
 import AntecedentesCompradorSection from '../components/AntecedentesCompradorSection';
-import DatosComercialSection from '../components/DatosComercialSection';
-import DatosOperacionSection from '../components/DatosOperacionSection';
+import {
+  CanalOriginacionField,
+  OficinaAsesorFields,
+  ProyectoInmuebleFields,
+} from '../components/DatosOperacionSection';
 import { useAvanzarCargaOperacionBanco } from '../hooks/useAvanzarCargaOperacionBanco';
 import { useCargaOperacionBanco } from '../hooks/useCargaOperacionBanco';
 import { useControlesAntecedenteComprador } from '../hooks/useControlesAntecedenteComprador';
@@ -33,23 +35,17 @@ import type {
   CargaOperacionBancoDatosOperacion,
 } from '../models/carga_operacion_banco';
 
-/**
- * TODO:
- * Reemplazar por el id real de la actividad 3.1 Carga Operación Banco
- * cuando esté configurado en el workflow.
- */
-const ACTIVITY_ID = '_4X3k8H6kEeeGvo3jOJ1wYw';
-
 const now = () => new Date().toISOString();
 
 const buildDatosOperacionInitialState = (
   id_expediente: number,
+  codigo_asesor_default: string | null = null,
 ): CargaOperacionBancoDatosOperacion => ({
   id_carga_operacion_banco_datos_operacion: 0,
   id_carga_operacion_banco: 0,
   id_expediente,
   id_scoring: null,
-  codigo_asesor: null,
+  codigo_asesor: codigo_asesor_default,
   codigo_oficina: null,
   descripcion_oficina: null,
   canal_originacion: null,
@@ -129,7 +125,10 @@ const buildDatosComercialInitialState = (
   modified_date: null,
 });
 
-const buildInitialState = (id_expediente: number): CargaOperacionBanco => ({
+const buildInitialState = (
+  id_expediente: number,
+  codigo_asesor_default: string | null = null,
+): CargaOperacionBanco => ({
   id_carga_operacion_banco: 0,
   id_expediente,
   is_active: true,
@@ -138,7 +137,7 @@ const buildInitialState = (id_expediente: number): CargaOperacionBanco => ({
   created_date: now(),
   modified_by: null,
   modified_date: null,
-  datos_operacion: buildDatosOperacionInitialState(id_expediente),
+  datos_operacion: buildDatosOperacionInitialState(id_expediente, codigo_asesor_default),
   antecedentes_comprador: [],
   antecedente_credito: buildAntecedenteCreditoInitialState(id_expediente),
   datos_comercial: buildDatosComercialInitialState(id_expediente),
@@ -148,6 +147,7 @@ const normalizeDatosOperacion = (
   source: Partial<CargaOperacionBancoDatosOperacion> | null | undefined,
   id_expediente_fallback: number,
   id_carga_operacion_banco_fallback = 0,
+  codigo_asesor_default: string | null = null,
 ): CargaOperacionBancoDatosOperacion => ({
   id_carga_operacion_banco_datos_operacion: Number(
     source?.id_carga_operacion_banco_datos_operacion ?? 0,
@@ -157,7 +157,7 @@ const normalizeDatosOperacion = (
   ),
   id_expediente: Number(source?.id_expediente ?? id_expediente_fallback ?? 0),
   id_scoring: source?.id_scoring ?? null,
-  codigo_asesor: source?.codigo_asesor ?? null,
+  codigo_asesor: source?.codigo_asesor ?? codigo_asesor_default,
   codigo_oficina: source?.codigo_oficina ?? null,
   descripcion_oficina: source?.descripcion_oficina ?? null,
   canal_originacion: source?.canal_originacion ?? null,
@@ -287,6 +287,7 @@ const normalizeDatosComercial = (
 const normalizeCargaOperacionBanco = (
   source: Partial<CargaOperacionBanco> | null | undefined,
   id_expediente_fallback: number,
+  codigo_asesor_default: string | null = null,
 ): CargaOperacionBanco => {
   const idCargaOperacionBanco = Number(source?.id_carga_operacion_banco ?? 0);
   const idExpediente = Number(source?.id_expediente ?? id_expediente_fallback ?? 0);
@@ -304,6 +305,7 @@ const normalizeCargaOperacionBanco = (
       source?.datos_operacion,
       idExpediente,
       idCargaOperacionBanco,
+      codigo_asesor_default,
     ),
     antecedentes_comprador: normalizeAntecedentesComprador(
       source?.antecedentes_comprador,
@@ -328,11 +330,13 @@ export default function CargaOperacionBancoPage() {
 
   const navigate = useNavigate();
   const { id_expediente: idExpedienteParam } = useParams();
+  const { user } = useAuth();
 
   const id_expediente = Number(idExpedienteParam ?? 0);
+  const codigoAsesorDefault = user?.user_name?.trim() || null;
 
   const [form, setForm] = useState<CargaOperacionBanco>(
-    buildInitialState(id_expediente),
+    buildInitialState(id_expediente, codigoAsesorDefault),
   );
   const [isDisabled, setIsDisabled] = useState(true);
   const [canAdvance, setCanAdvance] = useState(false);
@@ -342,6 +346,8 @@ export default function CargaOperacionBancoPage() {
 
   const hasHydratedRef = useRef(false);
   const currentExpedienteRef = useRef<number>(id_expediente);
+
+  const idemKeyRef = useRef<string | null>(null);
 
   const { data, isLoading } = useCargaOperacionBanco(id_expediente);
   const saveMutation = useUpsertCargaOperacionBanco();
@@ -394,19 +400,19 @@ export default function CargaOperacionBancoPage() {
     if (currentExpedienteRef.current !== id_expediente) {
       currentExpedienteRef.current = id_expediente;
       hasHydratedRef.current = false;
-      setForm(buildInitialState(id_expediente));
+      setForm(buildInitialState(id_expediente, codigoAsesorDefault));
       setIsDisabled(true);
       setCanAdvance(false);
       setErrorMessage('');
       setSuccessMessage('');
     }
-  }, [id_expediente]);
+  }, [id_expediente, codigoAsesorDefault]);
 
   useEffect(() => {
     if (hasHydratedRef.current) return;
 
     if (!id_expediente || id_expediente <= 0) {
-      setForm(buildInitialState(0));
+      setForm(buildInitialState(0, codigoAsesorDefault));
       setIsDisabled(false);
       setCanAdvance(false);
       hasHydratedRef.current = true;
@@ -414,7 +420,9 @@ export default function CargaOperacionBancoPage() {
     }
 
     if (data?.status && data.detail) {
-      setForm(normalizeCargaOperacionBanco(data.detail, id_expediente));
+      setForm(
+        normalizeCargaOperacionBanco(data.detail, id_expediente, codigoAsesorDefault),
+      );
       setIsDisabled(Number(data.detail.id_carga_operacion_banco) > 0);
       setCanAdvance(false);
       hasHydratedRef.current = true;
@@ -422,12 +430,12 @@ export default function CargaOperacionBancoPage() {
     }
 
     if (data) {
-      setForm(buildInitialState(id_expediente));
+      setForm(buildInitialState(id_expediente, codigoAsesorDefault));
       setIsDisabled(true);
       setCanAdvance(false);
       hasHydratedRef.current = true;
     }
-  }, [data, id_expediente]);
+  }, [data, id_expediente, codigoAsesorDefault]);
 
   const updateDatosOperacionField = <
     K extends keyof CargaOperacionBancoDatosOperacion,
@@ -438,7 +446,8 @@ export default function CargaOperacionBancoPage() {
     setForm((prev) => ({
       ...prev,
       datos_operacion: {
-        ...(prev.datos_operacion ?? buildDatosOperacionInitialState(prev.id_expediente)),
+        ...(prev.datos_operacion ??
+          buildDatosOperacionInitialState(prev.id_expediente, codigoAsesorDefault)),
         [field]: value,
       },
     }));
@@ -455,25 +464,6 @@ export default function CargaOperacionBancoPage() {
       antecedente_credito: {
         ...(prev.antecedente_credito ??
           buildAntecedenteCreditoInitialState(
-            prev.id_expediente,
-            prev.id_carga_operacion_banco,
-          )),
-        [field]: value,
-      },
-    }));
-  };
-
-  const updateDatosComercialField = <
-    K extends keyof CargaOperacionBancoDatosComercial,
-  >(
-    field: K,
-    value: CargaOperacionBancoDatosComercial[K],
-  ) => {
-    setForm((prev) => ({
-      ...prev,
-      datos_comercial: {
-        ...(prev.datos_comercial ??
-          buildDatosComercialInitialState(
             prev.id_expediente,
             prev.id_carga_operacion_banco,
           )),
@@ -546,20 +536,6 @@ export default function CargaOperacionBancoPage() {
       return 'Debe ingresar el Monto Otorgado.';
     }
 
-    const datosComercial =
-      form.datos_comercial ??
-      buildDatosComercialInitialState(
-        form.id_expediente,
-        form.id_carga_operacion_banco,
-      );
-
-    if (!datosComercial.correo_declarativo_cliente?.trim()) {
-      return 'Debe ingresar el Correo Declarativo Cliente.';
-    }
-    if (!datosComercial.numero_telefono_declarativo?.trim()) {
-      return 'Debe ingresar el Número Teléfono Declarativo.';
-    }
-
     return '';
   };
 
@@ -616,8 +592,12 @@ export default function CargaOperacionBancoPage() {
       setIsBusy(true);
 
       const payload = buildPayload();
+      const guardarKey = crypto.randomUUID();
 
-      const response = await saveMutation.mutateAsync({ payload });
+      const response = await saveMutation.mutateAsync({
+        payload,
+        idempotencyKey: guardarKey,
+      });
 
       if (response.status) {
         const savedEntity = normalizeCargaOperacionBanco(
@@ -679,12 +659,22 @@ export default function CargaOperacionBancoPage() {
       return;
     }
 
+    // Generar clave de idempotencia una sola vez por intento de avance.
+    // Se reutiliza en save + avanzar para que el backend pueda detectar reintentos.
+    if (idemKeyRef.current === null) {
+      idemKeyRef.current = crypto.randomUUID();
+    }
+    const currentIdemKey = idemKeyRef.current;
+
     try {
       setIsBusy(true);
 
       const payload = buildPayload();
 
-      const saveResponse = await saveMutation.mutateAsync({ payload });
+      const saveResponse = await saveMutation.mutateAsync({
+        payload,
+        idempotencyKey: currentIdemKey,
+      });
 
       if (!saveResponse.status) {
         toast.current?.show({
@@ -720,13 +710,16 @@ export default function CargaOperacionBancoPage() {
       if (response.status) {
         // Resetear la clave para habilitar un nuevo intento fresco si el usuario
         // inicia otra operación desde la misma sesión de pantalla.
+        idemKeyRef.current = null;
 
         toast.current?.show({
           severity: 'success',
           summary: 'Éxito',
-          detail: 'Actividad avanzada correctamente.',
-          life: 2000,
+          detail: response.message,
+          life: 5000,
         });
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         navigate('/home/bandeja');
       } else {
@@ -762,31 +755,11 @@ export default function CargaOperacionBancoPage() {
       <Toast ref={toast} />
 
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        Carga Operación Banco
+        Radicar Crédito
       </h2>
 
-      <Accordion activeIndex={[0, 2]} multiple>
-        <AccordionTab
-          disabled={!id_expediente || id_expediente <= 0}
-          header="Información del Expediente"
-        >
-          <EncabezadoActividad
-            idExpediente={Number(form.id_expediente || id_expediente || 0)}
-            activityID={ACTIVITY_ID}
-          />
-        </AccordionTab>
-
-        <AccordionTab
-          header="Funciones Transversales"
-          disabled={!id_expediente || id_expediente <= 0}
-        >
-          <FuncionesTransversales
-            idExpediente={Number(form.id_expediente || id_expediente || 0)}
-            idActividad={ACTIVITY_ID}
-          />
-        </AccordionTab>
-
-        <AccordionTab header="Carga Operación Banco">
+      <Accordion activeIndex={[0]} multiple>
+        <AccordionTab header="Radicar Crédito">
           <Card className="w-full shadow-md card-presto-form mb-6">
             {isLoading && id_expediente > 0 && (
               <div className="mb-4 text-sm text-blue-600">
@@ -806,98 +779,161 @@ export default function CargaOperacionBancoPage() {
               </div>
             )}
 
-            <div className="mb-5">
-              <h3 className="text-lg font-semibold text-gray-800">
-                Sección: Datos de la Operación
-              </h3>
+            {/* Card 1: Datos Generales y Financieros */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-6">
+              <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                <h3 className="font-semibold text-gray-800 text-sm">
+                  Datos Generales y Financieros
+                </h3>
+              </div>
+              <div className="p-6">
+                <AntecedenteCreditoSection
+                  value={
+                    form.antecedente_credito ??
+                    buildAntecedenteCreditoInitialState(
+                      form.id_expediente,
+                      form.id_carga_operacion_banco,
+                    )
+                  }
+                  disabled={isDisabled || isBusy}
+                  controles={controlesCredito}
+                  loadingControles={isLoadingControlesCredito}
+                  onChange={updateAntecedenteCreditoField}
+                  canalOriginacionSlot={
+                    <CanalOriginacionField
+                      value={
+                        form.datos_operacion ??
+                        buildDatosOperacionInitialState(form.id_expediente)
+                      }
+                      disabled={isDisabled || isBusy}
+                      catalogos={catalogos}
+                      loadingCatalogos={isLoadingCatalogos}
+                      onChange={updateDatosOperacionField}
+                    />
+                  }
+                />
+              </div>
             </div>
 
-            <DatosOperacionSection
-              value={
-                form.datos_operacion ??
-                buildDatosOperacionInitialState(form.id_expediente)
-              }
-              disabled={isDisabled || isBusy}
-              catalogos={catalogos}
-              loadingCatalogos={isLoadingCatalogos}
-              onChange={updateDatosOperacionField}
-            />
+            {/* Cards 2a y 2b: Proyecto/Inmueble y Oficina/Asesor, lado a lado en desktop */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                  <h3 className="font-semibold text-gray-800 text-sm">
+                    Datos del Proyecto e Inmueble
+                  </h3>
+                </div>
+                <div className="p-6">
+                  <ProyectoInmuebleFields
+                    value={
+                      form.datos_operacion ??
+                      buildDatosOperacionInitialState(form.id_expediente)
+                    }
+                    disabled={isDisabled || isBusy}
+                    catalogos={catalogos}
+                    loadingCatalogos={isLoadingCatalogos}
+                    onChange={updateDatosOperacionField}
+                  />
+                </div>
+              </div>
 
-            <div className="my-8 border-t border-gray-200" />
-
-            <AntecedentesCompradorSection
-              key={`antecedentes-comprador-${canEditAntecedentesComprador ? 'edit' : 'view'}`}
-              value={form.antecedentes_comprador ?? []}
-              idExpediente={Number(form.id_expediente || id_expediente || 0)}
-              idCargaOperacionBanco={Number(form.id_carga_operacion_banco ?? 0)}
-              disabled={isDisabled || isBusy}
-              canEdit={canEditAntecedentesComprador}
-              controles={controlesComprador}
-              loadingControles={isLoadingControlesComprador}
-              onChange={updateAntecedentesComprador}
-              onWarn={(message) =>
-                toast.current?.show({
-                  severity: 'warn',
-                  summary: 'Validación',
-                  detail: message,
-                  life: 3000,
-                })
-              }
-            />
-
-            <div className="my-8 border-t border-gray-200" />
-
-            <div className="mb-5">
-              <h3 className="text-lg font-semibold text-gray-800">
-                Sección: Antecedentes del Crédito
-              </h3>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                  <h3 className="font-semibold text-gray-800 text-sm">
+                    Datos Comerciales
+                  </h3>
+                </div>
+                <div className="p-6">
+                  <OficinaAsesorFields
+                    value={
+                      form.datos_operacion ??
+                      buildDatosOperacionInitialState(form.id_expediente)
+                    }
+                    disabled={isDisabled || isBusy}
+                    catalogos={catalogos}
+                    loadingCatalogos={isLoadingCatalogos}
+                    onChange={updateDatosOperacionField}
+                  />
+                </div>
+              </div>
             </div>
 
-            <AntecedenteCreditoSection
-              value={
-                form.antecedente_credito ??
-                buildAntecedenteCreditoInitialState(
-                  form.id_expediente,
-                  form.id_carga_operacion_banco,
-                )
-              }
-              disabled={isDisabled || isBusy}
-              controles={controlesCredito}
-              loadingControles={isLoadingControlesCredito}
-              onChange={updateAntecedenteCreditoField}
-            />
-
-            <div className="my-8 border-t border-gray-200" />
-
-            <div className="mb-5">
-              <h3 className="text-lg font-semibold text-gray-800">
-                Sección: Datos Comercial
-              </h3>
+            {/* Card 3: Titulares (incluye datos declarativos del cliente) */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-6">
+              <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                <h3 className="font-semibold text-gray-800 text-sm">Titulares</h3>
+              </div>
+              <div className="p-6">
+                <AntecedentesCompradorSection
+                  key={`antecedentes-comprador-${canEditAntecedentesComprador ? 'edit' : 'view'}`}
+                  value={form.antecedentes_comprador ?? []}
+                  idExpediente={Number(form.id_expediente || id_expediente || 0)}
+                  idCargaOperacionBanco={Number(form.id_carga_operacion_banco ?? 0)}
+                  disabled={isDisabled || isBusy}
+                  canEdit={canEditAntecedentesComprador}
+                  controles={controlesComprador}
+                  loadingControles={isLoadingControlesComprador}
+                  onChange={updateAntecedentesComprador}
+                  onWarn={(message) =>
+                    toast.current?.show({
+                      severity: 'warn',
+                      summary: 'Validación',
+                      detail: message,
+                      life: 3000,
+                    })
+                  }
+                />
+              </div>
             </div>
 
-            <DatosComercialSection
-              value={
-                form.datos_comercial ??
-                buildDatosComercialInitialState(
-                  form.id_expediente,
-                  form.id_carga_operacion_banco,
-                )
-              }
-              disabled={isDisabled || isBusy}
-              onChange={updateDatosComercialField}
-            />
+            <div className="form-actions">
+              <Button
+                type="button"
+                label="Editar"
+                icon="pi pi-pencil"
+                severity="info"
+                outlined
+                onClick={handleEditar}
+                disabled={isBusy || !isDisabled}
+                className="btn-responsive"
+              />
 
-            <ActivityActionBar
-              is_busy={isBusy}
-              is_disabled={isDisabled}
-              can_advance={canAdvance || Boolean(form.id_carga_operacion_banco)}
-              is_saving={saveMutation.isPending}
-              is_advancing={avanzarMutation.isPending}
-              on_edit={handleEditar}
-              on_save={handleGuardar}
-              on_advance={handleAvanzar}
-              on_exit={handleSalir}
-            />
+              <Button
+                type="button"
+                label={saveMutation.isPending ? 'Guardando...' : 'Guardar'}
+                icon="pi pi-save"
+                severity="success"
+                onClick={handleGuardar}
+                disabled={isBusy || isDisabled}
+                className="btn-responsive"
+              />
+
+              <Button
+                type="button"
+                label={saveMutation.isPending || avanzarMutation.isPending ? 'Procesando...' : 'Avanzar'}
+                icon="pi pi-arrow-right"
+                severity="warning"
+                onClick={handleAvanzar}
+                disabled={
+                  isBusy ||
+                  saveMutation.isPending ||
+                  avanzarMutation.isPending ||
+                  (!canAdvance && !form.id_carga_operacion_banco)
+                }
+                className="btn-responsive"
+              />
+
+              <Button
+                type="button"
+                label="Salir"
+                icon="pi pi-sign-out"
+                severity="secondary"
+                outlined
+                onClick={handleSalir}
+                disabled={isBusy}
+                className="btn-responsive"
+              />
+            </div>
           </Card>
         </AccordionTab>
       </Accordion>

@@ -103,7 +103,7 @@ export default function EstatusGeneralSection({
               disabled={!isEditing}
               onChange={(e) => onChange('requiere_definir_inmueble', e.target.checked)}
             />
-            Requiere Definir Inmueble (crea tarea BBV-44)
+            Requiere Definir Inmueble
           </label>
           <label className="flex items-center gap-2 text-sm">
             <input

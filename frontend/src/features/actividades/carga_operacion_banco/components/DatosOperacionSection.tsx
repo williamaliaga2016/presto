@@ -17,7 +17,7 @@ interface DatosOperacionSectionProps {
 
 const emptyMessage = 'Sin resultados';
 
-export default function DatosOperacionSection({
+export function CanalOriginacionField({
   value,
   disabled,
   catalogos,
@@ -25,65 +25,63 @@ export default function DatosOperacionSection({
   onChange,
 }: DatosOperacionSectionProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-      <div className="flex flex-col gap-1">
-        <label className="font-semibold text-sm">Código Asesor</label>
-        <InputText
-          value={value.codigo_asesor ?? ''}
-          onChange={(e) => onChange('codigo_asesor', e.target.value)}
-          className="form-input-presto w-full"
-          disabled={disabled}
-          placeholder="Ingrese código asesor"
-        />
-      </div>
+    <div className="flex flex-col gap-1">
+      <label className="font-semibold text-sm">Canal de Originación</label>
+      <Dropdown
+        value={value.canal_originacion ?? null}
+        options={catalogos.canal_originacion}
+        optionLabel="description"
+        optionValue="code"
+        onChange={(e) => onChange('canal_originacion', e.value ?? null)}
+        className="form-dropdown-presto w-full"
+        disabled={disabled}
+        loading={loadingCatalogos}
+        placeholder="Seleccione"
+        emptyMessage={emptyMessage}
+        showClear
+      />
+    </div>
+  );
+}
 
-      <div className="flex flex-col gap-1">
-        <label className="font-semibold text-sm">Código Oficina</label>
-        <InputText
-          value={value.codigo_oficina ?? ''}
-          onChange={(e) => onChange('codigo_oficina', e.target.value)}
-          className="form-input-presto w-full"
-          disabled={disabled}
-          placeholder="Ingrese código oficina"
-        />
-      </div>
+const esTipoInmuebleNueva = (description?: string | null) =>
+  description?.trim().toLowerCase() === 'nueva';
 
-      <div className="flex flex-col gap-1">
-        <label className="font-semibold text-sm">Descripción Oficina</label>
-        <InputText
-          value={value.descripcion_oficina ?? ''}
-          onChange={(e) => onChange('descripcion_oficina', e.target.value)}
-          className="form-input-presto w-full"
-          disabled={disabled}
-          placeholder="Ingrese descripción de oficina"
-        />
-      </div>
+export function ProyectoInmuebleFields({
+  value,
+  disabled,
+  catalogos,
+  loadingCatalogos = false,
+  onChange,
+}: DatosOperacionSectionProps) {
+  const tipoInmuebleSeleccionado = catalogos.tipo_inmueble.find(
+    (option) => option.code === value.tipo_inmueble,
+  );
+  const mostrarCamposProyecto = esTipoInmuebleNueva(
+    tipoInmuebleSeleccionado?.description,
+  );
 
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       <div className="flex flex-col gap-1">
-        <label className="font-semibold text-sm">Canal de Originación</label>
-        <Dropdown
-          value={value.canal_originacion ?? null}
-          options={catalogos.canal_originacion}
-          optionLabel="description"
-          optionValue="code"
-          onChange={(e) => onChange('canal_originacion', e.value ?? null)}
-          className="form-dropdown-presto w-full"
-          disabled={disabled}
-          loading={loadingCatalogos}
-          placeholder="Seleccione"
-          emptyMessage={emptyMessage}
-          showClear
-        />
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label className="font-semibold text-sm">Tipo Inmueble</label>
+        <label className="font-semibold text-sm">Tipo Inmueble (Opcional)</label>
         <Dropdown
           value={value.tipo_inmueble ?? null}
           options={catalogos.tipo_inmueble}
           optionLabel="description"
           optionValue="code"
-          onChange={(e) => onChange('tipo_inmueble', e.value ?? null)}
+          onChange={(e) => {
+            onChange('tipo_inmueble', e.value ?? null);
+
+            const selected = catalogos.tipo_inmueble.find(
+              (option) => option.code === e.value,
+            );
+
+            if (!esTipoInmuebleNueva(selected?.description)) {
+              onChange('codigo_proyecto', null);
+              onChange('descripcion_proyecto', null);
+            }
+          }}
           className="form-dropdown-presto w-full"
           disabled={disabled}
           loading={loadingCatalogos}
@@ -94,7 +92,7 @@ export default function DatosOperacionSection({
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="font-semibold text-sm">Estado Inmueble</label>
+        <label className="font-semibold text-sm">Estado Inmueble (Opcional)</label>
         <Dropdown
           value={value.estado_inmueble ?? null}
           options={catalogos.estado_inmueble}
@@ -110,7 +108,33 @@ export default function DatosOperacionSection({
         />
       </div>
 
-      <div className="flex flex-col gap-1">
+      {mostrarCamposProyecto && (
+        <>
+          <div className="flex flex-col gap-1">
+            <label className="font-semibold text-sm">Código Proyecto</label>
+            <InputText
+              value={value.codigo_proyecto ?? ''}
+              onChange={(e) => onChange('codigo_proyecto', e.target.value)}
+              className="form-input-presto w-full"
+              disabled={disabled}
+              placeholder="Ingrese código de proyecto"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1 md:col-span-2">
+            <label className="font-semibold text-sm">Descripción Proyecto</label>
+            <InputText
+              value={value.descripcion_proyecto ?? ''}
+              onChange={(e) => onChange('descripcion_proyecto', e.target.value)}
+              className="form-input-presto w-full"
+              disabled={disabled}
+              placeholder="Ingrese descripción de proyecto"
+            />
+          </div>
+        </>
+      )}
+
+      <div className="flex flex-col gap-1 md:col-span-2">
         <label className="font-semibold text-sm">Descripción Estado Inmueble</label>
         <InputText
           value={value.descripcion_estado_inmueble ?? ''}
@@ -120,26 +144,59 @@ export default function DatosOperacionSection({
           placeholder="Ingrese descripción del estado del inmueble"
         />
       </div>
+    </div>
+  );
+}
 
+export function OficinaAsesorFields({
+  value,
+  disabled,
+  catalogos,
+  loadingCatalogos = false,
+  onChange,
+}: DatosOperacionSectionProps) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       <div className="flex flex-col gap-1">
-        <label className="font-semibold text-sm">Código Proyecto</label>
-        <InputText
-          value={value.codigo_proyecto ?? ''}
-          onChange={(e) => onChange('codigo_proyecto', e.target.value)}
-          className="form-input-presto w-full"
+        <label className="font-semibold text-sm">Código Oficina</label>
+        <Dropdown
+          value={value.codigo_oficina ?? null}
+          options={catalogos.codigo_oficina}
+          optionLabel="code"
+          optionValue="code"
+          onChange={(e) => {
+            onChange('codigo_oficina', e.value ?? null);
+            const selected = catalogos.codigo_oficina.find(
+              (option) => option.code === e.value,
+            );
+            onChange('descripcion_oficina', selected?.description ?? null);
+          }}
+          className="form-dropdown-presto w-full"
           disabled={disabled}
-          placeholder="Ingrese código de proyecto"
+          loading={loadingCatalogos}
+          placeholder="Seleccione"
+          emptyMessage={emptyMessage}
+          showClear
         />
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="font-semibold text-sm">Descripción Proyecto</label>
+        <label className="font-semibold text-sm">Código Asesor</label>
         <InputText
-          value={value.descripcion_proyecto ?? ''}
-          onChange={(e) => onChange('descripcion_proyecto', e.target.value)}
+          value={value.codigo_asesor ?? ''}
           className="form-input-presto w-full"
-          disabled={disabled}
-          placeholder="Ingrese descripción de proyecto"
+          disabled
+          placeholder="Se completa automáticamente con el usuario de la sesión"
+        />
+      </div>
+
+      <div className="flex flex-col gap-1 md:col-span-2">
+        <label className="font-semibold text-sm">Descripción Oficina</label>
+        <InputText
+          value={value.descripcion_oficina ?? ''}
+          className="form-input-presto w-full"
+          disabled
+          placeholder="Se completa automáticamente al seleccionar el Código Oficina"
         />
       </div>
     </div>

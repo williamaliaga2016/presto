@@ -16,7 +16,6 @@ import DatosTitularSection from '../../validar_informacion/components/DatosTitul
 import DatosInmuebleSection from '../../validar_informacion/components/DatosInmuebleSection';
 import DatosCreditoSection from '../../validar_informacion/components/DatosCreditoSection';
 import CondicionesFinancierasSection from '../../validar_informacion/components/CondicionesFinancierasSection';
-import RegistroContactoSection from '../../validar_informacion/components/RegistroContactoSection';
 import { EMPTY_CONTROLES_VALIDAR_INFORMACION } from '../../validar_informacion/models/catalogo';
 import {
   EMPTY_ENCABEZADO_VALIDAR_INFORMACION,
@@ -35,6 +34,7 @@ import {
 } from '../hooks/useAsignarFirmas';
 import {
   EMPTY_ASIGNAR_FIRMAS,
+  RECALC_TRIGGER_FIELDS,
   RESULTADO_FIELDS,
   type AsignarFirmasForm,
   type DatosFolioAsignacion,
@@ -57,9 +57,6 @@ const folioLabels: [keyof DatosFolioAsignacion, string][] = [
   ['nombre_cliente', 'Nombre Cliente'],
   ['departamento_predio', 'Departamento del Predio'],
   ['ciudad_predio', 'Ciudad del Predio'],
-  ['direccion_predio', 'Dirección del Predio'],
-  ['ubicacion_predio', 'Ubicación del Predio'],
-  ['valor_comercial_predio', 'Valor Comercial del Predio'],
   ['usuario_solicitante', 'Usuario Solicitante'],
 ];
 
@@ -68,7 +65,8 @@ const resultGroups: { title: string; fields: [keyof AsignarFirmasForm, string, b
     title: 'Firma / Perito',
     fields: [
       ['nombre_firma_supervisor', 'Nombre Firma / Supervisor'], ['telefono_firma', 'Teléfono'],
-      ['email_firma', 'Email'], ['valor_avaluo', 'Valor Avalúo', true],
+      ['celular_firma', 'Celular'], ['email_firma', 'Email'],
+      ['valor_avaluo', 'Valor Avalúo', true], ['valor_viatico', 'Valor Viático', true],
       ['valor_total_consignar', 'Valor Total a Consignar', true],
       ['opciones_recaudo', 'Opciones de Recaudo'], ['numero_recaudo', 'Número de Recaudo'],
       ['banco', 'Banco'],
@@ -78,6 +76,7 @@ const resultGroups: { title: string; fields: [keyof AsignarFirmasForm, string, b
     title: 'Abogado',
     fields: [
       ['nombre_abogado', 'Nombre Abogado'], ['telefono_abogado', 'Teléfono'],
+      ['email_abogado', 'Email'],
       ['valor_estudio_titulos', 'Valor Estudio de Títulos', true],
       ['tipo_cuenta_abogado', 'Tipo de Cuenta'], ['numero_cuenta_abogado', 'Número de Cuenta'],
     ],
@@ -165,13 +164,13 @@ function AsignarFirmasHeader({
 
         <HeaderItem label="Tipo de Crédito" value={heredados.tipo_credito} />
         <HeaderItem label="Nro. Registro" value="0" />
-        <HeaderItem label="Segmento" value={encabezado.id_tipo_sub_producto} />
+        <HeaderItem label="Segmento" value={encabezado.tipo_subproducto} />
         <HeaderItem label="Canal de Originación" value={heredados.estatus_general} />
 
         <HeaderItem label="Constructora / Proyecto" value={constructoraProyecto} />
         <HeaderItem label="Propietario" value={datosFolio?.nombre_cliente || heredados.nombre_completo_t1} />
-        <HeaderItem label="Código Subproducto" value={encabezado.id_tipo_sub_producto} />
-        <HeaderItem label="Subproducto BBVA" value={encabezado.id_tipo_sub_producto} />
+        <HeaderItem label="Código Subproducto" value={encabezado.tipo_subproducto} />
+        <HeaderItem label="Subproducto BBVA" value={encabezado.tipo_subproducto} />
 
         <HeaderItem label="Tipo de Tasa" value={encabezado.condiciones_organismo_decisor} />
         <HeaderItem label="Tasa" value={encabezado.tasa} />
@@ -241,7 +240,7 @@ export default function AsignarFirmasPage() {
   const [invalid, setInvalid] = useState<Set<string>>(new Set());
   const [accessLink, setAccessLink] = useState<string | null>(null);
   const { data, isLoading, error } = useAsignarFirmas(id);
-  const { data: controlesData } = useControlesAsignarFirmas(id);
+  const { data: controlesData } = useControlesAsignarFirmas();
   const guardar = useGuardarAsignarFirmas();
   const calcular = useCalcularAsignacion(id);
   const avanzar = useAvanzarAsignarFirmas();
@@ -268,20 +267,34 @@ export default function AsignarFirmasPage() {
         incoming.tipo_solicitud_avaluo || detail.datos_heredados?.tipo_credito || '',
       tipo_tramite_eett:
         incoming.tipo_tramite_eett || detail.datos_heredados?.tipo_credito || '',
+      // Estos 3 vienen inicialmente heredados del folio, pero ahora son editables:
+      // se siembran una sola vez y de ahí en adelante manda lo que el usuario guarde.
+      direccion_predio:
+        incoming.direccion_predio || detail.datos_folio?.direccion_predio || null,
+      ubicacion_predio:
+        incoming.ubicacion_predio || detail.datos_folio?.ubicacion_predio || null,
+      valor_comercial_predio:
+        incoming.valor_comercial_predio ?? detail.datos_folio?.valor_comercial_predio ?? null,
     });
     setDirty(false);
   }, [detail, id]);
 
   const hasResults = useMemo(
-    () => Boolean(form.nombre_firma_supervisor && form.nombre_abogado),
-    [form.nombre_firma_supervisor, form.nombre_abogado],
+    () => Boolean(
+      form.nombre_firma_supervisor
+      && (form.asignar_abogado === false || Boolean(form.nombre_abogado)),
+    ),
+    [form.nombre_firma_supervisor, form.nombre_abogado, form.asignar_abogado],
   );
   const canCalculate = MANUAL_FIELDS.every((field) => String(form[field] ?? '').trim());
 
   const update = (field: keyof AsignarFirmasForm, value: unknown) => {
     setForm((current) => {
       const next = { ...current, [field]: value };
-      if (MANUAL_FIELDS.includes(field) && RESULTADO_FIELDS.some((key) => current[key] != null)) {
+      if (
+        RECALC_TRIGGER_FIELDS.includes(field)
+        && RESULTADO_FIELDS.some((key) => current[key] != null)
+      ) {
         RESULTADO_FIELDS.forEach((key) => { next[key] = null; });
       }
       if (field === 'requiere_envio_notificacion' && value === false) {
@@ -302,13 +315,34 @@ export default function AsignarFirmasPage() {
   });
 
   const handleCalcular = () => {
+    const datosFolio = detail?.datos_folio;
+
     calcular.mutate({
+      id_expediente: id,
       tipo_cliente: form.tipo_cliente!,
       codigo_ejecutivo: form.codigo_ejecutivo_solicitante!,
       oficina: form.oficina_solicitante!,
       tipo_solicitud_avaluo: form.tipo_solicitud_avaluo!,
       tipo_tramite_eett: form.tipo_tramite_eett!,
-      id_expediente: id,
+
+      numero_identificacion_cliente:
+        datosFolio?.identificacion_cliente || heredados.numero_id_t1 || '',
+      direccion_predio: form.direccion_predio ?? null,
+
+      tipo_vivienda: datosFolio?.tipo_inmueble || heredados.tipo_inmueble || null,
+      constructora: datosFolio?.constructora || heredados.constructora || null,
+      codigo_proyecto: heredados.codigo_proyecto ?? null,
+      departamento_predio:
+        datosFolio?.departamento_predio || heredados.departamento_inmueble || '',
+      ciudad_predio: datosFolio?.ciudad_predio || heredados.municipio_inmueble || '',
+      ubicacion_predio: form.ubicacion_predio ?? null,
+      valor_comercial_predio: form.valor_comercial_predio ?? 0,
+
+      homologacion: form.homologacion ?? false,
+      requiere_actualizacion_avaluo: form.requiere_actualizacion_avaluo ?? false,
+      firma_avaluo_anterior: form.firma_avaluo_anterior ?? null,
+
+      asignar_abogado: form.asignar_abogado ?? true,
     }, {
       onSuccess: (response) => {
         setForm((current) => ({ ...current, ...response.detail }));
@@ -391,6 +425,10 @@ export default function AsignarFirmasPage() {
     <div className="flex flex-col gap-4 p-4">
       <Toast ref={toast} />
 
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+        Asignar Firmas, Peritos y Abogados
+      </h2>
+
       <Dialog
         header="Link de acceso temporal"
         visible={Boolean(accessLink)}
@@ -427,145 +465,234 @@ export default function AsignarFirmasPage() {
         </div>
       </Dialog>
 
-      <Card>
-        <Accordion multiple activeIndex={[0]}>
-          <AccordionTab header="Información del Expediente">
-            <AsignarFirmasHeader
-              id={id}
-              form={form}
-              heredados={heredados}
-              encabezado={encabezado}
-              datosFolio={detail?.datos_folio}
-            />
-          </AccordionTab>
-        </Accordion>
-      </Card>
+      <div className="grid grid-cols-1 gap-4">
+        <div>
+          <Accordion multiple activeIndex={[0]}>
+            <AccordionTab header="Información General">
+              <AsignarFirmasHeader
+                id={id}
+                form={form}
+                heredados={heredados}
+                encabezado={encabezado}
+                datosFolio={detail?.datos_folio}
+              />
+            </AccordionTab>
+            <AccordionTab header="Funciones Transversales">
+              <FuncionesTransversales idExpediente={id} idActividad={ACTIVIDAD_ID} />
+            </AccordionTab>
+            <AccordionTab header="Datos Titular">
+              <DatosTitularSection data={heredados} controles={controles} isEditing={false} onChange={() => undefined} />
+            </AccordionTab>
+            <AccordionTab header="Datos Inmueble">
+              <DatosInmuebleSection data={heredados} controles={controles} isEditing={false} onChange={() => undefined} />
+            </AccordionTab>
+            <AccordionTab header="Datos Crédito">
+              <DatosCreditoSection data={heredados} encabezado={encabezado} controles={controles} isEditing={false} onChange={() => undefined} />
+            </AccordionTab>
+            <AccordionTab header="Condiciones Financieras">
+              <CondicionesFinancierasSection data={heredados} encabezado={encabezado} isEditing={false} onChange={() => undefined} />
+            </AccordionTab>
+            <AccordionTab header="Asignar Firmas, Peritos y Abogados">
+              <section className="space-y-6">
+                <fieldset className="border border-gray-200 rounded-md p-4">
+                  <legend className="px-2 text-sm font-semibold text-gray-700">
+                    DATOS DEL FOLIO
+                  </legend>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {folioLabels.map(([key, label]) => (
+                      <div key={key} className="rounded border bg-gray-50 px-3 py-2">
+                        <div className="text-xs text-gray-500">{label}</div>
+                        <div className="text-sm font-medium">{displayValue(detail?.datos_folio?.[key], key)}</div>
+                      </div>
+                    ))}
+                  </div>
+                </fieldset>
+                <fieldset className="border border-gray-200 rounded-md p-4">
+                  <legend className="px-2 text-sm font-semibold text-gray-700">
+                    DATOS PARA EL MOTOR ASIGNADOR
+                  </legend>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {([
+                      ['tipo_cliente', 'Tipo de Cliente'], ['codigo_ejecutivo_solicitante', 'Código Ejecutivo Solicitante'],
+                      ['oficina_solicitante', 'Oficina Solicitante'], ['tipo_solicitud_avaluo', 'Tipo de Solicitud Avalúo'],
+                      ['tipo_tramite_eett', 'Tipo de Trámite EETT'],
+                    ] as [keyof AsignarFirmasForm, string][]).map(([field, label]) => (
+                      <div key={field} className="flex flex-col gap-1">
+                        <label className="font-semibold text-sm">{label} *</label>
+                        <InputText
+                          value={String(form[field] ?? '')}
+                          onChange={(e) => update(field, e.target.value)}
+                          className={`${inputClass} ${invalid.has(String(field)) ? 'p-invalid' : ''}`}
+                        />
+                      </div>
+                    ))}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2">
-          <Card className="w-full shadow-md card-presto-form">
-            <Accordion multiple>
-              <AccordionTab header="Datos Titular">
-                <DatosTitularSection data={heredados} controles={controles} isEditing={false} onChange={() => undefined} />
-              </AccordionTab>
-              <AccordionTab header="Datos Inmueble">
-                <DatosInmuebleSection data={heredados} controles={controles} isEditing={false} onChange={() => undefined} />
-              </AccordionTab>
-              <AccordionTab header="Datos Crédito">
-                <DatosCreditoSection data={heredados} encabezado={encabezado} controles={controles} isEditing={false} onChange={() => undefined} />
-              </AccordionTab>
-              <AccordionTab header="Condiciones Financieras">
-                <CondicionesFinancierasSection data={heredados} encabezado={encabezado} isEditing={false} onChange={() => undefined} />
-              </AccordionTab>
-              <AccordionTab header="Registro Contacto">
-                <RegistroContactoSection id_expediente={id} id_actividad={ACTIVIDAD_ID} controles={controles} />
-              </AccordionTab>
-              <AccordionTab header="Asignar Firmas, Peritos y Abogados">
-                <section className="space-y-6">
-                  <fieldset className="border border-gray-200 rounded-md p-4">
-                    <legend className="px-2 text-sm font-semibold text-gray-700">
-                      DATOS DEL FOLIO
-                    </legend>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {folioLabels.map(([key, label]) => (
-                        <div key={key} className="rounded border bg-gray-50 px-3 py-2">
-                          <div className="text-xs text-gray-500">{label}</div>
-                          <div className="text-sm font-medium">{displayValue(detail?.datos_folio?.[key], key)}</div>
-                        </div>
-                      ))}
+                    <div className="flex flex-col gap-1">
+                      <label className="font-semibold text-sm">Dirección del Predio</label>
+                      <InputText
+                        value={form.direccion_predio ?? ''}
+                        onChange={(e) => update('direccion_predio', e.target.value)}
+                        className={inputClass}
+                      />
                     </div>
-                  </fieldset>
-                  <fieldset className="border border-gray-200 rounded-md p-4">
-                    <legend className="px-2 text-sm font-semibold text-gray-700">
-                      DATOS PARA EL MOTOR ASIGNADOR
-                    </legend>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                      {([
-                        ['tipo_cliente', 'Tipo de Cliente'], ['codigo_ejecutivo_solicitante', 'Código Ejecutivo Solicitante'],
-                        ['oficina_solicitante', 'Oficina Solicitante'], ['tipo_solicitud_avaluo', 'Tipo de Solicitud Avalúo'],
-                        ['tipo_tramite_eett', 'Tipo de Trámite EETT'],
-                      ] as [keyof AsignarFirmasForm, string][]).map(([field, label]) => (
-                        <div key={field} className="flex flex-col gap-1">
-                          <label className="font-semibold text-sm">{label} *</label>
-                          <InputText
-                            value={String(form[field] ?? '')}
-                            onChange={(e) => update(field, e.target.value)}
-                            className={`${inputClass} ${invalid.has(String(field)) ? 'p-invalid' : ''}`}
-                          />
-                        </div>
-                      ))}
+
+                    <div className="flex flex-col gap-1">
+                      <label className="font-semibold text-sm">Valor Comercial del Predio</label>
+                      <InputNumber
+                        value={form.valor_comercial_predio ?? null}
+                        onValueChange={(e) => update('valor_comercial_predio', e.value ?? null)}
+                        mode="currency"
+                        currency="COP"
+                        locale="es-CO"
+                        className="w-full"
+                        inputClassName={inputClass}
+                        min={0}
+                      />
                     </div>
-                    <div className="flex justify-end mt-4">
-                      <Button label="Calcular Asignación" icon="pi pi-calculator" disabled={!canCalculate} loading={calcular.isPending} onClick={handleCalcular} />
-                    </div>
-                  </fieldset>
-                  {resultGroups.map((group) => (
-                    <fieldset key={group.title} className={`border rounded-md p-4 ${invalid.has('resultado_asignacion') ? 'border-red-500' : 'border-gray-200'}`}>
-                      <legend className="px-2 text-sm font-semibold text-gray-700">
-                        {group.title.toUpperCase()}
-                      </legend>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        {group.fields.map(([field, label, currency]) => (
-                          <div key={field} className="flex flex-col gap-1">
-                            <label className="font-semibold text-sm">{label}</label>
-                            {currency ? (
-                              <InputNumber
-                                value={(form[field] as number | null) ?? null}
-                                mode="currency"
-                                currency="COP"
-                                locale="es-CO"
-                                disabled
-                                className="w-full"
-                                inputClassName={inputClass}
-                              />
-                            ) : (
-                              <InputText value={String(form[field] ?? '')} disabled className={inputClass} />
-                            )}
+
+                    <div className="flex flex-col gap-1">
+                      <label className="font-semibold text-sm">Ubicación del Predio</label>
+                      <div className="flex gap-5 mt-1">
+                        {['URBANO', 'RURAL'].map((optionValue) => (
+                          <div key={optionValue} className="flex items-center gap-2">
+                            <RadioButton
+                              className="form-radio-presto"
+                              inputId={`ubicacion_predio-${optionValue}`}
+                              checked={form.ubicacion_predio === optionValue}
+                              onChange={() => update('ubicacion_predio', optionValue)}
+                            />
+                            <label htmlFor={`ubicacion_predio-${optionValue}`}>{optionValue}</label>
                           </div>
                         ))}
                       </div>
-                    </fieldset>
-                  ))}
-                </section>
-              </AccordionTab>
-              <AccordionTab header="Estatus General">
-                <div className="space-y-5">
-                  <fieldset className={`border rounded-md p-4 ${invalid.has('requiere_envio_notificacion') ? 'border-red-500' : 'border-gray-200'}`}>
+                    </div>
+
+                    {([
+                      ['homologacion', '¿Homologación?'],
+                      ['requiere_actualizacion_avaluo', '¿Requiere Actualización de Avalúo?'],
+                      ['asignar_abogado', '¿Asignar Abogado?'],
+                    ] as [keyof AsignarFirmasForm, string][]).map(([field, label]) => (
+                      <div key={field} className="flex flex-col gap-1">
+                        <label className="font-semibold text-sm">{label}</label>
+                        <div className="flex gap-5 mt-1">
+                          {[true, false].map((optionValue) => (
+                            <div key={String(optionValue)} className="flex items-center gap-2">
+                              <RadioButton
+                                className="form-radio-presto"
+                                inputId={`${field}-${optionValue}`}
+                                checked={form[field] === optionValue}
+                                onChange={() => update(field, optionValue)}
+                              />
+                              <label htmlFor={`${field}-${optionValue}`}>
+                                {optionValue ? 'Sí' : 'No'}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+
+                    <div className="flex flex-col gap-1">
+                      <label className="font-semibold text-sm">Firma Avalúo Anterior</label>
+                      <InputText
+                        value={form.firma_avaluo_anterior ?? ''}
+                        onChange={(e) => update('firma_avaluo_anterior', e.target.value)}
+                        className={inputClass}
+                        placeholder="Solo informativo, no altera el cálculo"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end mt-4">
+                    <Button label="Calcular Asignación" icon="pi pi-calculator" disabled={!canCalculate} loading={calcular.isPending} onClick={handleCalcular} />
+                  </div>
+                </fieldset>
+                {(form.advertencias?.length
+                  || form.reutilizado_por_duplicado
+                  || form.asignacion_por_proyecto_parametrizado) ? (
+                  <div className="flex flex-col gap-2">
+                    {form.reutilizado_por_duplicado && (
+                      <div className="rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm text-blue-800">
+                        Se reutilizó una asignación vigente para este cliente/inmueble; no se recalculó.
+                      </div>
+                    )}
+                    {form.asignacion_por_proyecto_parametrizado && (
+                      <div className="rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm text-blue-800">
+                        La firma y el abogado se asignaron según el proyecto parametrizado.
+                      </div>
+                    )}
+                    {form.advertencias?.map((advertencia) => (
+                      <div
+                        key={advertencia}
+                        className="rounded-md border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800"
+                      >
+                        {advertencia}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+                {resultGroups.map((group) => (
+                  <fieldset key={group.title} className={`border rounded-md p-4 ${invalid.has('resultado_asignacion') ? 'border-red-500' : 'border-gray-200'}`}>
                     <legend className="px-2 text-sm font-semibold text-gray-700">
-                      ESTATUS GENERAL
+                      {group.title.toUpperCase()}
                     </legend>
-                    <label className="text-sm font-medium">¿Requiere Envío de Notificación? *</label>
-                    <div className="flex gap-5 mt-2">
-                      {[true, false].map((value) => <div key={String(value)} className="flex items-center gap-2"><RadioButton className="form-radio-presto" inputId={`notifica-${value}`} checked={form.requiere_envio_notificacion === value} onChange={() => update('requiere_envio_notificacion', value)} /><label htmlFor={`notifica-${value}`}>{value ? 'Sí' : 'No'}</label></div>)}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      {group.fields.map(([field, label, currency]) => (
+                        <div key={field} className="flex flex-col gap-1">
+                          <label className="font-semibold text-sm">{label}</label>
+                          {currency ? (
+                            <InputNumber
+                              value={(form[field] as number | null) ?? null}
+                              mode="currency"
+                              currency="COP"
+                              locale="es-CO"
+                              disabled
+                              className="w-full"
+                              inputClassName={inputClass}
+                            />
+                          ) : (
+                            <InputText value={String(form[field] ?? '')} disabled className={inputClass} />
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </fieldset>
-                  {form.requiere_envio_notificacion && (
-                    <fieldset className={`border rounded-md p-4 ${invalid.has('checklist_documentos_solicitar') ? 'border-red-500' : 'border-gray-200'}`}>
-                      <legend className="px-2 text-sm font-semibold text-gray-700">
-                        DOCUMENTOS A SOLICITAR
-                      </legend>
-                      <label className="font-semibold text-sm">CheckList Documentos a Solicitar *</label>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                        {controles.documentos_solicitar.map((doc) => <div key={doc.id} className="flex items-center gap-2"><Checkbox className="form-checkbox-presto" inputId={`doc-${doc.id}`} checked={form.checklist_documentos_solicitar.includes(doc.id)} onChange={(e) => toggleDocumento(doc.id, e.checked ?? false)} /><label htmlFor={`doc-${doc.id}`}>{doc.nombre}</label></div>)}
-                        {!controles.documentos_solicitar.length && <span className="text-sm text-amber-700">El backend no devolvió documentos configurados.</span>}
-                      </div>
-                    </fieldset>
-                  )}
-                  <div className="flex flex-col gap-1">
-                    <label className="font-semibold text-sm">Observaciones *</label>
-                    <InputTextarea rows={4} value={form.observaciones ?? ''} onChange={(e) => update('observaciones', e.target.value)} className={`${textareaClass} ${invalid.has('observaciones') ? 'p-invalid' : ''}`} />
+                ))}
+              </section>
+            </AccordionTab>
+            <AccordionTab header="Estatus General">
+              <div className="space-y-5">
+                <fieldset className={`border rounded-md p-4 ${invalid.has('requiere_envio_notificacion') ? 'border-red-500' : 'border-gray-200'}`}>
+                  <legend className="px-2 text-sm font-semibold text-gray-700">
+                    ESTATUS GENERAL
+                  </legend>
+                  <label className="text-sm font-medium">¿Requiere Envío de Notificación? *</label>
+                  <div className="flex gap-5 mt-2">
+                    {[true, false].map((value) => <div key={String(value)} className="flex items-center gap-2"><RadioButton className="form-radio-presto" inputId={`notifica-${value}`} checked={form.requiere_envio_notificacion === value} onChange={() => update('requiere_envio_notificacion', value)} /><label htmlFor={`notifica-${value}`}>{value ? 'Sí' : 'No'}</label></div>)}
                   </div>
+                </fieldset>
+                {form.requiere_envio_notificacion && (
+                  <fieldset className={`border rounded-md p-4 ${invalid.has('checklist_documentos_solicitar') ? 'border-red-500' : 'border-gray-200'}`}>
+                    <legend className="px-2 text-sm font-semibold text-gray-700">
+                      DOCUMENTOS A SOLICITAR
+                    </legend>
+                    <label className="font-semibold text-sm">CheckList Documentos a Solicitar *</label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                      {controles.documentos_solicitar.map((doc) => <div key={doc.id} className="flex items-center gap-2"><Checkbox className="form-checkbox-presto" inputId={`doc-${doc.id}`} checked={form.checklist_documentos_solicitar.includes(doc.id)} onChange={(e) => toggleDocumento(doc.id, e.checked ?? false)} /><label htmlFor={`doc-${doc.id}`}>{doc.nombre}</label></div>)}
+                      {!controles.documentos_solicitar.length && <span className="text-sm text-amber-700">El backend no devolvió documentos configurados.</span>}
+                    </div>
+                  </fieldset>
+                )}
+                <div className="flex flex-col gap-1">
+                  <label className="font-semibold text-sm">Observaciones *</label>
+                  <InputTextarea rows={4} value={form.observaciones ?? ''} onChange={(e) => update('observaciones', e.target.value)} className={`${textareaClass} ${invalid.has('observaciones') ? 'p-invalid' : ''}`} />
                 </div>
-              </AccordionTab>
-            </Accordion>
-            <div className="form-actions pt-4 border-t">
-              <Button label="Guardar" icon="pi pi-save" severity="secondary" loading={guardar.isPending} disabled={!dirty} onClick={handleGuardar} className="btn-responsive" />
-              <Button label="Avanzar" icon="pi pi-arrow-right" loading={avanzar.isPending} disabled={dirty} onClick={handleAvanzar} className="btn-responsive" />
-            </div>
-          </Card>
-        </div>
-        <div className="lg:col-span-1">
-          <FuncionesTransversales idExpediente={id} idActividad={ACTIVIDAD_ID} />
+              </div>
+            </AccordionTab>
+          </Accordion>
+          <div className="form-actions pt-4 border-t">
+            <Button label="Guardar" icon="pi pi-save" severity="secondary" loading={guardar.isPending} disabled={!dirty} onClick={handleGuardar} className="btn-responsive" />
+            <Button label="Avanzar" icon="pi pi-arrow-right" loading={avanzar.isPending} disabled={dirty} onClick={handleAvanzar} className="btn-responsive" />
+          </div>
         </div>
       </div>
     </div>

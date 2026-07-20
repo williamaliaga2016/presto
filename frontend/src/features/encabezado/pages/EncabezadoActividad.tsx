@@ -13,17 +13,38 @@ const formatFecha = (value?: string | null) => {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
 
-  return date.toLocaleDateString("es-PE");
+  return date.toLocaleDateString("es-CO");
 };
 
 const formatImporte = (value?: number | null) => {
   if (value === null || value === undefined) return "-";
 
-  return new Intl.NumberFormat("es-PE", {
+  return new Intl.NumberFormat("es-CO", {
     style: "currency",
-    currency: "PEN",
-    minimumFractionDigits: 2,
+    currency: "COP",
+    minimumFractionDigits: 0,
   }).format(value);
+};
+
+const formatTasa = (value?: string | number | null) => {
+  if (
+    value === null ||
+    value === undefined ||
+    String(value).trim() === ""
+  ) {
+    return "-";
+  }
+
+  const numericValue =
+    typeof value === "number"
+      ? value
+      : Number.parseFloat(String(value).replace(",", "."));
+
+  if (Number.isNaN(numericValue)) {
+    return String(value);
+  }
+
+  return `${Number(numericValue.toFixed(2))}%`;
 };
 
 function LabelItem({
@@ -86,6 +107,8 @@ function EncabezadoContent({ data }: { data: EncabezadoDTO }) {
       <LabelItem label="Correo Declarativo" value={data.correo_declarativo} />
       <LabelItem label="Teléfono Declarativo" value={data.telefono_declarativo} />
       <LabelItem label="Monto Otorgado" value={formatImporte(data.monto_otorgado)} />
+      <LabelItem label="Plazo Otorgado" value={data.plazo_otorgado} />
+      <LabelItem label="Tasa" value={formatTasa(data.tasa)} />
       <LabelItem label="Canal Originación" value={data.canal_originacion} />
       <LabelItem label="Código Proyecto" value={data.codigo_proyecto} />
       <LabelItem label="Proyecto" value={data.descripcion_proyecto} />

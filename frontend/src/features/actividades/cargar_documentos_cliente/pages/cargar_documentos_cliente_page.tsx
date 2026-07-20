@@ -8,6 +8,7 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { Toast } from 'primereact/toast';
 import type { Toast as ToastRef } from 'primereact/toast';
 import { useAuth } from '@/app/providers/AuthProvider';
+import { authStorage } from '@/core/auth/authStorage';
 import EncabezadoActividad from '@/features/encabezado/pages/EncabezadoActividad';
 import FuncionesTransversales from '@/features/funciones_transversales/pages/FuncionesTransversales';
 import ExpedienteDigitalPage from
@@ -16,10 +17,6 @@ import {
   EMPTY_CARGAR_DOCUMENTOS_CLIENTE,
   type CargarDocumentosCliente,
 } from '../models/cargar_documentos_cliente';
-import type {
-  CargarDocumentosClienteAccordionState,
-  CargarDocumentosClienteFormDraftState,
-} from '../models/cargar_documentos_cliente.form';
 import {
   useAvanzarCargarDocumentosCliente,
   useCargarDocumentosCliente,
@@ -27,9 +24,18 @@ import {
   useGuardarCargarDocumentosCliente,
 } from '../hooks/useCargarDocumentosCliente';
 
-const ACTIVITY_ID = 'ACT_DOCS_CLIENTE';
+const ACTIVITY_ID = 'BBVA_CONTACTO_CARGAR_DOCUMENTOS_CLIENTE_CBF7A738';
 const MAX_OBSERVACIONES = 500;
 
+interface FormDraftState {
+  key: string;
+  value: Partial<CargarDocumentosCliente>;
+}
+
+interface AccordionState {
+  standard: number[];
+  temporal: number[];
+}
 
 /**
  * Renderiza la actividad Cargar Documentos Cliente para que el cliente externo cargue documentos y confirme el envio.
@@ -44,16 +50,17 @@ export default function CargarDocumentosClientePage() {
   const accordionMode = isTemporalAccess ? 'temporal' : 'standard';
   const navigate = useNavigate();
   const toast = useRef<ToastRef>(null);
-  const [accordionState, setAccordionState] = useState<CargarDocumentosClienteAccordionState>({
+  const [accordionState, setAccordionState] = useState<AccordionState>({
     standard: [0, 1, 2],
     temporal: [0, 1],
   });
-  const [formDraftState, setFormDraftState] = useState<CargarDocumentosClienteFormDraftState>({
+  const [formDraftState, setFormDraftState] = useState<FormDraftState>({
     key: '',
     value: {},
   });
-  const [documentsSent, setDocumentsSent] = useState(false);
   const [showDocumentsConfirmationError, setShowDocumentsConfirmationError] =
+    useState(false);
+  const [temporalSubmissionCompleted, setTemporalSubmissionCompleted] =
     useState(false);
 
   const { data: registroResponse, isLoading: isLoadingRegistro } =
@@ -187,9 +194,6 @@ export default function CargarDocumentosClientePage() {
       return;
     }
 
-    const saved = await handleGuardar(!isTemporalAccess);
-    if (!saved) return;
-
     const response = await avanzarMutation.mutateAsync(id_expediente);
 
     if (!response.status) {
@@ -198,7 +202,8 @@ export default function CargarDocumentosClientePage() {
     }
 
     if (isTemporalAccess) {
-      setDocumentsSent(true);
+      authStorage.clear();
+      setTemporalSubmissionCompleted(true);
       return;
     }
 
@@ -342,18 +347,22 @@ export default function CargarDocumentosClientePage() {
     </AccordionTab>
   );
 
-  if (isTemporalAccess && documentsSent) {
+  if (temporalSubmissionCompleted) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-        <section className="w-full max-w-md rounded-lg bg-white p-6 text-center shadow-sm">
-          <h1 className="mb-3 text-xl font-semibold text-slate-900">
-            Documentos enviados
-          </h1>
-          <p className="text-sm leading-6 text-slate-600">
-            Los documentos han sido enviados exitosamente.
-          </p>
-        </section>
-      </main>
+      <>
+        <Toast ref={toast} />
+        <div className="flex min-h-[60vh] items-center justify-center px-4">
+          <Card className="w-full max-w-xl text-center shadow-md card-presto-form">
+            <i className="pi pi-check-circle mb-4 text-5xl text-green-600" />
+            <h2 className="mb-3 text-2xl font-bold text-gray-900">
+              Los documentos han sido enviados exitosamente.
+            </h2>
+            <p className="text-sm text-gray-600">
+              La carga documental fue recibida y el enlace temporal ya fue consumido.
+            </p>
+          </Card>
+        </div>
+      </>
     );
   }
 
