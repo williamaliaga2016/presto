@@ -105,6 +105,11 @@ import AsignarFirmasAccesoPage from
 import ValidarIntegracionDocumentosPage from "@/features/actividades/validar_integracion_documentos/pages/validar_integracion_documentos_page";
 import DevolucionVbComercialPage from "@/features/actividades/devolucion_vb_comercial/pages/devolucion_vb_comercial_page";
 
+import DefinirInmueblePage from "@/features/actividades/definir_inmueble/pages/definir_inmueble_page";
+import CargarSoportesPagoPage from "@/features/actividades/cargar_soportes_pago/pages/cargar_soportes_pago_page";
+import GestionarFirmaPage from "@/features/actividades/gestionar_firma/pages/gestionar_firma_page";
+import GestionarFirmaFisicaPage from "@/features/actividades/gestionar_firma_fisica/pages/gestionar_firma_fisica_page";
+
 export default function AppRouter() {
   const { isAuthenticated } = useAuth();
 
@@ -234,7 +239,12 @@ export default function AppRouter() {
             <Route path="cargar_documentos_constructora/:id_expediente" element={<CargarDocumentosConstructoraPage />}/>
             <Route path="revisar_documentos_inmueble/:id_expediente" element={<RevisarDocumentosInmueblePage />}/>
             <Route path="validar_integracion_documentos/:id_expediente" element={<ValidarIntegracionDocumentosPage />} />
-            <Route path="devolucion_vb_comercial/:id_expediente" element={<DevolucionVbComercialPage />}/>
+            <Route path="devolucion_vb_comercial/:id_expediente" element={<DevolucionVbComercialPage />} />
+
+            <Route path="definir_inmueble/:id_expediente" element={<DefinirInmueblePage />} />
+            <Route path="cargar_soportes_pago/:id_expediente" element={<CargarSoportesPagoPage />} />
+            <Route path="gestionar_firma/:id_expediente" element={<GestionarFirmaPage />} />
+            <Route path="gestionar_firmas_fisica/:id_expediente" element={<GestionarFirmaFisicaPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>
