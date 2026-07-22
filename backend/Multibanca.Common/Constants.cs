@@ -272,6 +272,8 @@ namespace Multibanca.Common
             public const string DetalleContacto     = "DETALLE_CONTACTO";
             public const string TipoFirma           = "TIPO_FIRMA";
             public const string TipoCredito         = "TIPO_CREDITO";
+            public const string TipoCreditoLeasing  = "ESCRITURACION_TIPO_CREDITO_LEASING";
+            public const string TipoCreditoCXI      = "ESCRITURACION_TIPO_CREDITO_CXI";
             public const string MotivoCierre        = "MOTIVO_CIERRE";
             public const string CodigoOficina       = "CODIGO_OFICINA";
         }
@@ -296,7 +298,25 @@ namespace Multibanca.Common
             public const string FirmaFisica = "BBVA_CONTACTO_GESTIONAR_FIRMAS_FISICA_A256C783";
             public const string ValidarIntegracion = "BBVA_CONTACTO_VALIDAR_INTEGRACION_DE_DOCUMENTOS_2B87EDAF";
             public const string DevolucionVbComercial = "BBVA_CONTACTO_REALIZAR_DEVOLUCION_PENDIENTE_VB_COMERCIAL_C4C97D10";
-            public const string FirmarEscrituraCliente = "BBVA_ESCRITURACION_FIRMAR_ESCRITURA_CLIENTE_CE5FAC2F";
+
+            // Actividades destino para verificar conceptos previos (enrutamiento)
+            public const string EscrituracionFirmarEscrituraCliente = "BBVA_ESCRITURACION_FIRMAR_ESCRITURA_CLIENTE_CE5FAC2F";
+            public const string EscrituracionRevisarEPAbogado = "ACT_REVISAR_EP_ABOGADO";
+            public const string EscrituracionVBProrrata = "ACT_VB_PRORRATA";
+            public const string EscrituracionRealizarCausacion = "ACT_REALIZAR_CAUSACION";
+        }
+
+        // ============================================================
+        // BBVA COLOMBIA — IDs de transiciones del Expediente Digital
+        // ============================================================
+        public static class TransicionesBBVA
+        {
+            // BBVA Escrituración — Firmar Escritura Cliente
+            // TODO: Reemplazar con los nombres reales de transición del XPDL
+            public const string EscrituracionEscalamientoComercial = "TR_FIRMAR_ESC_ESCALAMIENTO_COMERCIAL";
+            public const string EscrituracionRevisarEP = "TR_FIRMAR_ESC_REVISAR_EP";
+            public const string EscrituracionVBProrrata = "TR_FIRMAR_ESC_VB_PRORRATA";
+            public const string EscrituracionCausacion = "TR_FIRMAR_ESC_CAUSACION";
         }
 
         // ============================================================
