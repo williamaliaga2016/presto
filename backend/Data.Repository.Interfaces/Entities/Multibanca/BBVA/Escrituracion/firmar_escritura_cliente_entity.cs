@@ -1,7 +1,6 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Data.Repository.Interfaces.Entities.Multibanca.BBVA
+namespace Data.Repository.Interfaces.Entities.Multibanca.BBVA.Escrituracion
 {
     public class firmar_escritura_cliente_entity
     {

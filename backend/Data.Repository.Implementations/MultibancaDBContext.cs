@@ -24,6 +24,8 @@ using Microsoft.EntityFrameworkCore;
 using Data.Repository.Interfaces.Entities.Multibanca.BBVA;
 using Data.Repository.Interfaces.Entities.Multibanca.BBVA.ValidarIntegracionDocumentos;
 using Data.Repository.Implementations.EntityConfig.Multibanca.BBVA.ValidarIntegracionDocumentos;
+using Data.Repository.Interfaces.Entities.Multibanca.BBVA.Escrituracion;
+using Data.Repository.Implementations.EntityConfig.Multibanca.BBVA.Escrituracion;
 
 namespace Data.Repository.Implementations
 {

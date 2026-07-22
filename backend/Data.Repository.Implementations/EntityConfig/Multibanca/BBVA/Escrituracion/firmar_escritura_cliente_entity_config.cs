@@ -1,8 +1,8 @@
-using Data.Repository.Interfaces.Entities.Multibanca.BBVA;
+using Data.Repository.Interfaces.Entities.Multibanca.BBVA.Escrituracion;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Data.Repository.Implementations.EntityConfig.Multibanca.BBVA;
+namespace Data.Repository.Implementations.EntityConfig.Multibanca.BBVA.Escrituracion;
 
 internal class firmar_escritura_cliente_entity_config
 {
