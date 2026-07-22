@@ -94,12 +94,12 @@ public class FirmarEscrituraClienteController : ControllerBase
         }
     }
 
-    [HttpGet("/controles")]
-    public async Task<IActionResult> GetControles(long id_expediente)
+    [HttpGet("controles")]
+    public async Task<IActionResult> GetControles()
     {
         try
         {
-            var result = await ApplicationProvider.GetControles(id_expediente);
+            var result = await ApplicationProvider.GetControles();
             return Ok(new { status = true, detail = result, message = "Controles consultados." });
         }
         catch (Exception ex)

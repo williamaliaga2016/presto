@@ -8,5 +8,5 @@ public interface IFirmarEscrituraClienteApplication : IMultibancaGenericApplicat
 {
     Task<firmar_escritura_cliente_bbva?> GetByExpediente(long idExpediente);
     Task<List<AssignActivityDTO>> Avanzar(long idExpediente, int userId);
-    Task<object> GetControles(long idExpediente);
+    Task<object> GetControles();
 }

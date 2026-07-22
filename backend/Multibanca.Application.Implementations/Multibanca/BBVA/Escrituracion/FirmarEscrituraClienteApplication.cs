@@ -86,7 +86,7 @@ public class FirmarEscrituraClienteApplication
         return _mapper.Map<firmar_escritura_cliente_bbva>(entity);
     }
 
-    public async Task<object> GetControles(long idExpediente)
+    public async Task<object> GetControles()
     {
         var representantesLegales = await _commonApplication.GetCatalogoByType("REPRESENTANTE_LEGAL");
         var tipologias = await _commonApplication.GetCatalogoByType("TIPOLOGIA_ESCALAMIENTO");
