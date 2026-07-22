@@ -67,19 +67,15 @@ public class FirmarEscrituraClienteApplication
 
         if (entity == null)
         {
-            var herencia = await RepositoryProvider.GetDatosNotariaHerencia(idExpediente);
-
-            if (herencia == null)
-                return null;
-
-            dynamic datos = herencia;
+            // TODO: Cuando la tabla validar_cumplimiento_politicas esté lista,
+            // usar GetDatosNotariaHerencia para precargar los datos de notaría (CA07)
             return new firmar_escritura_cliente_bbva
             {
                 id_expediente = idExpediente,
-                notaria = datos.notaria,
-                fecha_notaria = datos.fecha_notaria,
-                numero_notaria = datos.numero_notaria,
-                ciudad_notaria = datos.ciudad_notaria
+                notaria = null,
+                fecha_notaria = null,
+                numero_notaria = null,
+                ciudad_notaria = null
             };
         }
 
