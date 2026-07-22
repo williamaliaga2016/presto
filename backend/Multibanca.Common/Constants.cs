@@ -296,6 +296,7 @@ namespace Multibanca.Common
             public const string FirmaFisica = "BBVA_CONTACTO_GESTIONAR_FIRMAS_FISICA_A256C783";
             public const string ValidarIntegracion = "BBVA_CONTACTO_VALIDAR_INTEGRACION_DE_DOCUMENTOS_2B87EDAF";
             public const string DevolucionVbComercial = "BBVA_CONTACTO_REALIZAR_DEVOLUCION_PENDIENTE_VB_COMERCIAL_C4C97D10";
+            public const string FirmarEscrituraCliente = "BBVA_ESCRITURACION_FIRMAR_ESCRITURA_CLIENTE_CE5FAC2F";
         }
 
         // ============================================================
