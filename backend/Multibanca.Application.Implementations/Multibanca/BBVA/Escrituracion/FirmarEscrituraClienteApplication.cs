@@ -90,11 +90,13 @@ public class FirmarEscrituraClienteApplication
     {
         var representantesLegales = await _commonApplication.GetCatalogoByType("REPRESENTANTE_LEGAL");
         var tipologias = await _commonApplication.GetCatalogoByType("TIPOLOGIA_ESCALAMIENTO");
+        var tiposLeasing = await _commonApplication.GetCatalogoByType(CatalogoTipoLeasing);
 
         return new
         {
             representantes_legales = representantesLegales,
-            tipologias = tipologias
+            tipologias = tipologias,
+            tipos_leasing = tiposLeasing
         };
     }
 
