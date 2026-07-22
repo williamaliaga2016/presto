@@ -1,6 +1,6 @@
-import { Dropdown } from 'primereact/dropdown';
 import { SelectButton } from 'primereact/selectbutton';
 
+import DropdownForm from '@/shared/components/DropdownForm';
 import type { FirmarEscrituraCliente } from '../models/firmar_escritura_cliente';
 import type { CatalogoOption } from '@/models/CatalogoOption';
 
@@ -74,21 +74,15 @@ export default function DecisionesEnrutamientoSection({
 
       {/* Tipologías - visible solo si escalamiento = "SI" */}
       {form.requiere_escalamiento_comercial === 'SI' && (
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold uppercase tracking-wide text-slate-700">
-            Tipologías *
-          </label>
-          <Dropdown
-            value={form.tipologia}
-            options={tipologias}
-            optionLabel="description"
-            optionValue="code"
-            onChange={(e) => updateField('tipologia', e.value)}
-            placeholder="Seleccionar tipología..."
-            className="w-full"
-            disabled={isDisabled}
-          />
-        </div>
+        <DropdownForm
+          label="Tipologías"
+          value={form.tipologia}
+          options={tipologias}
+          onChange={(val) => updateField('tipologia', val)}
+          placeholder="Seleccionar tipología..."
+          disabled={isDisabled}
+          required
+        />
       )}
 
       {/* ¿Requiere Causar? - visible solo si tipo crédito es Leasing */}

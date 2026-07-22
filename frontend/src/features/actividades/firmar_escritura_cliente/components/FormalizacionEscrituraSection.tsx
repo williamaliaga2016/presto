@@ -1,7 +1,6 @@
-import { Dropdown } from 'primereact/dropdown';
-
 import InputTextForm from '@/shared/components/InputTextForm';
 import InputCalendarForm from '@/shared/components/InputCalendarForm';
+import DropdownForm from '@/shared/components/DropdownForm';
 import type { FirmarEscrituraCliente } from '../models/firmar_escritura_cliente';
 import type { CatalogoOption } from '@/models/CatalogoOption';
 
@@ -43,21 +42,16 @@ export default function FormalizacionEscrituraSection({
         required={isRequired}
       />
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold uppercase tracking-wide text-slate-700">
-          Representante Legal
-        </label>
-        <Dropdown
-          value={form.representante_legal}
-          options={representantesLegales}
-          optionLabel="description"
-          optionValue="code"
-          onChange={(e) => updateField('representante_legal', e.value)}
-          placeholder="Seleccionar..."
-          className="w-full"
-          disabled={isDisabled || representantesLegales.length === 0}
-        />
-      </div>
+      <DropdownForm
+        label="Representante Legal"
+        value={form.representante_legal}
+        options={representantesLegales}
+        onChange={(val) => updateField('representante_legal', val)}
+        placeholder="Seleccionar..."
+        disabled={isDisabled}
+        filter
+        filterPlaceholder="Buscar representante..."
+      />
     </>
   );
 }
