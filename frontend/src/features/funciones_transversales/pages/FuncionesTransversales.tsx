@@ -14,6 +14,7 @@ type Props = {
   show_bitacora?: boolean;
   show_carta_aprobacion?: boolean;
   show_carta_compromiso?: boolean;
+  show_registro_contacto?: boolean;
   locked_categoria_id?: number;
   locked_documento_id?: number;
   onDocumentUploaded?: () => void;
@@ -27,6 +28,7 @@ export default function FuncionesTransversales({
   show_bitacora = true,
   show_carta_aprobacion = true,
   show_carta_compromiso = true,
+  show_registro_contacto = true,
   locked_categoria_id,
   locked_documento_id,
   onDocumentUploaded,
@@ -69,12 +71,14 @@ export default function FuncionesTransversales({
         />
       </TabPanel>
 
-      <TabPanel header="Registro Contacto" leftIcon="pi pi-phone">
-        <RegistroContactoPage
-          id_expediente={idExpediente}
-          id_actividad={idActividad}
-        />
-      </TabPanel>
+      {show_registro_contacto && (
+        <TabPanel header="Registro Contacto" leftIcon="pi pi-phone">
+          <RegistroContactoPage
+            id_expediente={idExpediente}
+            id_actividad={idActividad}
+          />
+        </TabPanel>
+      )}
 
       {show_carta_aprobacion && (
         <TabPanel header="Carta de Aprobación" leftIcon="pi pi-file-edit">
