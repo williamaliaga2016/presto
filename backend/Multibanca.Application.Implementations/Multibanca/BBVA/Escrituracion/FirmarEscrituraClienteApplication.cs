@@ -7,6 +7,7 @@ using Framework.WorkFlow.Common.DTO;
 using Multibanca.Application.Interfaces.Common;
 using Multibanca.Application.Interfaces.FuncTransversal;
 using Multibanca.Application.Interfaces.Multibanca;
+using Multibanca.Application.Interfaces.Multibanca.BBVA;
 using Multibanca.Application.Interfaces.Multibanca.BBVA.Escrituracion;
 using Multibanca.Application.Interfaces.Workflow;
 using Multibanca.Common;
@@ -43,6 +44,7 @@ public class FirmarEscrituraClienteApplication
     private readonly IWorkflowApplication _workflowApplication;
     private readonly IBitacoraApplication _bitacoraApplication;
     private readonly IActividadesApplication _actividadesApplication;
+    private readonly IValidarInformacionApplication _validarInformacionApplication;
 
     public FirmarEscrituraClienteApplication(
         MultibancaDBContext multibancaDBContext,
@@ -51,7 +53,8 @@ public class FirmarEscrituraClienteApplication
         ICommonApplication commonApplication,
         IWorkflowApplication workflowApplication,
         IBitacoraApplication bitacoraApplication,
-        IActividadesApplication actividadesApplication)
+        IActividadesApplication actividadesApplication,
+        IValidarInformacionApplication validarInformacionApplication)
         : base(multibancaDBContext, firmarEscrituraClienteRepository, mapper)
     {
         _mapper = mapper;
@@ -59,11 +62,16 @@ public class FirmarEscrituraClienteApplication
         _workflowApplication = workflowApplication;
         _bitacoraApplication = bitacoraApplication;
         _actividadesApplication = actividadesApplication;
+        _validarInformacionApplication = validarInformacionApplication;
     }
 
     public async Task<firmar_escritura_cliente_bbva?> GetByExpediente(long idExpediente)
     {
         var entity = await RepositoryProvider.GetByExpediente(idExpediente);
+
+        // Obtener tipo_credito del expediente (viene de validar_informacion_bbva)
+        var validarInfo = await _validarInformacionApplication.GetByExpediente(idExpediente);
+        string? tipoCredito = validarInfo?.tipo_credito;
 
         if (entity == null)
         {
@@ -75,19 +83,22 @@ public class FirmarEscrituraClienteApplication
                 notaria = null,
                 fecha_notaria = null,
                 numero_notaria = null,
-                ciudad_notaria = null
+                ciudad_notaria = null,
+                tipo_credito = tipoCredito
             };
         }
 
-        return _mapper.Map<firmar_escritura_cliente_bbva>(entity);
+        var result = _mapper.Map<firmar_escritura_cliente_bbva>(entity);
+        result.tipo_credito = tipoCredito;
+        return result;
     }
 
     public async Task<object> GetControles()
     {
-        var representantesLegales = await _commonApplication.GetCatalogoByType("REPRESENTANTE_LEGAL");
-        var tipologias = await _commonApplication.GetCatalogoByType("TIPOLOGIA_ESCALAMIENTO");
+        var representantesLegales = await _commonApplication.GetCatalogoByType(Constants.Catalogo.RepresentanteLegal_L38);
+        var tipologias = await _commonApplication.GetCatalogoByType(Constants.Catalogo.TipologiaEscalamiento);
         var tiposLeasing = await _commonApplication.GetCatalogoByType(CatalogoTipoLeasing);
-        var tiposEscrituracion = await _commonApplication.GetCatalogoByType("ESCRITURACION_TIPO_CREDITO");
+        var tiposEscrituracion = await _commonApplication.GetCatalogoByType(Constants.Catalogo.EscrituracionTiposCredito);
 
         return new
         {

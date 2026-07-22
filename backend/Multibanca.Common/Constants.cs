@@ -272,10 +272,13 @@ namespace Multibanca.Common
             public const string DetalleContacto     = "DETALLE_CONTACTO";
             public const string TipoFirma           = "TIPO_FIRMA";
             public const string TipoCredito         = "TIPO_CREDITO";
+            public const string EscrituracionTiposCredito = "ESCRITURACION_TIPO_CREDITO";
             public const string TipoCreditoLeasing  = "ESCRITURACION_TIPO_CREDITO_LEASING";
             public const string TipoCreditoCXI      = "ESCRITURACION_TIPO_CREDITO_CXI";
             public const string MotivoCierre        = "MOTIVO_CIERRE";
             public const string CodigoOficina       = "CODIGO_OFICINA";
+            public const string RepresentanteLegal_L38 = "L38_REPRESENTANTE_LEGAL";
+            public const string TipologiaEscalamiento = "TIPOLOGIA_ESCALAMIENTO";
         }
 
         // ============================================================
