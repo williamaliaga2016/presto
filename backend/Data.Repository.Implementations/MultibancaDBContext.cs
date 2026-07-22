@@ -179,6 +179,7 @@ namespace Data.Repository.Implementations
         public DbSet<gestionar_firma_bbva> GestionarFirmaBbva { get; set; }
         public DbSet<gestionar_firma_fisica_bbva> GestionarFirmaFisicaBbva { get; set; }
         public DbSet<firmar_escritura_cliente_entity> firmar_escritura_cliente { get; set; }
+        public DbSet<firmar_rep_legal_entity> firmar_rep_legal { get; set; }
 
         public MultibancaDBContext(DbContextOptions<MultibancaDBContext> options) : base(options)
         {
@@ -337,6 +338,8 @@ namespace Data.Repository.Implementations
                 modelBuilder.Entity<gestionar_firma_fisica_bbva>());
             firmar_escritura_cliente_entity_config.SetEntityBuilder(
                 modelBuilder.Entity<firmar_escritura_cliente_entity>());
+            firmar_rep_legal_entity_config.SetEntityBuilder(
+                modelBuilder.Entity<firmar_rep_legal_entity>());
 
             base.OnModelCreating(modelBuilder);
             gestion_rectificatoria_escritura_firmada_postventa_entity_config.SetEntityBuilder(modelBuilder.Entity<gestion_rectificatoria_escritura_firmada_postventa_entity>());

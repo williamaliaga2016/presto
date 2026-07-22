@@ -49,6 +49,7 @@ using Multibanca.Application.Interfaces.Workflow;
 using Multibanca.Application.Interfaces.Multibanca.BBVA.Escrituracion;
 using Multibanca.Application.Implementations.Multibanca.BBVA.Escrituracion;
 using Data.Repository.Implementations.Repositories.Multibanca.BBVA.Escrituracion;
+using Data.Repository.Interfaces.Repositories.Multibanca.BBVA.Escrituracion;
 
 namespace Multibanca.Register.IoC.Multibanca
 {
@@ -211,6 +212,7 @@ namespace Multibanca.Register.IoC.Multibanca
             services.AddScoped<IGestionarFirmaApplication, GestionarFirmaApplication>();
             services.AddScoped<IGestionarFirmaFisicaApplication, GestionarFirmaFisicaApplication>();
             services.AddScoped<IFirmarEscrituraClienteApplication, FirmarEscrituraClienteApplication>();
+            services.AddScoped<IFirmarRepLegalApplication, FirmarRepLegalApplication>();
 
             return services;
         }
@@ -362,6 +364,7 @@ namespace Multibanca.Register.IoC.Multibanca
             services.AddScoped<IGestionarFirmaRepository, GestionarFirmaRepository>();
             services.AddScoped<IGestionarFirmaFisicaRepository, GestionarFirmaFisicaRepository>();
             services.AddScoped<IFirmarEscrituraClienteRepository, FirmarEscrituraClienteRepository>();
+            services.AddScoped<IFirmarRepLegalRepository, FirmarRepLegalRepository>();
 
             return services;
         }
