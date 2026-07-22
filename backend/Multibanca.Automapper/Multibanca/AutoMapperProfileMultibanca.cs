@@ -1,6 +1,7 @@
 using AutoMapper;
 using Data.Repository.Interfaces.Entities.Multibanca;
 using Data.Repository.Interfaces.Entities.Multibanca.BBVA;
+using Data.Repository.Interfaces.Entities.Multibanca.BBVA.Escrituracion;
 using Data.Repository.Interfaces.Entities.Multibanca.BBVA.ValidarIntegracionDocumentos;
 using Data.Repository.Interfaces.Entities.Multibanca.CargaOperacionBanco;
 using Data.Repository.Interfaces.Entities.Multibanca.DatosOperacion;
@@ -10,6 +11,7 @@ using Data.Repository.Interfaces.Entities.Multibanca.ValidacionRectificatoriaLeg
 using Data.Repository.Interfaces.Entities.Multibanca.ValidacionRectificatoriaLegalPostventa;
 using Multibanca.Domain.Models.Multibanca;
 using Multibanca.Domain.Models.Multibanca.BBVA;
+using Multibanca.Domain.Models.Multibanca.BBVA.Escrituracion;
 using Multibanca.Domain.Models.Multibanca.BBVA.ValidarIntegracionDocumentos;
 using Multibanca.Domain.Models.Multibanca.CargaOperacionBanco;
 using Multibanca.Domain.Models.Multibanca.DatosOperacion;
@@ -17,7 +19,6 @@ using Multibanca.Domain.Models.Multibanca.GenerarBorradorEscritura;
 using Multibanca.Domain.Models.Multibanca.RevisarDatosOperacion;
 using Multibanca.Domain.Models.Multibanca.ValidacionRectificatoriaLegal;
 using Multibanca.Domain.Models.Multibanca.ValidacionRectificatoriaLegalPostventa;
-using Multibanca.Domain.Models.Multibanca.BBVA;
 
 namespace Multibanca.Automapper.Multibanca
 {
@@ -152,6 +153,7 @@ namespace Multibanca.Automapper.Multibanca
             CreateMap<validar_integracion_documentos, validar_integracion_documentos_entity>().ReverseMap();
             CreateMap<interviniente_bbva, interviniente_bbva_entity>().ReverseMap();
             CreateMap<devolucion_vb_comercial, devolucion_vb_comercial_entity>().ReverseMap();
+            CreateMap<firmar_escritura_cliente_bbva, firmar_escritura_cliente_entity>().ReverseMap();
         }
     }
 }
