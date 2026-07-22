@@ -30,7 +30,7 @@ export default function InputNumberForm({
       </label>
       <InputNumber
         value={value}
-        onValueChange={(e) => onChange(e.value ?? null)}
+        onChange={(e) => onChange(e.value ?? null)}
         min={min}
         max={max}
         useGrouping={useGrouping}
