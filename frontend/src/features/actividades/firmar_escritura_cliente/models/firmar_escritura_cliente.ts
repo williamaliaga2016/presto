@@ -30,10 +30,14 @@ export interface FirmarEscrituraCliente extends Auditoria{
 export interface ControlesFirmarEscritura {
   representantes_legales?: CatalogoOption[];
   tipologias?: CatalogoOption[];
+  tipos_leasing?: CatalogoOption[];
+  tipos_escrituracion?: CatalogoOption[];
   [key: string]: CatalogoOption[] | undefined;
 }
 
 export const EMPTY_CONTROLES_FIRMAR_ESCRITURA: ControlesFirmarEscritura = {
   representantes_legales: [],
   tipologias: [],
+  tipos_leasing: [],
+  tipos_escrituracion: [],
 };

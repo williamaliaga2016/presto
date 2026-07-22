@@ -91,12 +91,14 @@ public class FirmarEscrituraClienteApplication
         var representantesLegales = await _commonApplication.GetCatalogoByType("REPRESENTANTE_LEGAL");
         var tipologias = await _commonApplication.GetCatalogoByType("TIPOLOGIA_ESCALAMIENTO");
         var tiposLeasing = await _commonApplication.GetCatalogoByType(CatalogoTipoLeasing);
+        var tiposEscrituracion = await _commonApplication.GetCatalogoByType("ESCRITURACION_TIPO_CREDITO");
 
         return new
         {
             representantes_legales = representantesLegales,
             tipologias = tipologias,
-            tipos_leasing = tiposLeasing
+            tipos_leasing = tiposLeasing,
+            tipos_escrituracion = tiposEscrituracion
         };
     }
 

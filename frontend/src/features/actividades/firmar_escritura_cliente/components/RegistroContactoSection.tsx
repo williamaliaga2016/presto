@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Button } from 'primereact/button';
-import { Calendar } from 'primereact/calendar';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
-import { InputText } from 'primereact/inputtext';
-import { InputTextarea } from 'primereact/inputtextarea';
 import { SelectButton } from 'primereact/selectbutton';
 
+import InputTextForm from '@/shared/components/InputTextForm';
+import InputCalendarForm from '@/shared/components/InputCalendarForm';
+import InputTextAreaForm from '@/shared/components/InputTextAreaForm';
 import type { ControlBaseDTO } from '@/shared/models/ControlBaseDTO';
 import {
   EMPTY_REGISTRO_CONTACTO,
@@ -39,15 +39,6 @@ const AREA_CONTACTADA_OPTIONS = [
 
 const formatFecha = (value?: string | null) =>
   value ? new Date(value).toLocaleDateString('es-CO') : '-';
-
-const parseDate = (value?: string | null): Date | null => {
-  if (!value) return null;
-  const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? null : parsed;
-};
-
-const toIso = (value: Date | null | undefined): string | null =>
-  value ? value.toISOString() : null;
 
 const formatSiNo = (value?: boolean | null) => {
   if (value === true) return 'Si';
@@ -228,29 +219,20 @@ export default function RegistroContactoSection({
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1">
-              <label className="text-xs text-gray-500">Nro. Contacto</label>
-              <InputText
-                value={String(form.nro_contacto ?? siguienteContacto)}
-                disabled
-                className="w-full"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-xs text-gray-500">Fecha Contacto *</label>
-              <Calendar
-                value={parseDate(form.fecha_contacto)}
-                onChange={(e) =>
-                  setForm((f) => ({
-                    ...f,
-                    fecha_contacto: toIso(e.value as Date | null) ?? undefined,
-                  }))
-                }
-                dateFormat="dd/mm/yy"
-                showIcon
-                className="w-full"
-              />
-            </div>
+            <InputTextForm
+              label="Nro. Contacto"
+              value={String(form.nro_contacto ?? siguienteContacto)}
+              onChange={() => {}}
+              disabled
+            />
+            <InputCalendarForm
+              label="Fecha Contacto"
+              value={form.fecha_contacto ?? null}
+              onChange={(val) =>
+                setForm((f) => ({ ...f, fecha_contacto: val ?? undefined }))
+              }
+              required
+            />
           </div>
 
           <div className="flex flex-col gap-1">
@@ -315,24 +297,13 @@ export default function RegistroContactoSection({
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-xs text-gray-500">Observaciones</label>
-            <InputTextarea
-              value={form.observaciones ?? ''}
-              onChange={(e) =>
-                setForm((f) => ({
-                  ...f,
-                  observaciones: e.target.value.slice(0, 500),
-                }))
-              }
-              rows={3}
-              maxLength={500}
-              className="w-full"
-            />
-            <span className="text-xs text-gray-400 text-right">
-              {(form.observaciones ?? '').length}/500
-            </span>
-          </div>
+          <InputTextAreaForm
+            label="Observaciones"
+            value={form.observaciones ?? ''}
+            onChange={(val) => setForm((f) => ({ ...f, observaciones: val }))}
+            maxLength={500}
+            rows={3}
+          />
 
           <div className="flex justify-end gap-2">
             <Button

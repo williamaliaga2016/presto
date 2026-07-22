@@ -33,3 +33,17 @@ SELECT 'ESCRITURACION_TIPO_CREDITO_CXI', 'Leasing CXI', 'LEASING_CXI', NULL, tru
 WHERE NOT EXISTS (
     SELECT 1 FROM public.catalogo WHERE tipo = 'ESCRITURACION_TIPO_CREDITO_CXI' AND valor = 'LEASING_CXI'
 );
+
+-- ESCRITURACION_TIPO_CREDITO: todos los tipos de crédito que requieren escrituración (CA02/CA05)
+-- Se usa como guard en el frontend para verificar si la actividad aplica al expediente
+INSERT INTO public.catalogo (tipo, descripcion, valor, id_padre, is_active, orden)
+SELECT 'ESCRITURACION_TIPO_CREDITO', 'Constructor Individual', 'CONSTRUCTOR_INDIVIDUAL', NULL, true, 1
+WHERE NOT EXISTS (
+    SELECT 1 FROM public.catalogo WHERE tipo = 'ESCRITURACION_TIPO_CREDITO' AND valor = 'CONSTRUCTOR_INDIVIDUAL'
+);
+
+INSERT INTO public.catalogo (tipo, descripcion, valor, id_padre, is_active, orden)
+SELECT 'ESCRITURACION_TIPO_CREDITO', 'Hipotecario Nuevo', 'HIPOTECARIO_NUEVO', NULL, true, 2
+WHERE NOT EXISTS (
+    SELECT 1 FROM public.catalogo WHERE tipo = 'ESCRITURACION_TIPO_CREDITO' AND valor = 'HIPOTECARIO_NUEVO'
+);
