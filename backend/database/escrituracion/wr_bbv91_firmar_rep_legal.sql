@@ -56,11 +56,11 @@ WITH l41(codigo, descripcion, orden) AS (
         ('CRL-2', 'Escritura NO firmada', 2)
 )
 INSERT INTO public.catalogo (tipo, descripcion, valor, id_padre, is_active, orden)
-SELECT 'CONCEPTO_FIRMA_REP_LEGAL', l41.descripcion, l41.codigo, NULL, true, l41.orden
+SELECT 'L41_CONCEPTO_FIRMA_REP_LEGAL', l41.descripcion, l41.codigo, NULL, true, l41.orden
 FROM l41
 WHERE NOT EXISTS (
     SELECT 1 FROM public.catalogo c
-    WHERE c.tipo = 'CONCEPTO_FIRMA_REP_LEGAL' AND c.valor = l41.codigo
+    WHERE c.tipo = 'L41_CONCEPTO_FIRMA_REP_LEGAL' AND c.valor = l41.codigo
 );
 
 -- L42 — Tipología Devolución Rep. Legal
@@ -70,11 +70,11 @@ WITH l42(codigo, descripcion, orden) AS (
         ('TRL-2', 'Documentación', 2)
 )
 INSERT INTO public.catalogo (tipo, descripcion, valor, id_padre, is_active, orden)
-SELECT 'TIPOLOGIA_REP_LEGAL', l42.descripcion, l42.codigo, NULL, true, l42.orden
+SELECT 'L42_TIPOLOGIA_REP_LEGAL', l42.descripcion, l42.codigo, NULL, true, l42.orden
 FROM l42
 WHERE NOT EXISTS (
     SELECT 1 FROM public.catalogo c
-    WHERE c.tipo = 'TIPOLOGIA_REP_LEGAL' AND c.valor = l42.codigo
+    WHERE c.tipo = 'L42_TIPOLOGIA_REP_LEGAL' AND c.valor = l42.codigo
 );
 
 -- L43 — Casuística Devolución Rep. Legal (dependiente de L42)
@@ -87,14 +87,14 @@ WITH l43(codigo, descripcion, padre_codigo, orden) AS (
         ('CasRL-5', 'Avalúo con observaciones sin subsanar', 'TRL-2', 5)
 )
 INSERT INTO public.catalogo (tipo, descripcion, valor, id_padre, is_active, orden)
-SELECT 'CASUISTICA_REP_LEGAL', l43.descripcion, l43.codigo, padre.id, true, l43.orden
+SELECT 'L43_CASUISTICA_REP_LEGAL', l43.descripcion, l43.codigo, padre.id, true, l43.orden
 FROM l43
 JOIN public.catalogo padre
-    ON padre.tipo = 'TIPOLOGIA_REP_LEGAL'
+    ON padre.tipo = 'L42_TIPOLOGIA_REP_LEGAL'
    AND padre.valor = l43.padre_codigo
 WHERE NOT EXISTS (
     SELECT 1 FROM public.catalogo c
-    WHERE c.tipo = 'CASUISTICA_REP_LEGAL' AND c.valor = l43.codigo
+    WHERE c.tipo = 'L43_CASUISTICA_REP_LEGAL' AND c.valor = l43.codigo
 );
 
 

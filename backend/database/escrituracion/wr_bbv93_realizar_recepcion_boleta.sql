@@ -67,16 +67,16 @@ WITH l44(codigo, descripcion, orden) AS (
         ('TBOL-3', 'Física Copia', 3)
 )
 INSERT INTO public.catalogo (tipo, descripcion, valor, id_padre, is_active, orden)
-SELECT 'TIPO_BOLETA', l44.descripcion, l44.codigo, NULL, true, l44.orden
+SELECT 'L44_TIPO_BOLETA', l44.descripcion, l44.codigo, NULL, true, l44.orden
 FROM l44
 WHERE NOT EXISTS (
     SELECT 1 FROM public.catalogo c
-    WHERE c.tipo = 'TIPO_BOLETA' AND c.valor = l44.codigo
+    WHERE c.tipo = 'L44_TIPO_BOLETA' AND c.valor = l44.codigo
 );
 
 -- L45 — Oficina de Registro (listado oficial de Oficinas Registrales de Colombia)
 INSERT INTO public.catalogo (tipo, descripcion, valor, id_padre, is_active, orden)
-SELECT 'OFICINA_REGISTRO', v.descripcion, v.codigo, NULL, true, v.orden
+SELECT 'L45_OFICINA_REGISTRO', v.descripcion, v.codigo, NULL, true, v.orden
 FROM (VALUES
     ('400','LETICIA',1),('520','MITÚ',2),('001 N','MEDELLÍN ZONA NORTE',3),('001 S','MEDELLÍN ZONA SUR',4),
     ('2','ABEJORRAL',5),('3','AMALFI',6),('4','ANDES',7),('5','BOLÍVAR',8),('7','DABEIBA',9),
@@ -135,7 +135,7 @@ FROM (VALUES
 ) AS v(codigo, descripcion, orden)
 WHERE NOT EXISTS (
     SELECT 1 FROM public.catalogo c
-    WHERE c.tipo = 'OFICINA_REGISTRO' AND c.valor = v.codigo
+    WHERE c.tipo = 'L45_OFICINA_REGISTRO' AND c.valor = v.codigo
 );
 
 

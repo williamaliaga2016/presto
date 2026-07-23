@@ -72,9 +72,9 @@ public class FirmarRepLegalApplication
 
     public async Task<object> GetControles()
     {
-        var conceptoFirma = await _commonApplication.GetCatalogoByType("CONCEPTO_FIRMA_REP_LEGAL");
-        var tipologia = await _commonApplication.GetCatalogoByType("TIPOLOGIA_REP_LEGAL");
-        var casuistica = await _commonApplication.GetCatalogoByTypeWithParentCode("CASUISTICA_REP_LEGAL");
+        var conceptoFirma = await _commonApplication.GetCatalogoByType(Constants.Catalogo.ConceptoFirmaRepLegal_L41);
+        var tipologia = await _commonApplication.GetCatalogoByType(Constants.Catalogo.TipologiaRepLegal_L42);
+        var casuistica = await _commonApplication.GetCatalogoByTypeWithParentCode(Constants.Catalogo.CasuisticaRepLegal_L43);
 
         return new
         {

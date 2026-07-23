@@ -108,8 +108,8 @@ public class RealizarRecepcionBoletaApplication
 
     public async Task<object> GetControles()
     {
-        var tipoBoleta = await _commonApplication.GetCatalogoByType(Constants.Catalogo.TipoBoleta);
-        var oficinaRegistro = await _commonApplication.GetCatalogoByType(Constants.Catalogo.OficinaRegistro);
+        var tipoBoleta = await _commonApplication.GetCatalogoByType(Constants.Catalogo.TipoBoleta_L44);
+        var oficinaRegistro = await _commonApplication.GetCatalogoByType(Constants.Catalogo.OficinaRegistro_L45);
 
         return new
         {

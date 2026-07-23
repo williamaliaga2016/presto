@@ -280,9 +280,12 @@ namespace Multibanca.Common
             public const string RepresentanteLegal_L38 = "L38_REPRESENTANTE_LEGAL";
             public const string TipologiaCorreccionEP_L39 = "L39_TIPOLOGIA_DEVOLUCION_EP_ABOGADO";
             public const string CasuisticaCorreccionEP_L40 = "L40_CASUISTICA_DEVOLUCION_EP_ABOGADO";
+            public const string ConceptoFirmaRepLegal_L41 = "L41_CONCEPTO_FIRMA_REP_LEGAL";
+            public const string TipologiaRepLegal_L42 = "L42_TIPOLOGIA_REP_LEGAL";
+            public const string CasuisticaRepLegal_L43 = "L43_CASUISTICA_REP_LEGAL";
             public const string TipologiaEscalamiento = "TIPOLOGIA_ESCALAMIENTO";
-            public const string TipoBoleta = "TIPO_BOLETA";
-            public const string OficinaRegistro = "OFICINA_REGISTRO";
+            public const string TipoBoleta_L44 = "L44_TIPO_BOLETA";
+            public const string OficinaRegistro_L45 = "L45_OFICINA_REGISTRO";
         }
 
         // ============================================================
