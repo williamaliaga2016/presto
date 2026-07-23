@@ -62,9 +62,9 @@ GRANT EXECUTE ON FUNCTION public.usp_select_realizar_recepcion_boleta_bbva(BIGIN
 -- L44 — Tipo de Boleta
 WITH l44(codigo, descripcion, orden) AS (
     VALUES
-        ('TBOL-1', 'Digital', 1),
-        ('TBOL-2', 'Física Original', 2),
-        ('TBOL-3', 'Física Copia', 3)
+        ('TBOL-1', 'Física Original', 1),
+        ('TBOL-2', 'Física Copia', 2),
+        ('TBOL-3', 'Electrónica', 3)
 )
 INSERT INTO public.catalogo (tipo, descripcion, valor, id_padre, is_active, orden)
 SELECT 'L44_TIPO_BOLETA', l44.descripcion, l44.codigo, NULL, true, l44.orden

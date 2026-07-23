@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS public.revisar_ep_abogado_bbva (
 
 -- Índice UNIQUE parcial: garantiza un solo registro activo por expediente
 CREATE UNIQUE INDEX IF NOT EXISTS idx_rea_expediente
-    ON public.revisar_ep_abogado (id_expediente)
+    ON public.revisar_ep_abogado_bbva (id_expediente)
     WHERE is_active = true AND row_status = true;
 
 
