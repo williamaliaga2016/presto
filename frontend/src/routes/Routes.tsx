@@ -114,6 +114,7 @@ import FirmarRepLegalPage from "@/features/actividades/firmar_rep_legal/pages/fi
 import RealizarEntregaEpFirmadaPage from "@/features/actividades/realizar_entrega_ep_firmada/pages/realizar_entrega_ep_firmada_page";
 import RealizarRecepcionBoletaPage from "@/features/actividades/realizar_recepcion_boleta/pages/realizar_recepcion_boleta_page";
 import RealizarEPRegistradasPage from "@/features/actividades/realizar_ep_registradas/pages/realizar_ep_registradas_page";
+import RevisarEpAbogadoPage from "@/features/actividades/revisar_ep_abogado/pages/revisar_ep_abogado_page";
 
 export default function AppRouter() {
   const { isAuthenticated } = useAuth();
@@ -255,6 +256,7 @@ export default function AppRouter() {
             <Route path="realizar_entrega_ep_firmada/:id_expediente" element={<RealizarEntregaEpFirmadaPage />} />
             <Route path="realizar_recepcion_boleta/:id_expediente" element={<RealizarRecepcionBoletaPage />} />
             <Route path="realizar_ep_registradas/:id_expediente" element={<RealizarEPRegistradasPage />} />
+            <Route path="revisar_ep_abogado/:id_expediente" element={<RevisarEpAbogadoPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>

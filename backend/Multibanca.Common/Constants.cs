@@ -278,6 +278,8 @@ namespace Multibanca.Common
             public const string MotivoCierre        = "MOTIVO_CIERRE";
             public const string CodigoOficina       = "CODIGO_OFICINA";
             public const string RepresentanteLegal_L38 = "L38_REPRESENTANTE_LEGAL";
+            public const string TipologiaCorreccionEP_L39 = "L39_TIPOLOGIA_DEVOLUCION_EP_ABOGADO";
+            public const string CasuisticaCorreccionEP_L40 = "L40_CASUISTICA_DEVOLUCION_EP_ABOGADO";
             public const string TipologiaEscalamiento = "TIPOLOGIA_ESCALAMIENTO";
             public const string TipoBoleta = "TIPO_BOLETA";
             public const string OficinaRegistro = "OFICINA_REGISTRO";
@@ -323,10 +325,10 @@ namespace Multibanca.Common
         {
             // BBVA Escrituración — Firmar Escritura Cliente
             // TODO: Reemplazar con los nombres reales de transición del XPDL
-            public const string EscrituracionEscalamientoComercial = "TR_FIRMAR_ESC_ESCALAMIENTO_COMERCIAL";
-            public const string EscrituracionRevisarEP = "TR_FIRMAR_ESC_REVISAR_EP";
-            public const string EscrituracionVBProrrata = "TR_FIRMAR_ESC_VB_PRORRATA";
-            public const string EscrituracionCausacion = "TR_FIRMAR_ESC_CAUSACION";
+            public const string FirmarEscClienteAEscalamientoComercial = "TR_FIRMAR_ESC_ESCALAMIENTO_COMERCIAL";
+            public const string FirmarEscClienteARevisarEP = "TR_FIRMAR_ESC_REVISAR_EP";
+            public const string FirmarEscClienteAVBProrrata = "TR_FIRMAR_ESC_VB_PRORRATA";
+            public const string FirmarEscClienteACausacion = "TR_FIRMAR_ESC_CAUSACION";
 
             // BBVA Escrituración — Firmar Rep. Legal
             // TODO: Reemplazar con los nombres reales de transición del XPDL
@@ -343,6 +345,9 @@ namespace Multibanca.Common
 
             // BBVA Escrituración — Realizar EP Registradas
             public const string EPRegistradasVBFinalAbogado = "BBVA_ESCRITURACION_TR_EP_REGISTRADAS_VB_FINAL_ABOGADO";
+            // BBVA Escrituración — Revisar EP Abogado
+            public const string RevisarEPAFirmarRepLegal = "TR_REVISAR_EP_FIRMAR_REP_LEGAL";
+            public const string RevisarEPADevolucion = "TR_REVISAR_EP_DEVOLUCION";
         }
 
         // ============================================================

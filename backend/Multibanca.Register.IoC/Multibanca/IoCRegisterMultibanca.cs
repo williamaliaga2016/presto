@@ -216,6 +216,7 @@ namespace Multibanca.Register.IoC.Multibanca
             services.AddScoped<IRealizarEntregaEpFirmadaApplication, RealizarEntregaEpFirmadaApplication>();
             services.AddScoped<IRealizarRecepcionBoletaApplication, RealizarRecepcionBoletaApplication>();
             services.AddScoped<IRealizarEPRegistradasApplication, RealizarEPRegistradasApplication>();
+            services.AddScoped<IRevisarEpAbogadoApplication, RevisarEpAbogadoApplication>();
 
             return services;
         }
@@ -371,6 +372,7 @@ namespace Multibanca.Register.IoC.Multibanca
             services.AddScoped<IRealizarEntregaEpFirmadaRepository, RealizarEntregaEpFirmadaRepository>();
             services.AddScoped<IRealizarRecepcionBoletaRepository, RealizarRecepcionBoletaRepository>();
             services.AddScoped<IRealizarEPRegistradasRepository, RealizarEPRegistradasRepository>();
+            services.AddScoped<IRevisarEpAbogadoRepository, RevisarEpAbogadoRepository>();
 
             return services;
         }

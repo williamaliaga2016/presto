@@ -22,10 +22,10 @@ public class FirmarEscrituraClienteApplication
       IFirmarEscrituraClienteApplication
 {
     // Constantes de transición (workflow XPDL)
-    private const string TransicionEscalamientoComercial = Constants.TransicionesBBVA.EscrituracionEscalamientoComercial;
-    private const string TransicionRevisarEP = Constants.TransicionesBBVA.EscrituracionRevisarEP;
-    private const string TransicionVBProrrata = Constants.TransicionesBBVA.EscrituracionVBProrrata;
-    private const string TransicionCausacion = Constants.TransicionesBBVA.EscrituracionCausacion;
+    private const string TransicionEscalamientoComercial = Constants.TransicionesBBVA.FirmarEscClienteAEscalamientoComercial;
+    private const string TransicionRevisarEP = Constants.TransicionesBBVA.FirmarEscClienteARevisarEP;
+    private const string TransicionVBProrrata = Constants.TransicionesBBVA.FirmarEscClienteAVBProrrata;
+    private const string TransicionCausacion = Constants.TransicionesBBVA.FirmarEscClienteACausacion;
 
     // ID de la actividad actual en el workflow
     private static readonly string ActividadFirmarEscrituraCliente = Constants.ActividadesBBVA.EscrituracionFirmarEscrituraCliente;
@@ -118,8 +118,8 @@ public class FirmarEscrituraClienteApplication
         var formulario = _mapper.Map<firmar_escritura_cliente_bbva>(entity);
 
         // Cargar catálogos de tipo de crédito una sola vez
-        var tiposLeasing = await _commonApplication.GetCatalogoByType(CatalogoTipoLeasing);
-        var tiposCXI = await _commonApplication.GetCatalogoByType(CatalogoTipoCXI);
+        List<ControlBaseDTO> tiposLeasing = await _commonApplication.GetCatalogoByType(CatalogoTipoLeasing);
+        List<ControlBaseDTO> tiposCXI = await _commonApplication.GetCatalogoByType(CatalogoTipoCXI);
 
         // CA06, CA10 — Obligatoriedad condicionada según escalamiento comercial
         ValidarCamposObligatorios(formulario, tiposLeasing);
