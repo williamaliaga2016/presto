@@ -4,7 +4,7 @@ public class revisar_ep_abogado_bbva
 {
     public long id { get; set; }
     public long id_expediente { get; set; }
-    public string id_actividad { get; set; } = "ACT_REVISAR_EP_ABOGADO";
+    public string id_actividad { get; set; } = "BBVA_ESCRITURACION_REVISAR_EP_ABOGADO";
 
     // Datos heredados de firmar_escritura_cliente (solo lectura en UI)
     public string?   notaria { get; set; }

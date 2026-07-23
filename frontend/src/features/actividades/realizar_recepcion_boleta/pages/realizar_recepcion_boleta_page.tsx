@@ -106,6 +106,7 @@ export default function RealizarRecepcionBoletaPage() {
           vur_ejecutado: updated.vur_ejecutado,
           vur_exitoso: updated.vur_exitoso,
           vur_intentos: updated.vur_intentos,
+          id : updated.id
         }));
 
         toast.current?.show({

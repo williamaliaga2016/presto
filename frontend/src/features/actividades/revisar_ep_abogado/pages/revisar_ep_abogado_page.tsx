@@ -18,7 +18,7 @@ import { useControlesRevisarEp } from '../hooks/useControlesRevisarEp';
 import { useUpsertRevisarEp } from '../hooks/useUpsertRevisarEp';
 import { useAvanzarRevisarEp } from '../hooks/useAvanzarRevisarEp';
 
-const ACTIVITY_ID = 'ACT_REVISAR_EP_ABOGADO';
+const ACTIVITY_ID = 'BBVA_ESCRITURACION_REVISAR_EP_ABOGADO';
 
 const buildInitialState = (id_expediente: number): RevisarEpAbogado => ({
   id: 0,

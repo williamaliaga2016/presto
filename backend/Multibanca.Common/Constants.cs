@@ -313,9 +313,9 @@ namespace Multibanca.Common
             public const string EscrituracionFirmarEscrituraCliente = "BBVA_ESCRITURACION_FIRMAR_ESCRITURA_CLIENTE_CE5FAC2F";
             public const string EscrituracionFirmarRepLegal = "BBVA_ESCRITURACION_FIRMAR_REP_LEGAL";
             public const string EscrituracionRealizarEntregaEpFirmada = "BBVA_ESCRITURACION_REALIZAR_ENTREGA_EP_FIRMADA";
-            public const string EscrituracionRevisarEPAbogado = "ACT_REVISAR_EP_ABOGADO";
-            public const string EscrituracionVBProrrata = "ACT_VB_PRORRATA";
-            public const string EscrituracionRealizarCausacion = "ACT_REALIZAR_CAUSACION";
+            public const string EscrituracionRevisarEPAbogado = "BBVA_ESCRITURACION_REVISAR_EP_ABOGADO";
+            public const string EscrituracionVBProrrata = "BBVA_ESCRITURACION_VB_PRORRATA";
+            public const string EscrituracionRealizarCausacion = "BBVA_ESCRITURACION_REALIZAR_CAUSACION";
             public const string EscrituracionRealizarRecepcionBoleta = "BBVA_ESCRITURACION_REALIZAR_RECEPCION_BOLETA";
             public const string EscrituracionRealizarEPRegistradas = "BBVA_ESCRITURACION_REALIZAR_EP_REGISTRADAS";
             public const string EscrituracionRealizarVBFinalAbogado = "BBVA_ESCRITURACION_REALIZAR_VB_FINAL_ABOGADO";
@@ -348,7 +348,7 @@ namespace Multibanca.Common
 
             // BBVA Escrituración — Realizar EP Registradas
             public const string EPRegistradasVBFinalAbogado = "BBVA_ESCRITURACION_TR_EP_REGISTRADAS_VB_FINAL_ABOGADO";
-            // BBVA Escrituración — Revisar EP Abogado
+            // BBVA Escrituración — Revisar EP Abogado (BBV-130)
             public const string RevisarEPAFirmarRepLegal = "TR_REVISAR_EP_FIRMAR_REP_LEGAL";
             public const string RevisarEPADevolucion = "TR_REVISAR_EP_DEVOLUCION";
         }

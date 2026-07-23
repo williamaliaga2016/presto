@@ -90,7 +90,7 @@ public class RealizarEntregaEpFirmadaApplication
         string? conceptoFirmaDescripcion = null;
         if (!string.IsNullOrWhiteSpace(firmarRepLegal?.concepto_firma))
         {
-            var catalogoConcepto = await _commonApplication.GetCatalogoByType("CONCEPTO_FIRMA_REP_LEGAL");
+            var catalogoConcepto = await _commonApplication.GetCatalogoByType(Constants.Catalogo.ConceptoFirmaRepLegal_L41);
             conceptoFirmaDescripcion = catalogoConcepto
                 .FirstOrDefault(c => c.code == firmarRepLegal.concepto_firma)?.description;
         }
