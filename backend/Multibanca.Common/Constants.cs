@@ -304,6 +304,7 @@ namespace Multibanca.Common
 
             // Actividades destino para verificar conceptos previos (enrutamiento)
             public const string EscrituracionFirmarEscrituraCliente = "BBVA_ESCRITURACION_FIRMAR_ESCRITURA_CLIENTE_CE5FAC2F";
+            public const string EscrituracionFirmarRepLegal = "BBVA_ESCRITURACION_FIRMAR_REP_LEGAL";
             public const string EscrituracionRevisarEPAbogado = "ACT_REVISAR_EP_ABOGADO";
             public const string EscrituracionVBProrrata = "ACT_VB_PRORRATA";
             public const string EscrituracionRealizarCausacion = "ACT_REALIZAR_CAUSACION";
@@ -320,6 +321,11 @@ namespace Multibanca.Common
             public const string EscrituracionRevisarEP = "TR_FIRMAR_ESC_REVISAR_EP";
             public const string EscrituracionVBProrrata = "TR_FIRMAR_ESC_VB_PRORRATA";
             public const string EscrituracionCausacion = "TR_FIRMAR_ESC_CAUSACION";
+
+            // BBVA Escrituración — Firmar Rep. Legal
+            // TODO: Reemplazar con los nombres reales de transición del XPDL
+            public const string FirmarRepLegalEntregaEP = "BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_ENTREGA_EP";
+            public const string FirmarRepLegalDevolucion = "BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_DEVOLUCION";
         }
 
         // ============================================================

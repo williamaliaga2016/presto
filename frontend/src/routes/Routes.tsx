@@ -110,6 +110,7 @@ import CargarSoportesPagoPage from "@/features/actividades/cargar_soportes_pago/
 import GestionarFirmaPage from "@/features/actividades/gestionar_firma/pages/gestionar_firma_page";
 import GestionarFirmaFisicaPage from "@/features/actividades/gestionar_firma_fisica/pages/gestionar_firma_fisica_page";
 import FirmarEscrituraClientePage from "@/features/actividades/firmar_escritura_cliente/pages/firmar_escritura_cliente_page";
+import FirmarRepLegalPage from "@/features/actividades/firmar_rep_legal/pages/firmar_rep_legal_page";
 
 export default function AppRouter() {
   const { isAuthenticated } = useAuth();
@@ -247,6 +248,7 @@ export default function AppRouter() {
             <Route path="gestionar_firma/:id_expediente" element={<GestionarFirmaPage />} />
             <Route path="gestionar_firmas_fisica/:id_expediente" element={<GestionarFirmaFisicaPage />} />
             <Route path="firmar_escritura_cliente/:id_expediente" element={<FirmarEscrituraClientePage />} />
+            <Route path="firmar_rep_legal/:id_expediente" element={<FirmarRepLegalPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>
