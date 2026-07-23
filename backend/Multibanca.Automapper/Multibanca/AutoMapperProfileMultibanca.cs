@@ -155,6 +155,7 @@ namespace Multibanca.Automapper.Multibanca
             CreateMap<devolucion_vb_comercial, devolucion_vb_comercial_entity>().ReverseMap();
             CreateMap<firmar_escritura_cliente_bbva, firmar_escritura_cliente_entity>().ReverseMap();
             CreateMap<firmar_rep_legal, firmar_rep_legal_entity>().ReverseMap();
+            CreateMap<revisar_ep_abogado_bbva, revisar_ep_abogado_entity>().ReverseMap();
         }
     }
 }

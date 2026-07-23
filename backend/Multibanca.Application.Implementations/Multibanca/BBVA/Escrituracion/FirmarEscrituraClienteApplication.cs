@@ -13,6 +13,7 @@ using Multibanca.Application.Interfaces.Workflow;
 using Multibanca.Common;
 using Multibanca.Domain.Models.FuncTransversal;
 using Multibanca.Domain.Models.Multibanca.BBVA.Escrituracion;
+using Multibanca.DTO.Common;
 
 namespace Multibanca.Application.Implementations.Multibanca.BBVA.Escrituracion;
 
@@ -21,10 +22,10 @@ public class FirmarEscrituraClienteApplication
       IFirmarEscrituraClienteApplication
 {
     // Constantes de transición (workflow XPDL)
-    private const string TransicionEscalamientoComercial = Constants.TransicionesBBVA.EscrituracionEscalamientoComercial;
-    private const string TransicionRevisarEP = Constants.TransicionesBBVA.EscrituracionRevisarEP;
-    private const string TransicionVBProrrata = Constants.TransicionesBBVA.EscrituracionVBProrrata;
-    private const string TransicionCausacion = Constants.TransicionesBBVA.EscrituracionCausacion;
+    private const string TransicionEscalamientoComercial = Constants.TransicionesBBVA.FirmarEscClienteAEscalamientoComercial;
+    private const string TransicionRevisarEP = Constants.TransicionesBBVA.FirmarEscClienteARevisarEP;
+    private const string TransicionVBProrrata = Constants.TransicionesBBVA.FirmarEscClienteAVBProrrata;
+    private const string TransicionCausacion = Constants.TransicionesBBVA.FirmarEscClienteACausacion;
 
     // ID de la actividad actual en el workflow
     private static readonly string ActividadFirmarEscrituraCliente = Constants.ActividadesBBVA.EscrituracionFirmarEscrituraCliente;
@@ -117,8 +118,8 @@ public class FirmarEscrituraClienteApplication
         var formulario = _mapper.Map<firmar_escritura_cliente_bbva>(entity);
 
         // Cargar catálogos de tipo de crédito una sola vez
-        var tiposLeasing = await _commonApplication.GetCatalogoByType(CatalogoTipoLeasing);
-        var tiposCXI = await _commonApplication.GetCatalogoByType(CatalogoTipoCXI);
+        List<ControlBaseDTO> tiposLeasing = await _commonApplication.GetCatalogoByType(CatalogoTipoLeasing);
+        List<ControlBaseDTO> tiposCXI = await _commonApplication.GetCatalogoByType(CatalogoTipoCXI);
 
         // CA06, CA10 — Obligatoriedad condicionada según escalamiento comercial
         ValidarCamposObligatorios(formulario, tiposLeasing);
@@ -208,7 +209,7 @@ public class FirmarEscrituraClienteApplication
 
     // ======================== Métodos privados ========================
 
-    private static void ValidarCamposObligatorios(firmar_escritura_cliente_bbva formulario, IEnumerable<dynamic> tiposLeasing)
+    private static void ValidarCamposObligatorios(firmar_escritura_cliente_bbva formulario, IEnumerable<ControlBaseDTO> tiposLeasing)
     {
         var camposFaltantes = new List<string>();
 
@@ -255,20 +256,20 @@ public class FirmarEscrituraClienteApplication
         }
     }
 
-    private static bool EsTipoLeasing(string? tipoCredito, IEnumerable<dynamic> tiposLeasing)
+    private static bool EsTipoLeasing(string? tipoCredito, IEnumerable<ControlBaseDTO> tiposLeasing)
     {
         if (string.IsNullOrWhiteSpace(tipoCredito))
             return false;
 
-        return tiposLeasing.Any(t => string.Equals((string)t.valor, tipoCredito, StringComparison.OrdinalIgnoreCase));
+        return tiposLeasing.Any(t => string.Equals(t.code, tipoCredito, StringComparison.OrdinalIgnoreCase));
     }
 
-    private static bool EsTipoCXI(string? tipoCredito, IEnumerable<dynamic> tiposCXI)
+    private static bool EsTipoCXI(string? tipoCredito, IEnumerable<ControlBaseDTO> tiposCXI)
     {
         if (string.IsNullOrWhiteSpace(tipoCredito))
             return false;
 
-        return tiposCXI.Any(t => string.Equals((string)t.valor, tipoCredito, StringComparison.OrdinalIgnoreCase));
+        return tiposCXI.Any(t => string.Equals(t.code, tipoCredito, StringComparison.OrdinalIgnoreCase));
     }
 
     private void RegistrarBitacora(
@@ -276,8 +277,8 @@ public class FirmarEscrituraClienteApplication
         int userId,
         firmar_escritura_cliente_bbva formulario,
         List<AssignActivityDTO> actividadesCreadas,
-        IEnumerable<dynamic> tiposLeasing,
-        IEnumerable<dynamic> tiposCXI)
+        IEnumerable<ControlBaseDTO> tiposLeasing,
+        IEnumerable<ControlBaseDTO> tiposCXI)
     {
         List<string> decisiones = new List<string>();
 
