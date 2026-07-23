@@ -111,6 +111,9 @@ import GestionarFirmaPage from "@/features/actividades/gestionar_firma/pages/ges
 import GestionarFirmaFisicaPage from "@/features/actividades/gestionar_firma_fisica/pages/gestionar_firma_fisica_page";
 import FirmarEscrituraClientePage from "@/features/actividades/firmar_escritura_cliente/pages/firmar_escritura_cliente_page";
 import FirmarRepLegalPage from "@/features/actividades/firmar_rep_legal/pages/firmar_rep_legal_page";
+import RealizarEntregaEpFirmadaPage from "@/features/actividades/realizar_entrega_ep_firmada/pages/realizar_entrega_ep_firmada_page";
+import RealizarRecepcionBoletaPage from "@/features/actividades/realizar_recepcion_boleta/pages/realizar_recepcion_boleta_page";
+import RealizarEPRegistradasPage from "@/features/actividades/realizar_ep_registradas/pages/realizar_ep_registradas_page";
 import RevisarEpAbogadoPage from "@/features/actividades/revisar_ep_abogado/pages/revisar_ep_abogado_page";
 
 export default function AppRouter() {
@@ -250,6 +253,9 @@ export default function AppRouter() {
             <Route path="gestionar_firmas_fisica/:id_expediente" element={<GestionarFirmaFisicaPage />} />
             <Route path="firmar_escritura_cliente/:id_expediente" element={<FirmarEscrituraClientePage />} />
             <Route path="firmar_rep_legal/:id_expediente" element={<FirmarRepLegalPage />} />
+            <Route path="realizar_entrega_ep_firmada/:id_expediente" element={<RealizarEntregaEpFirmadaPage />} />
+            <Route path="realizar_recepcion_boleta/:id_expediente" element={<RealizarRecepcionBoletaPage />} />
+            <Route path="realizar_ep_registradas/:id_expediente" element={<RealizarEPRegistradasPage />} />
             <Route path="revisar_ep_abogado/:id_expediente" element={<RevisarEpAbogadoPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>

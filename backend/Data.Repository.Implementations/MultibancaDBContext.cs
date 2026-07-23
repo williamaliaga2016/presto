@@ -181,6 +181,9 @@ namespace Data.Repository.Implementations
         public DbSet<firmar_escritura_cliente_entity> firmar_escritura_cliente { get; set; }
         public DbSet<revisar_ep_abogado_entity> revisar_ep_abogado { get; set; }
         public DbSet<firmar_rep_legal_entity> firmar_rep_legal { get; set; }
+        public DbSet<realizar_entrega_ep_firmada_entity> realizar_entrega_ep_firmada { get; set; }
+        public DbSet<realizar_recepcion_boleta_entity> realizar_recepcion_boleta { get; set; }
+        public DbSet<realizar_ep_registradas_entity> realizar_ep_registradas { get; set; }
 
         public MultibancaDBContext(DbContextOptions<MultibancaDBContext> options) : base(options)
         {
@@ -343,6 +346,12 @@ namespace Data.Repository.Implementations
                 modelBuilder.Entity<revisar_ep_abogado_entity>());
             firmar_rep_legal_entity_config.SetEntityBuilder(
                 modelBuilder.Entity<firmar_rep_legal_entity>());
+            realizar_entrega_ep_firmada_entity_config.SetEntityBuilder(
+                modelBuilder.Entity<realizar_entrega_ep_firmada_entity>());
+            realizar_recepcion_boleta_entity_config.SetEntityBuilder(
+                modelBuilder.Entity<realizar_recepcion_boleta_entity>());
+            realizar_ep_registradas_entity_config.SetEntityBuilder(
+                modelBuilder.Entity<realizar_ep_registradas_entity>());
 
             base.OnModelCreating(modelBuilder);
             gestion_rectificatoria_escritura_firmada_postventa_entity_config.SetEntityBuilder(modelBuilder.Entity<gestion_rectificatoria_escritura_firmada_postventa_entity>());

@@ -74,6 +74,27 @@ AS $$
 $$;
 ```
 
+### 1.3 Registro en cat_actividades_ws (bandeja)
+
+> **OBLIGATORIO** para que la actividad aparezca en la bandeja de trabajo.
+
+```sql
+-- Firmar Rep. Legal (esta HU)
+INSERT INTO public.cat_actividades_ws (actividad, id_actividad, id_proceso, proceso, id_role, tipo, page, etapa, tiempo_promedio, is_active, row_status, created_by, created_date)
+SELECT 'Firmar Rep. Legal', 'BBVA_ESCRITURACION_FIRMAR_REP_LEGAL', 'WP_BBVA_ESCRITURACION', 'Escrituración', 1, 'actividad', 'firmar_rep_legal', '1', 1, true, true, 'admin', NOW()
+WHERE NOT EXISTS (SELECT 1 FROM cat_actividades_ws WHERE id_actividad = 'BBVA_ESCRITURACION_FIRMAR_REP_LEGAL');
+
+-- Destino: Realizar Entrega EP Firmada (cuando firma es conforme)
+INSERT INTO public.cat_actividades_ws (actividad, id_actividad, id_proceso, proceso, id_role, tipo, page, etapa, tiempo_promedio, is_active, row_status, created_by, created_date)
+SELECT 'Realizar Entrega EP Firmada', 'BBVA_ESCRITURACION_REALIZAR_ENTREGA_EP_FIRMADA', 'WP_BBVA_ESCRITURACION', 'Escrituración', 1, 'actividad', 'realizar_entrega_ep_firmada', '1', 1, true, true, 'admin', NOW()
+WHERE NOT EXISTS (SELECT 1 FROM cat_actividades_ws WHERE id_actividad = 'BBVA_ESCRITURACION_REALIZAR_ENTREGA_EP_FIRMADA');
+
+-- Destino: Realizar Devolución EP (cuando escritura NO firmada)
+INSERT INTO public.cat_actividades_ws (actividad, id_actividad, id_proceso, proceso, id_role, tipo, page, etapa, tiempo_promedio, is_active, row_status, created_by, created_date)
+SELECT 'Realizar Devolución EP', 'BBVA_ESCRITURACION_REALIZAR_DEVOLUCION_EP', 'WP_BBVA_ESCRITURACION', 'Escrituración', 1, 'actividad', 'realizar_devolucion_ep', '1', 1, true, true, 'admin', NOW()
+WHERE NOT EXISTS (SELECT 1 FROM cat_actividades_ws WHERE id_actividad = 'BBVA_ESCRITURACION_REALIZAR_DEVOLUCION_EP');
+```
+
 ### 1.3 Insert / Update
 
 > **NO se necesita SP para insert/update.**

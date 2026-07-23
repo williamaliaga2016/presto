@@ -281,6 +281,8 @@ namespace Multibanca.Common
             public const string TipologiaCorreccionEP_L39 = "L39_TIPOLOGIA_DEVOLUCION_EP_ABOGADO";
             public const string CasuisticaCorreccionEP_L40 = "L40_CASUISTICA_DEVOLUCION_EP_ABOGADO";
             public const string TipologiaEscalamiento = "TIPOLOGIA_ESCALAMIENTO";
+            public const string TipoBoleta = "TIPO_BOLETA";
+            public const string OficinaRegistro = "OFICINA_REGISTRO";
         }
 
         // ============================================================
@@ -307,9 +309,13 @@ namespace Multibanca.Common
             // Actividades destino para verificar conceptos previos (enrutamiento)
             public const string EscrituracionFirmarEscrituraCliente = "BBVA_ESCRITURACION_FIRMAR_ESCRITURA_CLIENTE_CE5FAC2F";
             public const string EscrituracionFirmarRepLegal = "BBVA_ESCRITURACION_FIRMAR_REP_LEGAL";
+            public const string EscrituracionRealizarEntregaEpFirmada = "BBVA_ESCRITURACION_REALIZAR_ENTREGA_EP_FIRMADA";
             public const string EscrituracionRevisarEPAbogado = "ACT_REVISAR_EP_ABOGADO";
             public const string EscrituracionVBProrrata = "ACT_VB_PRORRATA";
             public const string EscrituracionRealizarCausacion = "ACT_REALIZAR_CAUSACION";
+            public const string EscrituracionRealizarRecepcionBoleta = "BBVA_ESCRITURACION_REALIZAR_RECEPCION_BOLETA";
+            public const string EscrituracionRealizarEPRegistradas = "BBVA_ESCRITURACION_REALIZAR_EP_REGISTRADAS";
+            public const string EscrituracionRealizarVBFinalAbogado = "BBVA_ESCRITURACION_REALIZAR_VB_FINAL_ABOGADO";
         }
 
         // ============================================================
@@ -329,6 +335,16 @@ namespace Multibanca.Common
             public const string FirmarRepLegalEntregaEP = "BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_ENTREGA_EP";
             public const string FirmarRepLegalDevolucion = "BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_DEVOLUCION";
 
+            // BBVA Escrituración — Realizar Entrega EP Firmada
+            public const string EntregaEpFirmadaRecepcionBoleta = "BBVA_ESCRITURACION_TR_ENTREGA_EP_RECEPCION_BOLETA";
+            public const string EntregaEpFirmadaExcepcionDesembolso = "BBVA_ESCRITURACION_TR_ENTREGA_EP_EXCEPCION_DESEMBOLSO";
+
+            // BBVA Escrituración — Realizar Recepción Boleta
+            public const string RecepcionBoletaEPRegistradas = "BBVA_ESCRITURACION_TR_RECEPCION_BOLETA_EP_REGISTRADAS";
+            public const string RecepcionBoletaExcepcionDesembolso = "BBVA_ESCRITURACION_TR_RECEPCION_BOLETA_EXCEPCION_DESEMBOLSO";
+
+            // BBVA Escrituración — Realizar EP Registradas
+            public const string EPRegistradasVBFinalAbogado = "BBVA_ESCRITURACION_TR_EP_REGISTRADAS_VB_FINAL_ABOGADO";
             // BBVA Escrituración — Revisar EP Abogado
             public const string RevisarEPAFirmarRepLegal = "TR_REVISAR_EP_FIRMAR_REP_LEGAL";
             public const string RevisarEPADevolucion = "TR_REVISAR_EP_DEVOLUCION";
