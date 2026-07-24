@@ -1,5 +1,5 @@
-import { Dropdown } from 'primereact/dropdown';
-import { InputTextarea } from 'primereact/inputtextarea';
+import DropdownForm from '@/shared/components/DropdownForm';
+import InputTextAreaForm from '@/shared/components/InputTextAreaForm';
 import type { FirmarRepLegal } from '../models/firmar_rep_legal';
 import type { ControlBaseDTO } from '@/shared/models/ControlBaseDTO';
 
@@ -30,77 +30,55 @@ export default function ConceptoFirmaSection({
   return (
     <>
       {/* Concepto de Firma — Dropdown L41 */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold uppercase tracking-wide text-slate-700">
-          Concepto de Firma *
-        </label>
-        <Dropdown
-          value={form.concepto_firma}
-          options={conceptoOptions}
-          optionLabel="description"
-          optionValue="code"
-          onChange={(e) => onConceptoChange(e.value)}
-          placeholder="Seleccione concepto..."
-          className="w-full"
-          disabled={isDisabled}
-        />
-      </div>
+      <DropdownForm
+        label="Concepto de Firma"
+        value={form.concepto_firma}
+        options={conceptoOptions}
+        onChange={(val) => onConceptoChange(val ?? '')}
+        placeholder="Seleccione concepto..."
+        disabled={isDisabled}
+        required
+      />
 
       {/* Campos condicionales: solo visibles si "Escritura NO firmada" (CRL-2) */}
       {form.concepto_firma === 'CRL-2' && (
         <>
-          {/* Tipología (L42) */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-700">
-              Tipología *
-            </label>
-            <Dropdown
-              value={form.tipologia}
-              options={tipologiaOptions}
-              optionLabel="description"
-              optionValue="code"
-              onChange={(e) => onTipologiaChange(e.value)}
-              placeholder="Seleccionar tipología..."
-              className="w-full"
-              disabled={isDisabled}
-            />
-          </div>
+          <DropdownForm
+            label="Tipología"
+            value={form.tipologia}
+            options={tipologiaOptions}
+            onChange={(val) => onTipologiaChange(val ?? '')}
+            placeholder="Seleccionar tipología..."
+            disabled={isDisabled}
+            required
+          />
 
-          {/* Casuística (L43) — dependiente de tipología */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-700">
-              Casuística *
-            </label>
-            <Dropdown
-              value={form.casuistica}
-              options={casuisticaOptions}
-              optionLabel="description"
-              optionValue="code"
-              onChange={(e) => updateField('casuistica', e.value)}
-              placeholder={
-                !form.tipologia
-                  ? 'Seleccione primero una tipología'
-                  : casuisticaOptions.length === 0
-                    ? 'Sin casuísticas configuradas'
-                    : 'Seleccionar casuística...'
-              }
-              className="w-full"
-              disabled={isDisabled || !form.tipologia}
-            />
-          </div>
+          <DropdownForm
+            label="Casuística"
+            value={form.casuistica}
+            options={casuisticaOptions}
+            onChange={(val) => updateField('casuistica', val)}
+            placeholder={
+              !form.tipologia
+                ? 'Seleccione primero una tipología'
+                : casuisticaOptions.length === 0
+                  ? 'Sin casuísticas configuradas'
+                  : 'Seleccionar casuística...'
+            }
+            disabled={isDisabled || !form.tipologia}
+            required
+          />
 
-          {/* Observaciones */}
-          <div className="md:col-span-3 flex flex-col gap-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-700">
-              Observaciones *
-            </label>
-            <InputTextarea
+          <div className="md:col-span-3">
+            <InputTextAreaForm
+              label="Observaciones"
               value={form.observaciones ?? ''}
-              onChange={(e) => updateField('observaciones', e.target.value || null)}
+              onChange={(val) => updateField('observaciones', val || null)}
               maxLength={500}
               rows={4}
               placeholder="Indique el motivo de la no firma (máximo 500 caracteres)"
               disabled={isDisabled}
+              required
             />
           </div>
         </>
