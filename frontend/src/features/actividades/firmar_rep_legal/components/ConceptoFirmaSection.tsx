@@ -1,6 +1,5 @@
 import { Dropdown } from 'primereact/dropdown';
-import SwitchForm from '@/shared/components/SwitchForm';
-import InputTextAreaForm from '@/shared/components/InputTextAreaForm';
+import { InputTextarea } from 'primereact/inputtextarea';
 import type { FirmarRepLegal } from '../models/firmar_rep_legal';
 import type { ControlBaseDTO } from '@/shared/models/ControlBaseDTO';
 
@@ -22,27 +21,30 @@ export default function ConceptoFirmaSection({
   form,
   isDisabled,
   updateField,
+  conceptoOptions,
   tipologiaOptions,
   casuisticaOptions,
   onConceptoChange,
   onTipologiaChange,
 }: Props) {
-  const handleConceptoSwitch = (value: boolean) => {
-    // true = Firmada Conforme (CRL-1), false = NO firmada (CRL-2)
-    const code = value ? 'CRL-1' : 'CRL-2';
-    onConceptoChange(code);
-  };
-
   return (
     <>
-      {/* Concepto de Firma — Switch: Firmada Conforme SI/NO */}
-      <SwitchForm
-        label="¿Escritura Firmada Conforme?"
-        value={form.concepto_firma === 'CRL-1'}
-        onChange={handleConceptoSwitch}
-        disabled={isDisabled}
-        required
-      />
+      {/* Concepto de Firma — Dropdown L41 */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+          Concepto de Firma *
+        </label>
+        <Dropdown
+          value={form.concepto_firma}
+          options={conceptoOptions}
+          optionLabel="description"
+          optionValue="code"
+          onChange={(e) => onConceptoChange(e.value)}
+          placeholder="Seleccione concepto..."
+          className="w-full"
+          disabled={isDisabled}
+        />
+      </div>
 
       {/* Campos condicionales: solo visibles si "Escritura NO firmada" (CRL-2) */}
       {form.concepto_firma === 'CRL-2' && (
@@ -89,15 +91,16 @@ export default function ConceptoFirmaSection({
 
           {/* Observaciones */}
           <div className="md:col-span-3 flex flex-col gap-1.5">
-            <InputTextAreaForm
-              label="Observaciones"
+            <label className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+              Observaciones *
+            </label>
+            <InputTextarea
               value={form.observaciones ?? ''}
-              onChange={(val) => updateField('observaciones', val || null)}
+              onChange={(e) => updateField('observaciones', e.target.value || null)}
               maxLength={500}
               rows={4}
               placeholder="Indique el motivo de la no firma (máximo 500 caracteres)"
               disabled={isDisabled}
-              required
             />
           </div>
         </>
