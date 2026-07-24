@@ -501,6 +501,7 @@ export default function FirmarEscrituraClientePage() {
 
               <InformacionNotariaSection
                 form={form}
+                notarias={controles.notarias ?? []}
                 isDisabled={isDisabled}
                 updateField={updateField}
               />

@@ -8,6 +8,7 @@ public class revisar_ep_abogado_bbva
 
     // Datos heredados de firmar_escritura_cliente (solo lectura en UI)
     public string?   notaria { get; set; }
+    public string?   notaria_desc { get; set; }
     public DateTime? fecha_notaria { get; set; }
     public int?      numero_notaria { get; set; }
     public string?   ciudad_notaria { get; set; }

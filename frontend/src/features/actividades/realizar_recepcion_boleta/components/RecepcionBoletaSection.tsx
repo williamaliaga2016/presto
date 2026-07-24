@@ -3,8 +3,9 @@ import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputSwitch } from 'primereact/inputswitch';
 import { Tooltip } from 'primereact/tooltip';
-import type { ControlBaseDTO } from '@/core/api/models/ControlBaseDTO';
 import type { RealizarRecepcionBoleta } from '../models/realizar_recepcion_boleta';
+import SwitchForm from '@/shared/components/SwitchForm';
+import { ControlBaseDTO } from '@/shared/models/ControlBaseDTO';
 
 interface Props {
   form: RealizarRecepcionBoleta;
@@ -50,17 +51,6 @@ export default function RecepcionBoletaSection({ form, isDisabled, updateField, 
         </div>
       )}
 
-      {/* Código Zona */}
-      <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-700">Código Zona *</label>
-        <InputText
-          value={form.codigo_zona ?? ''}
-          onChange={(e) => updateField('codigo_zona', e.target.value || null)}
-          disabled={isDisabled}
-          placeholder="Código de zona"
-        />
-      </div>
-
       {/* Oficina de Registro */}
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-gray-700">Oficina de Registro *</label>
@@ -69,7 +59,10 @@ export default function RecepcionBoletaSection({ form, isDisabled, updateField, 
           options={oficinaOptions}
           optionLabel="description"
           optionValue="code"
-          onChange={(e) => updateField('oficina_registro', e.value)}
+          onChange={(e) => {
+            updateField('oficina_registro', e.value)
+            updateField('codigo_zona',e.value);
+          }}
           disabled={isDisabled}
           placeholder="Buscar oficina..."
           filter
@@ -77,24 +70,33 @@ export default function RecepcionBoletaSection({ form, isDisabled, updateField, 
         />
       </div>
 
-      {/* Boleta Recibida */}
-      <div className="flex flex-col gap-1 justify-center">
-        <label className="text-xs font-medium text-gray-700">Boleta Recibida</label>
-        <InputSwitch
-          checked={form.boleta_recibida}
-          onChange={(e) => updateField('boleta_recibida', e.value ?? false)}
-          disabled={isDisabled}
+      {/* Código Zona */}
+      <div className="flex flex-col gap-1">
+        <label className="text-xs font-medium text-gray-700">Código Zona *</label>
+        <InputText
+          value={form.codigo_zona ?? ''}
+          // onChange={(e) => updateField('codigo_zona', e.target.value || null)}
+          disabled
+          placeholder="Código de zona"
         />
       </div>
 
+      {/* Boleta Recibida */}
+      <SwitchForm 
+        label="¿Escritura Pública Conforme?"
+        value={form.boleta_recibida}
+        onChange={(val) => updateField('boleta_recibida', val ?? false)}
+        disabled={isDisabled}
+        required
+      />
+
       {/* ¿Aplica Excepción Desembolso? (readonly) */}
-      <div className="flex flex-col gap-1 justify-center">
-        <label className="text-xs font-medium text-gray-700">¿Aplica Excepción Desembolso?</label>
-        <InputSwitch
-          checked={form.aplica_excepcion === 'SI'}
-          disabled
-        />
-      </div>
+      <SwitchForm 
+        label="¿Aplica Excepción Desembolso?"
+        value={form.aplica_excepcion === 'SI'}
+        onChange={()=>{}}
+        disabled
+      />
 
       {/* Observaciones */}
       <div className="flex flex-col gap-1 md:col-span-3">

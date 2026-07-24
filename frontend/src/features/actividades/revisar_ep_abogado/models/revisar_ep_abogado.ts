@@ -8,6 +8,7 @@ export interface RevisarEpAbogado extends Auditoria{
 
   // Datos heredados (solo lectura en UI)
   notaria: string | null;
+  notaria_desc?: string | null;
   fecha_notaria: string | null;
   numero_notaria: number | null;
   ciudad_notaria: string | null;
@@ -30,6 +31,7 @@ export interface ControlesRevisarEp {
   representantes_legales?: CatalogoOption[];
   tipologias?: CatalogoOption[];
   casuisticas?: CatalogoOption[];
+  notarias?: CatalogoOption[];
   [key: string]: CatalogoOption[] | undefined;
 }
 
@@ -37,4 +39,5 @@ export const EMPTY_CONTROLES_REVISAR_EP: ControlesRevisarEp = {
   representantes_legales: [],
   tipologias: [],
   casuisticas: [],
+  notarias: [],
 };

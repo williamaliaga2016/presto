@@ -66,14 +66,31 @@ public class RealizarEPRegistradasApplication
         var recepcionBoleta = await _recepcionBoletaRepository.GetByExpediente(idExpediente);
 
         // Resolver tipo documento
-        string? tipoDocumentoDescripcion = null;
-        if (!string.IsNullOrWhiteSpace(validarInfo?.tipo_id_t1))
-        {
-            var catalogoTipoDoc = await _commonApplication.GetCatalogoByType(Constants.Catalogo.TipoDocumentoId);
-            tipoDocumentoDescripcion = catalogoTipoDoc
-                .FirstOrDefault(c => c.code == validarInfo.tipo_id_t1 || c.id.ToString() == validarInfo.tipo_id_t1)?.description
-                ?? validarInfo.tipo_id_t1;
-        }
+        string? tipoDocumentoDescripcion = await Helpers.CatalogHelper.GetDescFromCatalog(
+            _commonApplication,
+            Constants.Catalogo.TipoDocumentoId,
+            validarInfo?.tipo_id_t1,
+            validarInfo?.tipo_id_t1
+        );
+        string? tipoBoletaDesc = await Helpers.CatalogHelper.GetDescFromCatalog(
+            _commonApplication,
+            Constants.Catalogo.TipoBoleta_L44,
+            recepcionBoleta?.tipo_boleta,
+            recepcionBoleta?.tipo_boleta
+        );
+        string? oficinaRegistroDesc = await Helpers.CatalogHelper.GetDescFromCatalog(
+            _commonApplication,
+            Constants.Catalogo.OficinaRegistro_L45,
+            recepcionBoleta?.oficina_registro,
+            recepcionBoleta?.oficina_registro
+        );
+        string? tipoCreditoDesc = await Helpers.CatalogHelper.GetDescFromCatalog(
+            _commonApplication,
+            Constants.Catalogo.TipoCredito,
+            validarInfo?.tipo_credito,
+            validarInfo?.tipo_credito
+        );
+        
 
         return new
         {
@@ -95,6 +112,9 @@ public class RealizarEPRegistradasApplication
                 tipo_boleta = recepcionBoleta?.tipo_boleta,
                 oficina_registro = recepcionBoleta?.oficina_registro,
                 numero_matricula = recepcionBoleta?.numero_matricula,
+                tipo_boleta_desc = tipoBoletaDesc,
+                oficina_registro_desc = oficinaRegistroDesc,
+                tipo_credito_desc = tipoCreditoDesc,
             }
         };
     }
@@ -177,4 +197,5 @@ public class RealizarEPRegistradasApplication
             row_status = true
         }, userId);
     }
+
 }

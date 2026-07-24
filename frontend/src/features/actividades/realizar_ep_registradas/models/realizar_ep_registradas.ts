@@ -24,6 +24,9 @@ export interface DatosHeredadosEPRegistradas {
   tipo_boleta?: string | null;
   oficina_registro?: string | null;
   numero_matricula?: string | null;
+  tipo_boleta_desc?: string | null;
+  oficina_registro_desc?: string | null;
+  tipo_credito_desc?: string | null;
 }
 
 export interface GetByExpedienteResponse {

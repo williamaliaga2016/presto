@@ -27,13 +27,22 @@ export default function InputCalendarForm({
       </label>
       <Calendar
         value={toDateValue(value)}
-        onChange={(e) =>
-          onChange(normalizeDate(e.value instanceof Date ? e.value.toISOString() : null))
-        }
+        onChange={(e) => {
+          if (e.value instanceof Date) {
+            const d = e.value;
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            onChange(`${yyyy}-${mm}-${dd}`);
+          } else {
+            onChange(null);
+          }
+        }}
         showIcon
         dateFormat={dateFormat}
         placeholder={placeholder}
-        className="form-input-presto w-full"
+        className="w-full"
+        inputClassName="form-input-presto w-full"
         disabled={disabled}
       />
     </div>

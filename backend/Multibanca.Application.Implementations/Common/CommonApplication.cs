@@ -47,5 +47,10 @@ namespace Multibanca.Application.Implementations.Common
         {
             return await CommonRepositoryProvider.ExisteActividadFolio(idExpediente, idActividad);
         }
+
+        public async Task<ControlBaseDTO?> GetCatalogoByTypeAndCode(string type, string code)
+        {
+            return await CommonRepositoryProvider.GetCatalogoByTypeAndCode(type, code);
+        }
     }
 }

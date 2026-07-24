@@ -13,6 +13,7 @@ export interface DatosHeredadosEntregaEp {
   concepto_firma?: string | null;
   concepto_firma_descripcion?: string | null;
   notaria?: string | null;
+  notaria_desc?: string | null;
   numero_notaria?: number | null;
   ciudad_notaria?: string | null;
   fecha_notaria?: string | null;

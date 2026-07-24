@@ -57,7 +57,7 @@ const normalizeRevisarEp = (
   numero_escritura: source?.numero_escritura ?? null,
   fecha_escritura: source?.fecha_escritura ?? null,
   representante_legal: source?.representante_legal ?? null,
-  ep_conforme: source?.ep_conforme ?? null,
+  ep_conforme: source?.ep_conforme ?? "NO",
   tipologia: source?.tipologia ?? null,
   casuistica: source?.casuistica ?? null,
   observaciones_legales: source?.observaciones_legales ?? null,
@@ -67,6 +67,7 @@ const normalizeRevisarEp = (
   created_date: source?.created_date ?? '',
   modified_by: source?.modified_by ?? null,
   modified_date: source?.modified_date ?? null,
+  notaria_desc: source?.notaria_desc ?? null
 });
 
 const extractFormularioFromDetail = (
@@ -248,6 +249,7 @@ export default function RevisarEpAbogadoPage() {
         // Preservar campos heredados (no se persisten en tabla propia,
         // el backend no los devuelve en la respuesta del guardado)
         savedEntity.notaria = savedEntity.notaria ?? form.notaria;
+        savedEntity.notaria_desc = savedEntity.notaria_desc ?? form.notaria_desc;
         savedEntity.fecha_notaria = savedEntity.fecha_notaria ?? form.fecha_notaria;
         savedEntity.numero_notaria = savedEntity.numero_notaria ?? form.numero_notaria;
         savedEntity.ciudad_notaria = savedEntity.ciudad_notaria ?? form.ciudad_notaria;
@@ -402,11 +404,6 @@ export default function RevisarEpAbogadoPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-4">
               {/* Datos Heredados (solo lectura) */}
-              <div className="md:col-span-3">
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide mb-3">
-                  Datos Heredados
-                </h3>
-              </div>
 
               <DatosHeredadosSection form={form} />
 

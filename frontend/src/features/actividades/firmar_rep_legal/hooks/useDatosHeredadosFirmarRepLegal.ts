@@ -20,6 +20,7 @@ export function useDatosHeredadosFirmarRepLegal(id_expediente: number) {
       const d = response.detail;
       return {
         notaria: d.notaria ?? null,
+        notaria_desc: d.notaria_desc ?? '-',
         numero_notaria: d.numero_notaria ?? null,
         ciudad_notaria: d.ciudad_notaria ?? null,
         fecha_notaria: d.fecha_notaria ?? null,

@@ -5,6 +5,7 @@ using Data.Repository.Interfaces.Entities.Multibanca.BBVA.Escrituracion;
 using Data.Repository.Interfaces.Repositories.Multibanca.BBVA;
 using Data.Repository.Interfaces.Repositories.Multibanca.BBVA.Escrituracion;
 using Framework.WorkFlow.Common.DTO;
+using Multibanca.Application.Implementations.Helpers;
 using Multibanca.Application.Interfaces.Common;
 using Multibanca.Application.Interfaces.FuncTransversal;
 using Multibanca.Application.Interfaces.Multibanca.BBVA.Escrituracion;
@@ -87,13 +88,26 @@ public class RealizarEntregaEpFirmadaApplication
         var firmarEscritura = await _firmarEscrituraClienteRepository.GetByExpediente(idExpediente);
 
         // Obtener descripción del concepto de firma desde catálogo
-        string? conceptoFirmaDescripcion = null;
-        if (!string.IsNullOrWhiteSpace(firmarRepLegal?.concepto_firma))
-        {
-            var catalogoConcepto = await _commonApplication.GetCatalogoByType(Constants.Catalogo.ConceptoFirmaRepLegal_L41);
-            conceptoFirmaDescripcion = catalogoConcepto
-                .FirstOrDefault(c => c.code == firmarRepLegal.concepto_firma)?.description;
-        }
+        string? conceptoFirmaDescripcion = await CatalogHelper. GetDescFromCatalog(
+            _commonApplication,
+            Constants.Catalogo.ConceptoFirmaRepLegal_L41,
+            firmarRepLegal?.concepto_firma,
+            firmarRepLegal?.concepto_firma
+        );
+
+        string? notariaDesc = await CatalogHelper. GetDescFromCatalog(
+            _commonApplication,
+            Constants.Catalogo.Notarias_L46,
+            firmarEscritura?.notaria,
+            firmarEscritura?.notaria
+        );
+
+        string? repLegal = await CatalogHelper.GetDescFromCatalog(
+            _commonApplication,
+            Constants.Catalogo.RepresentanteLegal_L38,
+            firmarEscritura?.representante_legal,
+            firmarEscritura?.representante_legal
+        );
 
         return new
         {
@@ -105,12 +119,13 @@ public class RealizarEntregaEpFirmadaApplication
                 concepto_firma_descripcion = conceptoFirmaDescripcion,
                 // De Firmar Escritura Cliente (BBV-86)
                 notaria = firmarEscritura?.notaria,
+                notaria_desc = notariaDesc,
                 numero_notaria = firmarEscritura?.numero_notaria,
                 ciudad_notaria = firmarEscritura?.ciudad_notaria,
                 fecha_notaria = firmarEscritura?.fecha_notaria,
                 numero_escritura = firmarEscritura?.numero_escritura,
                 fecha_escritura = firmarEscritura?.fecha_escritura,
-                representante_legal = firmarEscritura?.representante_legal,
+                representante_legal = repLegal,
             }
         };
     }

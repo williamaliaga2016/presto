@@ -8,6 +8,7 @@ export interface FirmarEscrituraCliente extends Auditoria{
 
   // Información de Notaría
   notaria: string | null;
+  notaria_desc?: string | null;
   fecha_notaria: string | null;
   numero_notaria: number | null;
   ciudad_notaria: string | null;
@@ -32,6 +33,7 @@ export interface ControlesFirmarEscritura {
   tipologias?: CatalogoOption[];
   tipos_leasing?: CatalogoOption[];
   tipos_escrituracion?: CatalogoOption[];
+  notarias?: CatalogoOption[];
   [key: string]: CatalogoOption[] | undefined;
 }
 

@@ -10,6 +10,7 @@ public class firmar_escritura_cliente_bbva
 
     // Bloque Información de Notaría (heredado, editable)
     public string?   notaria { get; set; }
+    public string?   notaria_desc { get; set; }
     public DateTime? fecha_notaria { get; set; }
     public int?      numero_notaria { get; set; }
     public string?   ciudad_notaria { get; set; }

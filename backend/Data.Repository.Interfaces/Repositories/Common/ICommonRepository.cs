@@ -8,6 +8,8 @@ namespace Data.Repository.Interfaces.Repositories.Common
         Task<FolioDTO> CapturarDatosFolio(long id_expediente, string id_actividad);
         Task<AssignActivityDTO> AsignarActividad(long id_expediente, string id_performer);
         Task<List<ControlBaseDTO>> GetCatalogoByType(string tipo, string? codigoPadre = null);
+
+        Task<ControlBaseDTO?> GetCatalogoByTypeAndCode(string tipo, string code);
         /// <summary>
         /// Consulta catalogos e incluye el codigo del padre para dependencias entre listas.
         /// </summary>

@@ -1,11 +1,9 @@
+import { formatDate } from '@/shared/utils/dateUtils';
 import type { DatosHeredadosEntregaEp } from '../models/realizar_entrega_ep_firmada';
 
 interface Props {
   datosHeredados: DatosHeredadosEntregaEp | null;
 }
-
-const formatFecha = (value?: string | null) =>
-  value ? new Date(value).toLocaleDateString('es-CO') : '-';
 
 export default function DatosHeredadosSection({ datosHeredados }: Props) {
   if (!datosHeredados) {
@@ -30,7 +28,7 @@ export default function DatosHeredadosSection({ datosHeredados }: Props) {
       <div className="flex flex-col gap-0.5">
         <span className="text-xs text-gray-500 uppercase">Notaría</span>
         <span className="text-sm font-medium text-gray-800">
-          {datosHeredados.notaria ?? '-'}
+          {datosHeredados.notaria_desc ?? '-'}
         </span>
       </div>
 
@@ -58,7 +56,7 @@ export default function DatosHeredadosSection({ datosHeredados }: Props) {
       <div className="flex flex-col gap-0.5">
         <span className="text-xs text-gray-500 uppercase">Fecha Escritura</span>
         <span className="text-sm font-medium text-gray-800">
-          {formatFecha(datosHeredados.fecha_escritura)}
+          {formatDate(datosHeredados.fecha_escritura)}
         </span>
       </div>
 

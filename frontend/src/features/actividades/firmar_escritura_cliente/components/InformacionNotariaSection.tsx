@@ -2,6 +2,8 @@ import InputTextForm from '@/shared/components/InputTextForm';
 import InputNumberForm from '@/shared/components/InputNumberForm';
 import InputCalendarForm from '@/shared/components/InputCalendarForm';
 import type { FirmarEscrituraCliente } from '../models/firmar_escritura_cliente';
+import { CatalogoOption } from '@/models/CatalogoOption';
+import DropdownForm from '@/shared/components/DropdownForm';
 
 interface Props {
   form: FirmarEscrituraCliente;
@@ -10,23 +12,26 @@ interface Props {
     field: K,
     value: FirmarEscrituraCliente[K],
   ) => void;
+  notarias: CatalogoOption[];
 }
 
 export default function InformacionNotariaSection({
   form,
+  notarias,
   isDisabled,
   updateField,
 }: Props) {
   return (
     <>
-      <InputTextForm
+      <DropdownForm
         label="Notaría"
-        value={form.notaria ?? ''}
+        value={form.notaria}
+        options={notarias}
         onChange={(val) => updateField('notaria', val)}
-        maxLength={150}
-        placeholder="Nombre de la notaría"
+        placeholder="Seleccionar..."
         disabled={isDisabled}
-        required
+        filter
+        filterPlaceholder="Buscar notaría..."
       />
 
       <InputCalendarForm

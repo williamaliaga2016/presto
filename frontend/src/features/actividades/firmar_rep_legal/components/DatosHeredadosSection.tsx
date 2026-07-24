@@ -1,5 +1,8 @@
+import { formatDate } from "@/shared/utils/dateUtils";
+
 interface DatosHeredados {
   notaria?: string | null;
+  notaria_desc?: string | null;
   numero_notaria?: number | null;
   ciudad_notaria?: string | null;
   fecha_notaria?: string | null;
@@ -10,9 +13,6 @@ interface DatosHeredados {
 interface Props {
   datosHeredados: DatosHeredados | null;
 }
-
-const formatFecha = (value?: string | null) =>
-  value ? new Date(value).toLocaleDateString('es-CO') : '-';
 
 export default function DatosHeredadosSection({ datosHeredados }: Props) {
   if (!datosHeredados) {
@@ -28,7 +28,7 @@ export default function DatosHeredadosSection({ datosHeredados }: Props) {
       <div className="flex flex-col gap-0.5">
         <span className="text-xs text-gray-500 uppercase">Notaría</span>
         <span className="text-sm font-medium text-gray-800">
-          {datosHeredados.notaria ?? '-'}
+          {datosHeredados.notaria_desc ?? '-'}
         </span>
       </div>
 
@@ -49,7 +49,7 @@ export default function DatosHeredadosSection({ datosHeredados }: Props) {
       <div className="flex flex-col gap-0.5">
         <span className="text-xs text-gray-500 uppercase">Fecha Notaría</span>
         <span className="text-sm font-medium text-gray-800">
-          {formatFecha(datosHeredados.fecha_notaria)}
+          {formatDate(datosHeredados.fecha_notaria)}
         </span>
       </div>
 
@@ -63,7 +63,7 @@ export default function DatosHeredadosSection({ datosHeredados }: Props) {
       <div className="flex flex-col gap-0.5">
         <span className="text-xs text-gray-500 uppercase">Fecha Escritura</span>
         <span className="text-sm font-medium text-gray-800">
-          {formatFecha(datosHeredados.fecha_escritura)}
+          {formatDate(datosHeredados.fecha_escritura)}
         </span>
       </div>
     </div>

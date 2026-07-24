@@ -4,6 +4,7 @@ using Data.Repository.Implementations;
 using Data.Repository.Interfaces.Entities.Multibanca.BBVA.Escrituracion;
 using Data.Repository.Interfaces.Repositories.Multibanca.BBVA;
 using Framework.WorkFlow.Common.DTO;
+using Multibanca.Application.Implementations.Helpers;
 using Multibanca.Application.Interfaces.Common;
 using Multibanca.Application.Interfaces.FuncTransversal;
 using Multibanca.Application.Interfaces.Multibanca;
@@ -91,6 +92,15 @@ public class FirmarEscrituraClienteApplication
 
         var result = _mapper.Map<firmar_escritura_cliente_bbva>(entity);
         result.tipo_credito = tipoCredito;
+
+        // Resolver notaría código → descripción
+        result.notaria_desc = await CatalogHelper.GetDescFromCatalog(
+            _commonApplication,
+            Constants.Catalogo.Notarias_L46,
+            result?.notaria,
+            result?.notaria
+        );
+
         return result;
     }
 
@@ -100,13 +110,15 @@ public class FirmarEscrituraClienteApplication
         var tipologias = await _commonApplication.GetCatalogoByType(Constants.Catalogo.TipologiaEscalamiento);
         var tiposLeasing = await _commonApplication.GetCatalogoByType(CatalogoTipoLeasing);
         var tiposEscrituracion = await _commonApplication.GetCatalogoByType(Constants.Catalogo.EscrituracionTiposCredito);
+        var notarias = await _commonApplication.GetCatalogoByType(Constants.Catalogo.Notarias_L46);
 
         return new
         {
             representantes_legales = representantesLegales,
             tipologias = tipologias,
             tipos_leasing = tiposLeasing,
-            tipos_escrituracion = tiposEscrituracion
+            tipos_escrituracion = tiposEscrituracion,
+            notarias = notarias
         };
     }
 

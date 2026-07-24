@@ -1,11 +1,5 @@
-import DropdownForm from '@/shared/components/DropdownForm';
-import type { CatalogoOption } from '@/models/CatalogoOption';
+import SwitchForm from '@/shared/components/SwitchForm';
 import type { RevisarEpAbogado } from '../models/revisar_ep_abogado';
-
-const CONFORMIDAD_OPTIONS: CatalogoOption[] = [
-  { code: 'SI', description: 'SÍ' },
-  { code: 'NO', description: 'NO' },
-];
 
 interface Props {
   form: RevisarEpAbogado;
@@ -18,9 +12,7 @@ interface Props {
 }
 
 /**
- * Campo obligatorio "¿Escritura Pública Conforme?" (SI/NO).
- * Emite onChange a través de updateField para que la página padre
- * controle la visibilidad de los campos condicionales (NovedadesSection).
+ * Campo obligatorio "¿Escritura Pública Conforme?" (SI/NO) como Switch.
  * Corresponde al requerimiento CA04.
  */
 export default function CompuertaConformidadField({
@@ -29,8 +21,8 @@ export default function CompuertaConformidadField({
   onConformidadChange,
   disabled = false,
 }: Props) {
-  const handleChange = (val: string | null) => {
-    const newValue = val as RevisarEpAbogado['ep_conforme'];
+  const handleChange = (value: boolean) => {
+    const newValue: RevisarEpAbogado['ep_conforme'] = value ? 'SI' : 'NO';
     updateField('ep_conforme', newValue);
 
     // Cuando cambia a "SI", limpiar campos condicionales de novedades
@@ -44,12 +36,10 @@ export default function CompuertaConformidadField({
   };
 
   return (
-    <DropdownForm
+    <SwitchForm
       label="¿Escritura Pública Conforme?"
-      value={form.ep_conforme}
-      options={CONFORMIDAD_OPTIONS}
+      value={form.ep_conforme === 'SI'}
       onChange={handleChange}
-      placeholder="Seleccionar..."
       disabled={disabled}
       required
     />

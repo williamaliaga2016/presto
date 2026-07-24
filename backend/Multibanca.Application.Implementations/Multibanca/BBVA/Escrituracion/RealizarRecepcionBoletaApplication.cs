@@ -5,6 +5,7 @@ using Data.Repository.Interfaces.Entities.Multibanca.BBVA.Escrituracion;
 using Data.Repository.Interfaces.Repositories.Multibanca.BBVA;
 using Data.Repository.Interfaces.Repositories.Multibanca.BBVA.Escrituracion;
 using Framework.WorkFlow.Common.DTO;
+using Multibanca.Application.Implementations.Helpers;
 using Multibanca.Application.Interfaces.Common;
 using Multibanca.Application.Interfaces.FuncTransversal;
 using Multibanca.Application.Interfaces.Multibanca.BBVA.Escrituracion;
@@ -79,14 +80,20 @@ public class RealizarRecepcionBoletaApplication
         var firmarEscritura = await _firmarEscrituraClienteRepository.GetByExpediente(idExpediente);
 
         // Resolver descripción del tipo de documento
-        string? tipoDocumentoDescripcion = null;
-        if (!string.IsNullOrWhiteSpace(validarInfo?.tipo_id_t1))
-        {
-            var catalogoTipoDoc = await _commonApplication.GetCatalogoByType(Constants.Catalogo.TipoDocumentoId);
-            tipoDocumentoDescripcion = catalogoTipoDoc
-                .FirstOrDefault(c => c.code == validarInfo.tipo_id_t1 || c.id.ToString() == validarInfo.tipo_id_t1)?.description
-                ?? validarInfo.tipo_id_t1;
-        }
+        string? tipoDocumentoDescripcion = await CatalogHelper.GetDescFromCatalog(
+            _commonApplication,
+            Constants.Catalogo.TipoDocumentoId,
+            validarInfo?.tipo_id_t1,
+            validarInfo?.tipo_id_t1
+        );
+
+        string? tipoCreditoDesc = await CatalogHelper.GetDescFromCatalog(
+            _commonApplication,
+            Constants.Catalogo.TipoCredito,
+            validarInfo?.tipo_credito,
+            validarInfo?.tipo_credito
+        );
+
 
         return new
         {
@@ -97,7 +104,7 @@ public class RealizarRecepcionBoletaApplication
                 tipo_documento = tipoDocumentoDescripcion,
                 numero_documento = validarInfo?.numero_id_t1,
                 nombre_completo = validarInfo?.nombre_completo_t1,
-                tipo_credito = validarInfo?.tipo_credito,
+                tipo_credito = tipoCreditoDesc,
                 // Datos Notaría (de firmar_escritura_cliente)
                 ciudad_notaria = firmarEscritura?.ciudad_notaria,
                 numero_notaria = firmarEscritura?.numero_notaria,

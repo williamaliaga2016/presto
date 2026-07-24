@@ -210,5 +210,54 @@ namespace Data.Repository.Implementations.Repositories.Common
                     await connection.CloseAsync();
             }
         }
+
+        public async Task<ControlBaseDTO?> GetCatalogoByTypeAndCode(string tipo, string code)
+        {
+            object data = new
+            {
+                p_type = tipo,
+                p_code = code
+            };
+
+            using (DbCommand command = MultibancaDBContext.Database.GetDbConnection().CreateCommand())
+            {
+                try
+                {
+                    await MultibancaDBContext.Database.OpenConnectionAsync();
+
+                    command.CommandText = @"
+                        SELECT
+                            c.id::integer AS id,
+                            c.id::bigint AS idBig,
+                            c.valor AS code,
+                            c.descripcion AS description,
+                            NULL AS parent_code
+                        FROM public.catalogo c
+                        WHERE c.tipo = @p_type
+                          AND c.valor = @p_code
+                          AND c.is_active = true
+                        LIMIT 1;
+                    ";
+
+                    command.CommandType = CommandType.Text;
+                    command.Parameters.ToArray<object>(data);
+
+                    DbDataReader reader = await command.ExecuteReaderAsync();
+
+                    if (!reader.HasRows)
+                        return null;
+
+                    return reader.MapToDomain<ControlBaseDTO>();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Error al obtener catalogo por tipo '{tipo}' y código '{code}': {ex.Message}", ex);
+                }
+                finally
+                {
+                    await MultibancaDBContext.Database.CloseConnectionAsync();
+                }
+            }
+        }
     }
 }

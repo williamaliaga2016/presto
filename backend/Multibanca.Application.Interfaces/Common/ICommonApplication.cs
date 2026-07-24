@@ -13,6 +13,7 @@ namespace Multibanca.Application.Interfaces.Common
         Task<FolioDTO> CapturarDatosFolio(long id_expediente, string ActivityID);
         Task<AssignActivityDTO> AsignarActividad(long id_expediente, string idPerformer);
         Task<List<ControlBaseDTO>> GetCatalogoByType(string type);
+        Task<ControlBaseDTO?> GetCatalogoByTypeAndCode(string type,string code);
         /// <summary>
         /// Consulta catalogos e incluye el codigo del padre para dependencias entre listas.
         /// </summary>

@@ -11,6 +11,7 @@ using Multibanca.Application.Interfaces.Workflow;
 using Multibanca.Common;
 using Multibanca.Domain.Models.FuncTransversal;
 using Multibanca.Domain.Models.Multibanca.BBVA.Escrituracion;
+using Multibanca.DTO.Common;
 
 namespace Multibanca.Application.Implementations.Multibanca.BBVA.Escrituracion;
 
@@ -50,36 +51,31 @@ public class RevisarEpAbogadoApplication
         var entity = await RepositoryProvider.GetByExpediente(idExpediente);
         var herencia = await RepositoryProvider.GetDatosHerencia(idExpediente);
 
-        if (entity == null)
-        {
-            return new revisar_ep_abogado_bbva
-            {
-                id_expediente = idExpediente,
-                notaria = herencia?.notaria,
-                fecha_notaria = herencia?.fecha_notaria,
-                numero_notaria = herencia?.numero_notaria,
-                ciudad_notaria = herencia?.ciudad_notaria,
-                numero_escritura = herencia?.numero_escritura,
-                fecha_escritura = herencia?.fecha_escritura,
-                representante_legal = herencia?.representante_legal
-            };
-        }
+        var formulario = entity != null
+            ? _mapper.Map<revisar_ep_abogado_bbva>(entity)
+            : new revisar_ep_abogado_bbva { id_expediente = idExpediente };
 
-        var result = _mapper.Map<revisar_ep_abogado_bbva>(entity);
-
-        // Overlay inherited fields from firmar_escritura_cliente
-        result.notaria = herencia?.notaria;
-        result.fecha_notaria = herencia?.fecha_notaria;
-        result.numero_notaria = herencia?.numero_notaria;
-        result.ciudad_notaria = herencia?.ciudad_notaria;
-        result.numero_escritura = herencia?.numero_escritura;
-        result.fecha_escritura = herencia?.fecha_escritura;
+        // Herencia de campos de solo lectura
+        formulario.notaria = herencia?.notaria;
+        formulario.fecha_notaria = herencia?.fecha_notaria;
+        formulario.numero_notaria = herencia?.numero_notaria;
+        formulario.ciudad_notaria = herencia?.ciudad_notaria;
+        formulario.numero_escritura = herencia?.numero_escritura;
+        formulario.fecha_escritura = herencia?.fecha_escritura;
 
         // Si representante_legal no fue editado en esta actividad, pre-cargar desde herencia
-        if (string.IsNullOrWhiteSpace(result.representante_legal))
-            result.representante_legal = herencia?.representante_legal;
+        if (string.IsNullOrWhiteSpace(formulario.representante_legal))
+            formulario.representante_legal = herencia?.representante_legal;
 
-        return result;
+        // Resolver notaría código → descripción
+        formulario.notaria_desc = await Helpers.CatalogHelper.GetDescFromCatalog(
+            _commonApplication,
+            Constants.Catalogo.Notarias_L46,
+            formulario?.notaria,
+            formulario?.notaria
+        );
+
+        return formulario;
     }
 
     public async Task<object> GetControles(long idExpediente)

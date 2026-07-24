@@ -286,6 +286,7 @@ namespace Multibanca.Common
             public const string TipologiaEscalamiento = "TIPOLOGIA_ESCALAMIENTO";
             public const string TipoBoleta_L44 = "L44_TIPO_BOLETA";
             public const string OficinaRegistro_L45 = "L45_OFICINA_REGISTRO";
+            public const string Notarias_L46 = "L46_NOTARIAS";
         }
 
         // ============================================================
