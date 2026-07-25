@@ -115,6 +115,7 @@ import RealizarEntregaEpFirmadaPage from "@/features/actividades/realizar_entreg
 import RealizarRecepcionBoletaPage from "@/features/actividades/realizar_recepcion_boleta/pages/realizar_recepcion_boleta_page";
 import RealizarEPRegistradasPage from "@/features/actividades/realizar_ep_registradas/pages/realizar_ep_registradas_page";
 import RevisarEpAbogadoPage from "@/features/actividades/revisar_ep_abogado/pages/revisar_ep_abogado_page";
+import ExcepcionDesembolsoPage from "@/features/actividades/excepcion_desembolso/pages/excepcion_desembolso_page";
 
 export default function AppRouter() {
   const { isAuthenticated } = useAuth();
@@ -257,6 +258,7 @@ export default function AppRouter() {
             <Route path="realizar_recepcion_boleta/:id_expediente" element={<RealizarRecepcionBoletaPage />} />
             <Route path="realizar_ep_registradas/:id_expediente" element={<RealizarEPRegistradasPage />} />
             <Route path="revisar_ep_abogado/:id_expediente" element={<RevisarEpAbogadoPage />} />
+            <Route path="excepcion_desembolso/:id_expediente" element={<ExcepcionDesembolsoPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>
