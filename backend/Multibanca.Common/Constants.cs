@@ -319,6 +319,7 @@ namespace Multibanca.Common
             public const string EscrituracionRealizarCausacion = "BBVA_ESCRITURACION_REALIZAR_CAUSACION";
             public const string EscrituracionRealizarRecepcionBoleta = "BBVA_ESCRITURACION_REALIZAR_RECEPCION_BOLETA";
             public const string EscrituracionRealizarEPRegistradas = "BBVA_ESCRITURACION_REALIZAR_EP_REGISTRADAS";
+            public const string EscrituracionRealizarExcepcionDesembolso = "BBVA_ESCRITURACION_REALIZAR_EXCEPCION_DESEMBOLSO";
             public const string EscrituracionRealizarVBFinalAbogado = "BBVA_ESCRITURACION_REALIZAR_VB_FINAL_ABOGADO";
         }
 
@@ -346,6 +347,10 @@ namespace Multibanca.Common
             // BBVA Escrituración — Realizar Recepción Boleta
             public const string RecepcionBoletaEPRegistradas = "BBVA_ESCRITURACION_TR_RECEPCION_BOLETA_EP_REGISTRADAS";
             public const string RecepcionBoletaExcepcionDesembolso = "BBVA_ESCRITURACION_TR_RECEPCION_BOLETA_EXCEPCION_DESEMBOLSO";
+
+            // BBVA Escrituración — Realizar Excepción Desembolso
+            public const string ExcepcionDesembolsoVoBoGerencia = "BBVA_ESCRITURACION_TR_EXCEPCION_DESEMBOLSO_VOBO_GERENCIA";
+            public const string ExcepcionDesembolsoValidarCondiciones = "BBVA_ESCRITURACION_TR_EXCEPCION_DESEMBOLSO_VALIDAR_CONDICIONES";
 
             // BBVA Escrituración — Realizar EP Registradas
             public const string EPRegistradasVBFinalAbogado = "BBVA_ESCRITURACION_TR_EP_REGISTRADAS_VB_FINAL_ABOGADO";
