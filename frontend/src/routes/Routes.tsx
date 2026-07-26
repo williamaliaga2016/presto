@@ -116,6 +116,7 @@ import RealizarRecepcionBoletaPage from "@/features/actividades/realizar_recepci
 import RealizarEPRegistradasPage from "@/features/actividades/realizar_ep_registradas/pages/realizar_ep_registradas_page";
 import RevisarEpAbogadoPage from "@/features/actividades/revisar_ep_abogado/pages/revisar_ep_abogado_page";
 import ExcepcionDesembolsoPage from "@/features/actividades/excepcion_desembolso/pages/excepcion_desembolso_page";
+import RealizarVoboGerenciaCohPage from "@/features/actividades/realizar_vobo_gerencia_coh/pages/realizar_vobo_gerencia_coh_page";
 
 export default function AppRouter() {
   const { isAuthenticated } = useAuth();
@@ -259,6 +260,7 @@ export default function AppRouter() {
             <Route path="realizar_ep_registradas/:id_expediente" element={<RealizarEPRegistradasPage />} />
             <Route path="revisar_ep_abogado/:id_expediente" element={<RevisarEpAbogadoPage />} />
             <Route path="excepcion_desembolso/:id_expediente" element={<ExcepcionDesembolsoPage />} />
+            <Route path="realizar_vobo_gerencia_coh/:id_expediente" element={<RealizarVoboGerenciaCohPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>
