@@ -358,6 +358,9 @@ namespace Multibanca.Common
             // BBVA Escrituración — Revisar EP Abogado (BBV-130)
             public const string RevisarEPAFirmarRepLegal = "TR_REVISAR_EP_FIRMAR_REP_LEGAL";
             public const string RevisarEPADevolucion = "TR_REVISAR_EP_DEVOLUCION";
+
+            // BBVA Escrituración — Realizar Vobo Gerencia COH (BBV-141)
+            public const string VoboGerenciaCohExcepcionDesembolso = "BBVA_ESCRITURACION_TR_VOBO_GERENCIA_COH_EXCEPCION_DESEMBOLSO";
         }
 
         // ============================================================
