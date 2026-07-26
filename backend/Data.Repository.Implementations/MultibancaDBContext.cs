@@ -185,6 +185,7 @@ namespace Data.Repository.Implementations
         public DbSet<realizar_recepcion_boleta_entity> realizar_recepcion_boleta { get; set; }
         public DbSet<realizar_ep_registradas_entity> realizar_ep_registradas { get; set; }
         public DbSet<excepcion_desembolso_entity> excepcion_desembolso { get; set; }
+        public DbSet<vobo_gerencia_coh_entity> vobo_gerencia_coh { get; set; }
 
         public MultibancaDBContext(DbContextOptions<MultibancaDBContext> options) : base(options)
         {
@@ -355,6 +356,8 @@ namespace Data.Repository.Implementations
                 modelBuilder.Entity<realizar_ep_registradas_entity>());
             excepcion_desembolso_entity_config.SetEntityBuilder(
                 modelBuilder.Entity<excepcion_desembolso_entity>());
+            vobo_gerencia_coh_entity_config.SetEntityBuilder(
+                modelBuilder.Entity<vobo_gerencia_coh_entity>());
 
             base.OnModelCreating(modelBuilder);
             gestion_rectificatoria_escritura_firmada_postventa_entity_config.SetEntityBuilder(modelBuilder.Entity<gestion_rectificatoria_escritura_firmada_postventa_entity>());
