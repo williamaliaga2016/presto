@@ -322,6 +322,8 @@ namespace Multibanca.Common
             public const string EscrituracionRealizarExcepcionDesembolso = "BBVA_ESCRITURACION_REALIZAR_EXCEPCION_DESEMBOLSO";
             public const string EscrituracionRealizarVBFinalAbogado = "BBVA_ESCRITURACION_REALIZAR_VB_FINAL_ABOGADO";
             public const string EscrituracionVoBoGerenciaApplication = "BBVA_ESCRITURACION_REALIZAR_VOBO_GERENCIA_COH";
+            public const string EscrituracionRevisarMarcacionCobertura = "BBVA_ESCRITURACION_REVISAR_MARCACION_COBERTURA";
+            public const string EscrituracionValidarCondicionesDesembolso = "BBVA_ESCRITURACION_VALIDAR_CONDICIONES_DESEMBOLSO";
         }
 
         // ============================================================
@@ -361,6 +363,9 @@ namespace Multibanca.Common
 
             // BBVA Escrituración — Realizar Vobo Gerencia COH (BBV-141)
             public const string VoboGerenciaCohExcepcionDesembolso = "BBVA_ESCRITURACION_TR_VOBO_GERENCIA_COH_EXCEPCION_DESEMBOLSO";
+
+            // BBVA Escrituración — Revisar Marcación de Cobertura (BBV-107)
+            public const string MarcacionCoberturaValidarCondiciones = "BBVA_ESCRITURACION_TR_MARCACION_COBERTURA_VALIDAR_CONDICIONES";
         }
 
         // ============================================================
