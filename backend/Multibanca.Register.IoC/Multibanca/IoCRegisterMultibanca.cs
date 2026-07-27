@@ -219,6 +219,7 @@ namespace Multibanca.Register.IoC.Multibanca
             services.AddScoped<IRevisarEpAbogadoApplication, RevisarEpAbogadoApplication>();
             services.AddScoped<IExcepcionDesembolsoApplication, ExcepcionDesembolsoApplication>();
             services.AddScoped<IVoboGerenciaCohApplication, VoboGerenciaCohApplication>();
+            services.AddScoped<IRevisionMarcacionCoberturaApplication, RevisionMarcacionCoberturaApplication>();
 
             return services;
         }
@@ -377,6 +378,7 @@ namespace Multibanca.Register.IoC.Multibanca
             services.AddScoped<IRevisarEpAbogadoRepository, RevisarEpAbogadoRepository>();
             services.AddScoped<IExcepcionDesembolsoRepository, ExcepcionDesembolsoRepository>();
             services.AddScoped<IVoboGerenciaCohRepository, VoboGerenciaCohRepository>();
+            services.AddScoped<IRevisionMarcacionCoberturaRepository, RevisionMarcacionCoberturaRepository>();
 
             return services;
         }
