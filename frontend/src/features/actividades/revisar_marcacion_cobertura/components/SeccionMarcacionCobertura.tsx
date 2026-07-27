@@ -5,10 +5,10 @@
  * (CA04). Componente controlado: todos los valores y su manejador único
  * `onChange` se reciben por props.
  *
- * No existe integración real con SITCAR ni catálogos para Tipo de Documento /
- * Tipo de Vivienda / Estado Proceso (ver sección 1.4 / 9 de
- * contexto/BBV-107_RECETA_IMPLEMENTACION.md): se usan listas fijas hasta que
- * se definan catálogos reutilizables.
+ * Tipo de Documento, Tipo de Vivienda y Estado Proceso vienen del catálogo
+ * (endpoint GET /api/RevisionMarcacionCobertura/controles — ver
+ * TIPO_DOCUMENTO_ID, TIPO_VIVIENDA_BBV107 y ESTADO_PROCESO_BBV107 en
+ * Multibanca.Common.Constants.Catalogo), no de listas fijas en el frontend.
  */
 import DropdownForm from '@/shared/components/DropdownForm';
 import InputTextForm from '@/shared/components/InputTextForm';
@@ -19,24 +19,6 @@ import InputTimeForm from '@/shared/components/InputTimeForm';
 import type { CatalogoOption } from '@/models/CatalogoOption';
 import type { RevisionMarcacionCobertura } from '../models/revision_marcacion_cobertura';
 
-const TIPO_DOCUMENTO_OPTIONS: CatalogoOption[] = [
-  { code: 'CC', description: 'Cédula de Ciudadanía' },
-  { code: 'CE', description: 'Cédula de Extranjería' },
-  { code: 'NIT', description: 'NIT' },
-];
-
-const TIPO_VIVIENDA_OPTIONS: CatalogoOption[] = [
-  { code: 'VIS', description: 'Vivienda de Interés Social' },
-  { code: 'VIP', description: 'Vivienda de Interés Prioritario' },
-  { code: 'NO_VIS', description: 'No VIS' },
-];
-
-const ESTADO_PROCESO_OPTIONS: CatalogoOption[] = [
-  { code: 'EN_TRAMITE', description: 'En Trámite' },
-  { code: 'APROBADO', description: 'Aprobado' },
-  { code: 'RECHAZADO', description: 'Rechazado' },
-];
-
 const MAX_OBSERVACIONES = 1000;
 
 interface SeccionMarcacionCoberturaProps {
@@ -45,12 +27,18 @@ interface SeccionMarcacionCoberturaProps {
     field: K,
     value: RevisionMarcacionCobertura[K],
   ) => void;
+  tipoDocumentoOptions: CatalogoOption[];
+  tipoViviendaOptions: CatalogoOption[];
+  estadoProcesoOptions: CatalogoOption[];
   disabled?: boolean;
 }
 
 export default function SeccionMarcacionCobertura({
   form,
   onChange,
+  tipoDocumentoOptions,
+  tipoViviendaOptions,
+  estadoProcesoOptions,
   disabled = false,
 }: SeccionMarcacionCoberturaProps) {
   return (
@@ -70,7 +58,7 @@ export default function SeccionMarcacionCobertura({
           <DropdownForm
             label="Tipo de Documento"
             value={form.tipo_documento}
-            options={TIPO_DOCUMENTO_OPTIONS}
+            options={tipoDocumentoOptions}
             onChange={(v) => onChange('tipo_documento', v)}
             required
             disabled={disabled}
@@ -129,7 +117,7 @@ export default function SeccionMarcacionCobertura({
           <DropdownForm
             label="Tipo de Vivienda"
             value={form.tipo_vivienda}
-            options={TIPO_VIVIENDA_OPTIONS}
+            options={tipoViviendaOptions}
             onChange={(v) => onChange('tipo_vivienda', v)}
             required
             disabled={disabled}
@@ -299,7 +287,7 @@ export default function SeccionMarcacionCobertura({
           <DropdownForm
             label="Estado Proceso"
             value={form.estado_proceso}
-            options={ESTADO_PROCESO_OPTIONS}
+            options={estadoProcesoOptions}
             onChange={(v) => onChange('estado_proceso', v)}
             required
             disabled={disabled}

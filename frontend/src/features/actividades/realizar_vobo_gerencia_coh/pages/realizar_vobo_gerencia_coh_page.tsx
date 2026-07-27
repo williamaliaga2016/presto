@@ -121,17 +121,15 @@ export default function RealizarVoboGerenciaCohPage() {
         setHerenciaError(false);
       }
 
-      // Precarga: si formulario.id > 0, cargar valores guardados (Req 5.7)
+      // Precarga: siempre se toma el formulario que retorna el backend
+      // (incluye created_date ya resuelto por el servidor, aun para
+      // expedientes sin registro previo — Req 5.7).
       if (payload.formulario) {
-        if (payload.formulario.id > 0) {
-          setForm({
-            ...EMPTY_VOBO_GERENCIA_COH(id_expediente),
-            ...payload.formulario,
-            id_expediente,
-          });
-        } else {
-          setForm(EMPTY_VOBO_GERENCIA_COH(id_expediente));
-        }
+        setForm({
+          ...EMPTY_VOBO_GERENCIA_COH(id_expediente),
+          ...payload.formulario,
+          id_expediente,
+        });
       }
     }
 

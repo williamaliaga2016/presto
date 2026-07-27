@@ -5,6 +5,7 @@ using Data.Repository.Implementations;
 using Data.Repository.Interfaces.Entities.Multibanca.BBVA.Escrituracion;
 using Data.Repository.Interfaces.Repositories.Multibanca.BBVA.Escrituracion;
 using Framework.WorkFlow.Common.DTO;
+using Multibanca.Application.Interfaces.Common;
 using Multibanca.Application.Interfaces.FuncTransversal;
 using Multibanca.Application.Interfaces.Multibanca;
 using Multibanca.Application.Interfaces.Multibanca.BBVA.Escrituracion;
@@ -29,6 +30,7 @@ public class RevisionMarcacionCoberturaApplication
     private static readonly Regex EmailRegex = new(@"^[^\s@]+@[^\s@]+\.[^\s@]+$", RegexOptions.Compiled);
 
     private readonly IMapper _mapper;
+    private readonly ICommonApplication _commonApplication;
     private readonly IWorkflowApplication _workflowApplication;
     private readonly IBitacoraApplication _bitacoraApplication;
     private readonly IEncabezadoApplication _encabezadoApplication;
@@ -38,6 +40,7 @@ public class RevisionMarcacionCoberturaApplication
         MultibancaDBContext multibancaDBContext,
         IRevisionMarcacionCoberturaRepository repository,
         IMapper mapper,
+        ICommonApplication commonApplication,
         IWorkflowApplication workflowApplication,
         IBitacoraApplication bitacoraApplication,
         IEncabezadoApplication encabezadoApplication,
@@ -45,6 +48,7 @@ public class RevisionMarcacionCoberturaApplication
         : base(multibancaDBContext, repository, mapper)
     {
         _mapper                        = mapper;
+        _commonApplication             = commonApplication;
         _workflowApplication           = workflowApplication;
         _bitacoraApplication           = bitacoraApplication;
         _encabezadoApplication         = encabezadoApplication;
@@ -85,6 +89,20 @@ public class RevisionMarcacionCoberturaApplication
         {
             formulario = formulario,
             herencia   = herencia
+        };
+    }
+
+    public async Task<object> GetControles()
+    {
+        var tipoDocumento = await _commonApplication.GetCatalogoByType(Constants.Catalogo.TipoDocumentoId);
+        var tipoVivienda  = await _commonApplication.GetCatalogoByType(Constants.Catalogo.TipoViviendaBbv107);
+        var estadoProceso = await _commonApplication.GetCatalogoByType(Constants.Catalogo.EstadoProcesoBbv107);
+
+        return new
+        {
+            tipo_documento = tipoDocumento,
+            tipo_vivienda  = tipoVivienda,
+            estado_proceso = estadoProceso
         };
     }
 

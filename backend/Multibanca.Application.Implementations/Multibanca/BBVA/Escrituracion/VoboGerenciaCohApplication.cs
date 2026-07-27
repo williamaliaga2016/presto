@@ -4,6 +4,7 @@ using Data.Repository.Implementations;
 using Data.Repository.Interfaces.Entities.Multibanca.BBVA.Escrituracion;
 using Data.Repository.Interfaces.Repositories.Multibanca.BBVA.Escrituracion;
 using Framework.WorkFlow.Common.DTO;
+using Multibanca.Application.Interfaces.Common;
 using Multibanca.Application.Interfaces.FuncTransversal;
 using Multibanca.Application.Interfaces.Multibanca;
 using Multibanca.Application.Interfaces.Multibanca.BBVA.Escrituracion;
@@ -26,6 +27,7 @@ public class VoboGerenciaCohApplication
     private static readonly string ActividadVoboGerenciaCoh = Constants.ActividadesBBVA.EscrituracionVoBoGerenciaApplication;
 
     private readonly IMapper _mapper;
+    private readonly ICommonApplication _commonApplication;
     private readonly IWorkflowApplication _workflowApplication;
     private readonly IBitacoraApplication _bitacoraApplication;
     private readonly IEncabezadoApplication _encabezadoApplication;
@@ -34,12 +36,14 @@ public class VoboGerenciaCohApplication
         MultibancaDBContext multibancaDBContext,
         IVoboGerenciaCohRepository repository,
         IMapper mapper,
+        ICommonApplication commonApplication,
         IWorkflowApplication workflowApplication,
         IBitacoraApplication bitacoraApplication,
         IEncabezadoApplication encabezadoApplication)
         : base(multibancaDBContext, repository, mapper)
     {
         _mapper                = mapper;
+        _commonApplication     = commonApplication;
         _workflowApplication   = workflowApplication;
         _bitacoraApplication   = bitacoraApplication;
         _encabezadoApplication = encabezadoApplication;
@@ -71,6 +75,14 @@ public class VoboGerenciaCohApplication
                 // Falla al enriquecer con datos de cliente: se muestran los campos como "-"
                 // en el frontend (Req 2.3), sin bloquear el resto de los Datos_Heredados.
             }
+
+            // Resolver notaría código → descripción (catálogo L46_NOTARIAS)
+            herencia.nombre_notaria = await Helpers.CatalogHelper.GetDescFromCatalog(
+                _commonApplication,
+                Constants.Catalogo.Notarias_L46,
+                herencia.nombre_notaria,
+                herencia.nombre_notaria
+            );
         }
 
         return new VoboGerenciaCohResponse
@@ -86,19 +98,17 @@ public class VoboGerenciaCohApplication
 
         request.id_actividad = ActividadVoboGerenciaCoh;
 
+        request.is_active  = true;
+        request.row_status = true;
+
         if (existente != null)
         {
             // Actualizar registro existente preservando auditoría de creación
-            request.id           = existente.id;
-            request.created_by   = existente.created_by;
-            request.created_date = existente.created_date;
-            request.is_active    = existente.is_active;
-            request.row_status   = existente.row_status;
+            // request.id           = existente.id;
+            // request.is_active    = true;
+            // request.row_status   = true;
             return Update(request, userId);
         }
-
-        request.is_active  = true;
-        request.row_status = true;
         return Create(request, userId);
     }
 

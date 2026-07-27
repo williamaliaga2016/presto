@@ -35,6 +35,25 @@ public class RevisionMarcacionCoberturaController : ControllerBase
         }
     }
 
+    // GET /api/RevisionMarcacionCobertura/controles
+    [HttpGet, Route("controles")]
+    public async Task<IActionResult> GetControles()
+    {
+        try
+        {
+            var result = await _app.GetControles();
+            return Ok(new { status = true, detail = result, message = "Controles consultados." });
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, new
+            {
+                status  = false,
+                message = "No fue posible obtener los controles."
+            });
+        }
+    }
+
     // POST /api/RevisionMarcacionCobertura/Save
     [HttpPost, Route("Save")]
     public async Task<IActionResult> Save([FromBody] revision_marcacion_cobertura_bbva model)

@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Multibanca.Application.Interfaces.Multibanca.BBVA.Escrituracion;
+using Multibanca.Common;
 using Multibanca.Domain.Models.Multibanca.BBVA.Escrituracion;
 using System.Security.Claims;
 
-namespace Multibanca.Backend.Api.Controllers.Multibanca;
+namespace Multibanca.Backend.Api.Controllers.Multibanca.BBVA.Escrituracion;
 
 [Authorize(Roles = "ADMINISTRADOR,GERENTE_COH")]
 [Route("api/[controller]")]
@@ -12,10 +13,12 @@ namespace Multibanca.Backend.Api.Controllers.Multibanca;
 public class VoboGerenciaCohController : ControllerBase
 {
     private readonly IVoboGerenciaCohApplication _app;
+    private readonly string ActividadID = Constants.ActividadesBBVA.EscrituracionVoBoGerenciaApplication;
 
-    public VoboGerenciaCohController(IVoboGerenciaCohApplication app)
-        => _app = app;
 
+    public VoboGerenciaCohController(IVoboGerenciaCohApplication app){
+        _app = app;   
+    }
     // GET /api/VoboGerenciaCoh/GetByExpediente/{idExpediente}
     [HttpGet, Route("GetByExpediente/{idExpediente}")]
     public async Task<IActionResult> GetByExpediente(long idExpediente)
@@ -36,25 +39,41 @@ public class VoboGerenciaCohController : ControllerBase
     }
 
     // POST /api/VoboGerenciaCoh/Save
-    [HttpPost, Route("Save")]
+    [HttpPost("Save")]
     public async Task<IActionResult> Save([FromBody] vobo_gerencia_coh_bbva model)
     {
         try
         {
             if (model.id_expediente <= 0)
-                return Ok(new
-                {
-                    status  = false,
-                    message = "El campo id_expediente es obligatorio."
-                });
-
-            var result = await _app.Guardar(model, GetUserId());
-            return Ok(new
             {
-                status  = true,
-                detail  = result,
-                message = "Información guardada correctamente."
-            });
+                return BadRequest(new {status  = false,message = "El campo id_expediente es obligatorio."});
+            }
+
+            model.id_actividad = ActividadID;
+
+            if (model.id == 0)
+            {
+                model.row_status = true;
+                model.is_active = true;
+                model = _app.Create(model, GetUserId());
+            }
+            else
+            {
+                // Forzar campos de auditoría para que Update no los ponga en false/infinity
+                model.row_status = true;
+                model.is_active = true;
+                model = _app.Update(model, GetUserId());
+            }
+
+            return Ok(new { status = true, detail = model, message = "Firmar Escritura Cliente guardado correctamente." });
+
+            // var result = await _app.Guardar(model, GetUserId());
+            // return Ok(new
+            // {
+            //     status  = true,
+            //     detail  = result,
+            //     message = "Información guardada correctamente."
+            // });
         }
         catch (Exception)
         {

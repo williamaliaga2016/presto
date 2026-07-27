@@ -33,9 +33,11 @@ import {
   camposObligatoriosFaltantes,
   emailColocacionesInvalido,
 } from '../models/revision_marcacion_cobertura';
+import { EMPTY_CONTROLES_REVISION_MARCACION_COBERTURA } from '../models/controles';
 import { useRevisionMarcacionCobertura } from '../hooks/useRevisionMarcacionCobertura';
 import { useUpsertRevisionMarcacionCobertura } from '../hooks/useUpsertRevisionMarcacionCobertura';
 import { useAvanzarRevisionMarcacionCobertura } from '../hooks/useAvanzarRevisionMarcacionCobertura';
+import { useControlesRevisionMarcacionCobertura } from '../hooks/useControlesRevisionMarcacionCobertura';
 
 // ─── Constantes ────────────────────────────────────────────────────────────────
 
@@ -81,6 +83,8 @@ export default function RevisarMarcacionCoberturaPage() {
   const { data, isLoading, isError, refetch } = useRevisionMarcacionCobertura(id_expediente);
   const saveMutation = useUpsertRevisionMarcacionCobertura();
   const avanzarMutation = useAvanzarRevisionMarcacionCobertura();
+  const { data: controlesData } = useControlesRevisionMarcacionCobertura();
+  const controles = controlesData?.detail ?? EMPTY_CONTROLES_REVISION_MARCACION_COBERTURA;
 
   // ── Reset cuando cambia el expediente ────────────────────────────────────
   useEffect(() => {
@@ -122,16 +126,15 @@ export default function RevisarMarcacionCoberturaPage() {
         setHerenciaError(false);
       }
 
+      // Precarga: siempre se toma el formulario que retorna el backend
+      // (incluye created_date ya resuelto por el servidor, aun para
+      // expedientes sin registro previo).
       if (payload.formulario) {
-        if (payload.formulario.id > 0) {
-          setForm({
-            ...EMPTY_REVISION_MARCACION_COBERTURA(id_expediente),
-            ...payload.formulario,
-            id_expediente,
-          });
-        } else {
-          setForm(EMPTY_REVISION_MARCACION_COBERTURA(id_expediente));
-        }
+        setForm({
+          ...EMPTY_REVISION_MARCACION_COBERTURA(id_expediente),
+          ...payload.formulario,
+          id_expediente,
+        });
       }
     }
 
@@ -376,6 +379,9 @@ export default function RevisarMarcacionCoberturaPage() {
                 <SeccionMarcacionCobertura
                   form={form}
                   onChange={updateField}
+                  tipoDocumentoOptions={controles.tipo_documento}
+                  tipoViviendaOptions={controles.tipo_vivienda}
+                  estadoProcesoOptions={controles.estado_proceso}
                   disabled={isBusy}
                 />
 

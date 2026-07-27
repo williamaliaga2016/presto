@@ -4,6 +4,7 @@ import type {
   RevisionMarcacionCobertura,
   RevisionMarcacionCoberturaResponse,
 } from '../models/revision_marcacion_cobertura';
+import type { ControlesRevisionMarcacionCobertura } from '../models/controles';
 
 const PATH_URL = '/api/RevisionMarcacionCobertura';
 
@@ -46,6 +47,17 @@ export const revisarMarcacionCoberturaService = {
     const response = await axiosClient.get<
       ApiResponse<{ actividad_destino: string } | null>
     >(`${PATH_URL}/Avanzar/${id_expediente}`);
+    return response.data;
+  },
+
+  /**
+   * GET /api/RevisionMarcacionCobertura/controles
+   * Catálogos para los dropdowns de Tipo de Documento, Tipo de Vivienda y Estado Proceso.
+   */
+  async getControles(): Promise<ApiResponse<ControlesRevisionMarcacionCobertura>> {
+    const response = await axiosClient.get<ApiResponse<ControlesRevisionMarcacionCobertura>>(
+      `${PATH_URL}/controles`,
+    );
     return response.data;
   },
 };
