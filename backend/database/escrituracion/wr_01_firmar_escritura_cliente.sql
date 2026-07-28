@@ -29,3 +29,33 @@ CREATE TABLE IF NOT EXISTS public.firmar_escritura_cliente (
 CREATE UNIQUE INDEX IF NOT EXISTS idx_fec_expediente
     ON public.firmar_escritura_cliente (id_expediente)
     WHERE is_active = true AND row_status = true;
+
+-- cat_actividades_ws
+INSERT INTO public.cat_actividades_ws (actividad, id_actividad, id_proceso, proceso, id_role, tipo, page, etapa, tiempo_promedio, is_active, row_status, created_by, created_date)
+SELECT 'Firmar Escritura Cliente', 'BBVA_ESCRITURACION_FIRMAR_ESCRITURA_CLIENTE_CE5FAC2F', 'WP_BBVA_CONTACTO_CLIENTE', 'Escrituración', 1, 'actividad', 'firmar_escritura_cliente', '1', 1, true, true, 'admin', NOW()
+WHERE NOT EXISTS (SELECT 1 FROM cat_actividades_ws WHERE id_actividad = 'BBVA_ESCRITURACION_FIRMAR_ESCRITURA_CLIENTE_CE5FAC2F');
+
+-- xpdl_transitions — Transiciones de salida de Firmar Escritura Cliente
+-- 1. Escalamiento Comercial → Gestión Comercial
+INSERT INTO public.xpdl_transitions (transition_id, name, from_activity, to_activity, condition, workflow_process_id)
+SELECT 'TR_FIRMAR_ESC_ESCALAMIENTO_COMERCIAL', 'TR_FIRMAR_ESC_ESCALAMIENTO_COMERCIAL',
+       'BBVA_ESCRITURACION_FIRMAR_ESCRITURA_CLIENTE_CE5FAC2F', 'BBVA_ESCRITURACION_REALIZAR_GESTION_COMERCIAL', 'Otherwise', 'WP_BBVA_CONTACTO_CLIENTE'
+WHERE NOT EXISTS (SELECT 1 FROM public.xpdl_transitions WHERE transition_id = 'TR_FIRMAR_ESC_ESCALAMIENTO_COMERCIAL');
+
+-- 2. Sin escalamiento → Revisar EP Abogado
+INSERT INTO public.xpdl_transitions (transition_id, name, from_activity, to_activity, condition, workflow_process_id)
+SELECT 'TR_FIRMAR_ESC_REVISAR_EP', 'TR_FIRMAR_ESC_REVISAR_EP',
+       'BBVA_ESCRITURACION_FIRMAR_ESCRITURA_CLIENTE_CE5FAC2F', 'BBVA_ESCRITURACION_REVISAR_EP_ABOGADO', 'Otherwise', 'WP_BBVA_CONTACTO_CLIENTE'
+WHERE NOT EXISTS (SELECT 1 FROM public.xpdl_transitions WHERE transition_id = 'TR_FIRMAR_ESC_REVISAR_EP');
+
+-- 3. CXI → VB Prorrata (paralelo)
+INSERT INTO public.xpdl_transitions (transition_id, name, from_activity, to_activity, condition, workflow_process_id)
+SELECT 'TR_FIRMAR_ESC_VB_PRORRATA', 'TR_FIRMAR_ESC_VB_PRORRATA',
+       'BBVA_ESCRITURACION_FIRMAR_ESCRITURA_CLIENTE_CE5FAC2F', 'BBVA_ESCRITURACION_VB_PRORRATA', 'Otherwise', 'WP_BBVA_CONTACTO_CLIENTE'
+WHERE NOT EXISTS (SELECT 1 FROM public.xpdl_transitions WHERE transition_id = 'TR_FIRMAR_ESC_VB_PRORRATA');
+
+-- 4. Leasing + requiere_causar → Realizar Causación (paralelo)
+INSERT INTO public.xpdl_transitions (transition_id, name, from_activity, to_activity, condition, workflow_process_id)
+SELECT 'TR_FIRMAR_ESC_CAUSACION', 'TR_FIRMAR_ESC_CAUSACION',
+       'BBVA_ESCRITURACION_FIRMAR_ESCRITURA_CLIENTE_CE5FAC2F', 'BBVA_ESCRITURACION_REALIZAR_CAUSACION', 'Otherwise', 'WP_BBVA_CONTACTO_CLIENTE'
+WHERE NOT EXISTS (SELECT 1 FROM public.xpdl_transitions WHERE transition_id = 'TR_FIRMAR_ESC_CAUSACION');

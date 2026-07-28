@@ -114,6 +114,10 @@ import FirmarRepLegalPage from "@/features/actividades/firmar_rep_legal/pages/fi
 import RealizarEntregaEpFirmadaPage from "@/features/actividades/realizar_entrega_ep_firmada/pages/realizar_entrega_ep_firmada_page";
 import RealizarRecepcionBoletaPage from "@/features/actividades/realizar_recepcion_boleta/pages/realizar_recepcion_boleta_page";
 import RealizarEPRegistradasPage from "@/features/actividades/realizar_ep_registradas/pages/realizar_ep_registradas_page";
+import RealizarVBFinalAbogadoPage from "@/features/actividades/realizar_vb_final_abogado/pages/realizar_vb_final_abogado_page";
+import ValidarCondicionesDesembolsoPage from "@/features/actividades/validar_condiciones_desembolso/pages/validar_condiciones_desembolso_page";
+import RealizarGestionComercialPage from "@/features/actividades/realizar_gestion_comercial/pages/realizar_gestion_comercial_page";
+import RealizarDevolucionEPPage from "@/features/actividades/realizar_devolucion_ep/pages/realizar_devolucion_ep_page";
 import RevisarEpAbogadoPage from "@/features/actividades/revisar_ep_abogado/pages/revisar_ep_abogado_page";
 import ExcepcionDesembolsoPage from "@/features/actividades/excepcion_desembolso/pages/excepcion_desembolso_page";
 import RealizarVoboGerenciaCohPage from "@/features/actividades/realizar_vobo_gerencia_coh/pages/realizar_vobo_gerencia_coh_page";
@@ -259,6 +263,10 @@ export default function AppRouter() {
             <Route path="realizar_entrega_ep_firmada/:id_expediente" element={<RealizarEntregaEpFirmadaPage />} />
             <Route path="realizar_recepcion_boleta/:id_expediente" element={<RealizarRecepcionBoletaPage />} />
             <Route path="realizar_ep_registradas/:id_expediente" element={<RealizarEPRegistradasPage />} />
+            <Route path="realizar_vb_final_abogado/:id_expediente" element={<RealizarVBFinalAbogadoPage />} />
+            <Route path="validar_condiciones_desembolso/:id_expediente" element={<ValidarCondicionesDesembolsoPage />} />
+            <Route path="realizar_gestion_comercial/:id_expediente" element={<RealizarGestionComercialPage />} />
+            <Route path="realizar_devolucion_ep/:id_expediente" element={<RealizarDevolucionEPPage />} />
             <Route path="revisar_ep_abogado/:id_expediente" element={<RevisarEpAbogadoPage />} />
             <Route path="excepcion_desembolso/:id_expediente" element={<ExcepcionDesembolsoPage />} />
             <Route path="realizar_vobo_gerencia_coh/:id_expediente" element={<RealizarVoboGerenciaCohPage />} />

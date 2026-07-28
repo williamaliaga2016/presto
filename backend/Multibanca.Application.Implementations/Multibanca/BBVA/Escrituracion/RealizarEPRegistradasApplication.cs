@@ -92,6 +92,26 @@ public class RealizarEPRegistradasApplication
         );
         
 
+        // Resolver tipo boleta
+        string? tipoBoletaDescripcion = null;
+        if (!string.IsNullOrWhiteSpace(recepcionBoleta?.tipo_boleta))
+        {
+            var catalogoTipoBoleta = await _commonApplication.GetCatalogoByType(Constants.Catalogo.TipoBoleta_L44);
+            tipoBoletaDescripcion = catalogoTipoBoleta
+                .FirstOrDefault(c => c.code == recepcionBoleta.tipo_boleta)?.description
+                ?? recepcionBoleta.tipo_boleta;
+        }
+
+        // Resolver oficina de registro
+        string? oficinaRegistroDescripcion = null;
+        if (!string.IsNullOrWhiteSpace(recepcionBoleta?.oficina_registro))
+        {
+            var catalogoOficina = await _commonApplication.GetCatalogoByType(Constants.Catalogo.OficinaRegistro_L45);
+            oficinaRegistroDescripcion = catalogoOficina
+                .FirstOrDefault(c => c.code == recepcionBoleta.oficina_registro)?.description
+                ?? recepcionBoleta.oficina_registro;
+        }
+
         return new
         {
             formulario,
@@ -109,8 +129,8 @@ public class RealizarEPRegistradasApplication
                 // Datos Recepción Boleta
                 numero_boleta = recepcionBoleta?.numero_boleta,
                 fecha_boleta = recepcionBoleta?.fecha_boleta,
-                tipo_boleta = recepcionBoleta?.tipo_boleta,
-                oficina_registro = recepcionBoleta?.oficina_registro,
+                tipo_boleta = tipoBoletaDescripcion,
+                oficina_registro = oficinaRegistroDescripcion,
                 numero_matricula = recepcionBoleta?.numero_matricula,
                 tipo_boleta_desc = tipoBoletaDesc,
                 oficina_registro_desc = oficinaRegistroDesc,

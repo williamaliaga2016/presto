@@ -187,6 +187,10 @@ namespace Data.Repository.Implementations
         public DbSet<excepcion_desembolso_entity> excepcion_desembolso { get; set; }
         public DbSet<vobo_gerencia_coh_entity> vobo_gerencia_coh { get; set; }
         public DbSet<revision_marcacion_cobertura_entity> revision_marcacion_cobertura { get; set; }
+        public DbSet<realizar_vb_final_abogado_entity> realizar_vb_final_abogado { get; set; }
+        public DbSet<validar_condiciones_desembolso_entity> validar_condiciones_desembolso { get; set; }
+        public DbSet<realizar_gestion_comercial_entity> realizar_gestion_comercial { get; set; }
+        public DbSet<realizar_devolucion_ep_entity> realizar_devolucion_ep { get; set; }
 
         public MultibancaDBContext(DbContextOptions<MultibancaDBContext> options) : base(options)
         {
@@ -361,6 +365,14 @@ namespace Data.Repository.Implementations
                 modelBuilder.Entity<vobo_gerencia_coh_entity>());
             revision_marcacion_cobertura_entity_config.SetEntityBuilder(
                 modelBuilder.Entity<revision_marcacion_cobertura_entity>());
+            realizar_vb_final_abogado_entity_config.SetEntityBuilder(
+                modelBuilder.Entity<realizar_vb_final_abogado_entity>());
+            validar_condiciones_desembolso_entity_config.SetEntityBuilder(
+                modelBuilder.Entity<validar_condiciones_desembolso_entity>());
+            realizar_gestion_comercial_entity_config.SetEntityBuilder(
+                modelBuilder.Entity<realizar_gestion_comercial_entity>());
+            realizar_devolucion_ep_entity_config.SetEntityBuilder(
+                modelBuilder.Entity<realizar_devolucion_ep_entity>());
 
             base.OnModelCreating(modelBuilder);
             gestion_rectificatoria_escritura_firmada_postventa_entity_config.SetEntityBuilder(modelBuilder.Entity<gestion_rectificatoria_escritura_firmada_postventa_entity>());

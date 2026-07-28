@@ -768,3 +768,13 @@ html, body, #root {
   transform: none !important;
   visibility: visible !important;
 }
+
+/* ===== CONFIRM DIALOG BUTTONS FIX ===== */
+.p-confirm-dialog .p-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+.p-confirm-dialog .p-dialog-footer .p-button {
+  min-width: 120px;
+}

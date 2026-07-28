@@ -326,6 +326,11 @@ namespace Multibanca.Common
             public const string EscrituracionVoBoGerenciaApplication = "BBVA_ESCRITURACION_REALIZAR_VOBO_GERENCIA_COH";
             public const string EscrituracionRevisarMarcacionCobertura = "BBVA_ESCRITURACION_REVISAR_MARCACION_COBERTURA";
             public const string EscrituracionValidarCondicionesDesembolso = "BBVA_ESCRITURACION_VALIDAR_CONDICIONES_DESEMBOLSO";
+            public const string EscrituracionValidarCondicionesDesembolso = "BBVA_ESCRITURACION_VALIDAR_CONDICIONES_DESEMBOLSO";
+            public const string EscrituracionGestionarControlGarantias = "BBVA_ESCRITURACION_GESTIONAR_CONTROL_GARANTIAS";
+            public const string EscrituracionRealizarDevolucionEP = "BBVA_ESCRITURACION_REALIZAR_DEVOLUCION_EP";
+            public const string EscrituracionRealizarGestionComercial = "BBVA_ESCRITURACION_REALIZAR_GESTION_COMERCIAL";
+            public const string EscrituracionGestionarEscalamientos = "BBVA_ESCRITURACION_GESTIONAR_ESCALAMIENTOS";
         }
 
         // ============================================================
@@ -359,6 +364,27 @@ namespace Multibanca.Common
 
             // BBVA Escrituración — Realizar EP Registradas
             public const string EPRegistradasVBFinalAbogado = "BBVA_ESCRITURACION_TR_EP_REGISTRADAS_VB_FINAL_ABOGADO";
+
+            // BBVA Escrituración — Realizar VB Final Abogado
+            public const string VBFinalAbogadoDevolucionEP = "BBVA_ESCRITURACION_TR_VB_FINAL_DEVOLUCION_EP";
+            public const string VBFinalAbogadoValidarDesembolso = "BBVA_ESCRITURACION_TR_VB_FINAL_VALIDAR_DESEMBOLSO";
+            public const string VBFinalAbogadoControlGarantias = "BBVA_ESCRITURACION_TR_VB_FINAL_CONTROL_GARANTIAS";
+
+            // BBVA Escrituración — Validar Condiciones Desembolso
+            public const string ValidarDesembolsoGestionComercial = "BBVA_ESCRITURACION_TR_VALIDAR_DESEMBOLSO_GESTION_COMERCIAL";
+            public const string ValidarDesembolsoGestionarEscalamientos = "BBVA_ESCRITURACION_TR_VALIDAR_DESEMBOLSO_GESTIONAR_ESCALAMIENTOS";
+
+            // BBVA Escrituración — Realizar Gestión Comercial (retornos)
+            public const string GestionComercialRetornoFirmarEscritura = "BBVA_ESCRITURACION_TR_GESTION_COMERCIAL_FIRMAR_ESCRITURA";
+            public const string GestionComercialRetornoDevolucionEP = "BBVA_ESCRITURACION_TR_GESTION_COMERCIAL_DEVOLUCION_EP";
+            public const string GestionComercialRetornoValidarDesembolso = "BBVA_ESCRITURACION_TR_GESTION_COMERCIAL_VALIDAR_DESEMBOLSO";
+
+            // BBVA Escrituración — Realizar Devolución EP
+            public const string DevolucionEPGestionComercial = "BBVA_ESCRITURACION_TR_DEVOLUCION_EP_GESTION_COMERCIAL";
+            public const string DevolucionEPFirmarEscritura = "BBVA_ESCRITURACION_TR_DEVOLUCION_EP_FIRMAR_ESCRITURA";
+            public const string DevolucionEPFirmarRepLegal = "BBVA_ESCRITURACION_TR_DEVOLUCION_EP_FIRMAR_REP_LEGAL";
+            public const string DevolucionEPEPRegistradas = "BBVA_ESCRITURACION_TR_DEVOLUCION_EP_EP_REGISTRADAS";
+
             // BBVA Escrituración — Revisar EP Abogado (BBV-130)
             public const string RevisarEPAFirmarRepLegal = "TR_REVISAR_EP_FIRMAR_REP_LEGAL";
             public const string RevisarEPADevolucion = "TR_REVISAR_EP_DEVOLUCION";
