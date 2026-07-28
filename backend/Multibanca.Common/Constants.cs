@@ -326,7 +326,6 @@ namespace Multibanca.Common
             public const string EscrituracionVoBoGerenciaApplication = "BBVA_ESCRITURACION_REALIZAR_VOBO_GERENCIA_COH";
             public const string EscrituracionRevisarMarcacionCobertura = "BBVA_ESCRITURACION_REVISAR_MARCACION_COBERTURA";
             public const string EscrituracionValidarCondicionesDesembolso = "BBVA_ESCRITURACION_VALIDAR_CONDICIONES_DESEMBOLSO";
-            public const string EscrituracionValidarCondicionesDesembolso = "BBVA_ESCRITURACION_VALIDAR_CONDICIONES_DESEMBOLSO";
             public const string EscrituracionGestionarControlGarantias = "BBVA_ESCRITURACION_GESTIONAR_CONTROL_GARANTIAS";
             public const string EscrituracionRealizarDevolucionEP = "BBVA_ESCRITURACION_REALIZAR_DEVOLUCION_EP";
             public const string EscrituracionRealizarGestionComercial = "BBVA_ESCRITURACION_REALIZAR_GESTION_COMERCIAL";
