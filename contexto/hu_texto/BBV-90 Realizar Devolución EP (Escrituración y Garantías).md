@@ -1,85 +1,125 @@
-# BBV-90 Realizar Devolución EP (Escrituración y Garantías)
+# BBV-90 - HU - Actividad Realizar Devolución EP (Escrituración y Garantías)
 
-> Documento convertido desde PDF para edición y análisis en Kiro.
+## Información General
 
-<!-- --- PAGE 1 --- -->
-
-
-07726, 15:28 {#8BV.90] HU - Actividad Realizar Devolución EP (Escrturación y Garantías)
-Epica - Presto Escrituración y Garantías BBVA Legalización (ssv.12
-4 [BBV-90] HU - Actividad Realizar Devolución EP (Escrituración y Garantías) creada: o2jun26 Actualizada: 19/Jun/26
-Proyecto: BBVA - Colombia
-Principal: Épica - Presto Escrituración y Garantías BBVA Legalización
-Tipo Historia Prioridad. Media
-Etiquetas: BBVA_LEGALIZACION
-Tiempo Trabajado: Desconocido
+| Campo | Valor |
+|---|---|
+| Épica | Presto Escrituración y Garantías BBVA Legalización |
+| Historia | BBV-90 |
+| Estado | Tareas por hacer |
+| Proyecto | BBVA - Colombia |
+| Tipo | Historia |
+| Prioridad | Media |
+| Informador | Jorge Andres Garzon Paez |
+| Persona asignada | Jorge Andres Garzon Paez |
+| Resolución | Sin resolver |
+| Etiquetas | BBVA_LEGALIZACION |
 
 ## Descripción
 
 **Yo como:** Analista de Vivienda.
-**Para:** Solventar las inconsistencias documentales o de proceso reportadas y enrutar correctamente el flujo hacia Comercial, o reactivar la operación
-hacia a frma de escritura, rma del representante legal o revisión final del abogado
+
+**Deseo:** Acceder al acordeón **“Realizar Devolución EP”** para visualizar el histórico consolidado de rechazos emitidos por áreas previas, definir si la novedad requiere un escalamiento comercial (registrando sus causales) o reanudar el flujo seleccionando a qué etapa exacta debe retornar el trámite.
+
+**Para:** Solventar las inconsistencias documentales o de proceso reportadas y enrutar correctamente el flujo hacia Comercial, o reactivar la operación hacia la firma de escritura, firma del representante legal o revisión final del abogado.
 
 ## Alcance
 
-Esta funcionalidad corresponde a la bandeja centaizadora de rechazos del subproceso de Escrturacion y Garantía. Acta como el nodo de
-corrección donde el Analista de Vivenda revisa qué área devolvió la Escritura Pública (EP) y por qué. La pantalla mostrará en modo lectura los
-el enrutamiento dinámico que le otorga al analista el control total para decidir hacia qué punto exacto del ciclo (Acción a Segui) debe regresar el
-trámite una vez se subsanen los hallazgos.
+Esta funcionalidad corresponde a la bandeja centralizadora de rechazos del subproceso de **Escrituración y Garantías**. Actúa como el nodo de corrección donde el **Analista de Vivienda** revisa qué área devolvió la Escritura Pública (EP) y por qué.
 
-## Criterios de aceptación y reglas de negocio
+La pantalla mostrará en modo lectura los dictámenes previos y exigirá una decisión operativa principal mediante el campo **“¿Requiere Escalamiento Comercial?”**. Su principal característica es el enrutamiento dinámico que le otorga al analista el control total para decidir hacia qué punto exacto del ciclo (**Acción a Seguir**) debe regresar el trámite una vez se subsanen los hallazgos.
 
-+ CAO1 (Criterio Global Transversal):
-(heredando la vista de Escrituración y Garantías).
-2. El sistema debe renderizar en la cabecera la "información General” estctamente de solo lectura)
-3. El sistema debe incorporar el contenedor para "Funciones Transversales", dividido en Expediente Digital, Trazabilidad/Bitácora y Carta de
-Aprobación
-6. Trazablidad: Al ejecular "Avanzar, se registrará en a bicora: Fecha, Actividad (Realizar Devolución EP), Usuario Ejecutor (Analista de
-+ CA02 (Acordeón "Realizar Devolución EP” y Aseguramiento de Conceptos): El sistema debe desplegar un acordeón central nombrado
-obigatoriamente "Realizar Devolución EP”. Este bloque funcionará como un visor de aultria en modo de solo lectura que consalkará y
-mostrar
-‘Abogado, VoBo Prorraa, Concepto Causacin)
-hitpsliergeston tam atassian.neisiraisuevievsissue-ht/BBV.9/BV-90 im ve
+## Criterios de Aceptación - Reglas de Negocio
 
+### CA01 - Criterio Global Transversal
 
-<!-- --- PAGE 2 --- -->
+1. El sistema debe renderizar y mantener la estructura visual de los grupos de datos exactamente igual a como venían de la actividad anterior, heredando la vista de Escrituración y Garantías.
+2. Debe renderizar en la cabecera la **“Información General”**, estrictamente de solo lectura.
+3. Debe incorporar el contenedor de **“Funciones Transversales”**, dividido en:
+   - Expediente Digital.
+   - Trazabilidad/Bitácora.
+   - Carta de Aprobación.
+4. Botones de acción: **“Guardado”** y **“Transición / Avanzar”**.
+5. Al ejecutar **“Avanzar”**, se debe registrar en bitácora:
+   - Fecha.
+   - Actividad: `Realizar Devolución EP`.
+   - Usuario Ejecutor: `Analista de Vivienda`.
+   - Decisión de Enrutamiento.
+   - Observaciones.
 
+### CA02 - Acordeón “Realizar Devolución EP” y Aseguramiento de Conceptos
 
-877726, 15:23 [#88V-90] HU - Actividad Realizar Devolucién EP (Escrituración y Garantias)
-+ CA03 (Compuerta de Escalamiento Comercial y Novedades): Dentro del acordeón transaccional, el sistema habilitará el campo obligatorio
-"¿Requiere escalamiento comercial?" (Valores: SÍ / NO).
-© Sise selecciona "SÍ": El sistema debe desplegar dinámicamente dos listas desplegables obligatorias denominadas Tipologías y
-tarea al rol Comercial
-+ CA04 (Ruta de Reanudación y Acción a Seguir
-2. "Firmar Rep. Legal": Al avanzar, el uj so diigo hacia la actividad de "Firmar Rep. Legal"
-3. "Realizar EP Rogistradas": Al avanzar, ol flujo transita hacia la actividad de "Realizar EP Rogistradas"
-+ CAOS - Persistencia de Histórico de Devolución: Si el caso proviene de múltiples rechazos paralelos (ej. Abogado y Prorrata rechazaron al mismo
-tiempo), la pantalla debe mostrar ambos dictámenes consolidados para que el Analista de Vivienda solucione todas las inconsistencias de una sola
-+ CADS - Condicionalidad de Despliegue: El campo “Acción a Segui” y los campos "Tipologías/Casuísticas" son mutuamente excluyentes a nivel de
+El sistema debe desplegar un acordeón central denominado obligatoriamente **“Realizar Devolución EP”**. Funcionará como un visor de auditoría en modo de solo lectura y consolidará:
 
-## Modelo de datos
+- El o los conceptos/dictámenes negativos emitidos en las instancias previas que gatillaron la devolución.
+- Las **Tipologías**, **Casuísticas** y **Observaciones** exactas registradas por el área que detectó la novedad.
 
-Editable Obligatorio
-Campo Tipo de Dato Reglas de Negocio / Origen
-P m (Si/No) (Si/No) 3 9 9
-Conceptos /Dictémenes neo Ss Heredado. Muestra el estado o rechazo emitido por áreas
-Previos paralelas
-Tipología y Casuística de Alfanumérico No sí Heredado. Muestra la razón exacta de la devolución.
-Rechazo (Histórico)
-Observaciones de Rech . ,
-servaciones de Rechazo Texto No sí Heredado. Detalle dejado por el área revisora.
-(Histórico)
-¿Requiero ascalamiento List ,
-¿Requiero escalamiento ‘sta El Si Valores: "SÍ", "NO", Compuerta principal de decisión,
-comercial? Desplegable
-Lista
-Tipologías sí Condicionado Obligatorio si ¿Requiere escalamiento comercial? = SÍ,
-Desplegable
-Casuisticas Be econ 5 Condicionado — Obligatorio si ¿Requiere escalamiento comercial? = SÍ
-Lista Obligatorio si ¿Requiere escalamiento comercial? = NO. Valores
-Campo Kove para que sl Analista de Vivienda justnque las
-Observaciones Texto (Área) Si No Pp para a Justa:
-acciones tomadas para solventar la devolución.
-Generado alas Mon Jul 06 20:22:56 UTC 2026 por Michael Pulido usando JIRA 1001.0.0-SNAPSHOT100292-
-rev.c6te927afdded 1503 16460632049 14848e0265
-hitp:ebergestion atar atlassian nesijiaissueviews:ssue-himl/BBV.90/BBV-20 html ze
+### CA03 - Compuerta de Escalamiento Comercial y Novedades
+
+Dentro del acordeón transaccional, el sistema habilitará el campo obligatorio:
+
+**¿Requiere escalamiento comercial?**  
+Valores: **Sí / No**.
+
+- Si se selecciona **Sí**, el sistema debe desplegar dos listas obligatorias:
+  - `Tipologías`
+  - `Casuísticas`
+- Al accionar **“Avanzar”**, el flujo se dirige a **“Realizar Gestión Comercial”**, asignando la tarea al rol Comercial.
+
+### CA04 - Ruta de Reanudación y Acción a Seguir
+
+Si se selecciona **No**, el sistema debe mostrar un campo obligatorio **“Acción a Seguir”** con tres opciones:
+
+1. **Firmar Escritura** → retorna a **“Firmar Escritura Cliente”**.
+2. **Firmar Rep. Legal** → se dirige a **“Firmar Rep. Legal”**.
+3. **Realizar EP Registradas** → transita a **“Realizar EP Registradas”**.
+
+### CA05 - Persistencia de Histórico de Devolución
+
+Si el caso proviene de múltiples rechazos paralelos, la pantalla debe mostrar los dictámenes consolidados para que el Analista de Vivienda solucione todas las inconsistencias de una sola vez.
+
+### CA06 - Condicionalidad de Despliegue
+
+El campo **“Acción a Seguir”** y los campos **“Tipologías/Casuísticas”** son mutuamente excluyentes.
+
+- Si `¿Requiere escalamiento comercial? = Sí`:
+  - Mostrar `Tipologías`.
+  - Mostrar `Casuísticas`.
+  - Ocultar `Acción a Seguir`.
+- Si `¿Requiere escalamiento comercial? = No`:
+  - Mostrar `Acción a Seguir`.
+  - Ocultar `Tipologías`.
+  - Ocultar `Casuísticas`.
+
+## Modelado de Datos
+
+| Campo | Tipo de Dato | Editable | Obligatorio | Reglas de Negocio / Origen |
+|---|---|---:|---:|---|
+| Conceptos / Dictámenes Previos | Alfanumérico | No | Sí | Heredado. Muestra el estado o rechazo emitido por áreas paralelas. |
+| Tipología y Casuística de Rechazo (Histórico) | Alfanumérico | No | Sí | Heredado. Muestra la razón exacta de la devolución. |
+| Observaciones de Rechazo (Histórico) | Texto | No | Sí | Heredado. Detalle dejado por el área revisora. |
+| ¿Requiere escalamiento comercial? | Lista desplegable | Sí | Sí | Valores: “Sí”, “No”. Compuerta principal de decisión. |
+| Tipologías | Lista desplegable | Sí | Condicionado | Obligatorio si `¿Requiere escalamiento comercial? = Sí`. |
+| Casuísticas | Lista desplegable | Sí | Condicionado | Obligatorio si `¿Requiere escalamiento comercial? = Sí`. |
+| Acción a Seguir | Lista desplegable | Sí | Condicionado | Obligatorio si `¿Requiere escalamiento comercial? = No`. |
+| Observaciones | Texto (Área) | Sí | No | Campo libre para justificar las acciones tomadas para solventar la devolución. |
+
+## Resumen del Flujo
+
+```text
+Realizar Devolución EP
+        |
+        v
+¿Requiere escalamiento comercial?
+       / \
+     Sí   No
+     |     |
+     v     v
+Tipologías Acción a Seguir
+Casuísticas   |
+     |        +--> Firmar Escritura Cliente
+     |        +--> Firmar Rep. Legal
+     |        +--> Realizar EP Registradas
+     v
+Realizar Gestión Comercial
+```

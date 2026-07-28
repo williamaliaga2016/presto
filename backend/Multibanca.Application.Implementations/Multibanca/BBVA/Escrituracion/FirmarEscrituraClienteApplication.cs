@@ -152,10 +152,10 @@ public class FirmarEscrituraClienteApplication
         else
         {
             // CA03 — Escalamiento Comercial: No → Revisar EP Abogado (rol Abogado)
-            // CA11 — Evitar re-escalamiento si ya existe concepto previo
-            bool tieneConceptoEP = await _actividadesApplication.IsCompleteActivity(idExpediente, ActividadRevisarEP);
+            // CA11 — Evitar duplicar actividad si ya está en curso (no bloquear post-devolución)
+            bool hayRevisarEPActiva = await _actividadesApplication.ExisteActividadActiva(idExpediente, ActividadRevisarEP);
 
-            if (!tieneConceptoEP)
+            if (!hayRevisarEPActiva)
             {
                 var transitionIdEP = transitions.FirstOrDefault(x => x.name == TransicionRevisarEP)?.transition_id
                     ?? throw new InvalidOperationException($"No se encontró la transición '{TransicionRevisarEP}' en el workflow.");
@@ -165,12 +165,12 @@ public class FirmarEscrituraClienteApplication
             }
 
             // CA04, CA09 — Producto CXI: disparar en paralelo Realizar VB Prorrata (rol Gestor Constructor)
-            // CA11 — Evitar re-escalamiento si ya existe concepto previo
+            // CA11 — Evitar duplicar actividad si ya está en curso
             if (EsTipoCXI(formulario.tipo_credito, tiposCXI))
             {
-                bool tieneConceptoProrrata = await _actividadesApplication.IsCompleteActivity(idExpediente, ActividadVBProrrata);
+                bool hayProrrataActiva = await _actividadesApplication.ExisteActividadActiva(idExpediente, ActividadVBProrrata);
 
-                if (!tieneConceptoProrrata)
+                if (!hayProrrataActiva)
                 {
                     var transitionIdProrrata = transitions.FirstOrDefault(x => x.name == TransicionVBProrrata)?.transition_id
                         ?? throw new InvalidOperationException($"No se encontró la transición '{TransicionVBProrrata}' en el workflow.");
@@ -189,12 +189,12 @@ public class FirmarEscrituraClienteApplication
             }
 
             // CA04, CA09 — Producto Leasing + requiere_causar = SI: disparar Realizar Causación (rol Analista Leasing)
-            // CA11 — Evitar re-escalamiento si ya existe concepto previo
+            // CA11 — Evitar duplicar actividad si ya está en curso
             if (EsTipoLeasing(formulario.tipo_credito, tiposLeasing) && formulario.requiere_causar == "SI")
             {
-                bool tieneConceptoCausacion = await _actividadesApplication.IsCompleteActivity(idExpediente, ActividadCausacion);
+                bool hayCausacionActiva = await _actividadesApplication.ExisteActividadActiva(idExpediente, ActividadCausacion);
 
-                if (!tieneConceptoCausacion)
+                if (!hayCausacionActiva)
                 {
                     var transitionIdCausacion = transitions.FirstOrDefault(x => x.name == TransicionCausacion)?.transition_id
                         ?? throw new InvalidOperationException($"No se encontró la transición '{TransicionCausacion}' en el workflow.");
