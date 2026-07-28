@@ -216,6 +216,10 @@ namespace Multibanca.Register.IoC.Multibanca
             services.AddScoped<IRealizarEntregaEpFirmadaApplication, RealizarEntregaEpFirmadaApplication>();
             services.AddScoped<IRealizarRecepcionBoletaApplication, RealizarRecepcionBoletaApplication>();
             services.AddScoped<IRealizarEPRegistradasApplication, RealizarEPRegistradasApplication>();
+            services.AddScoped<IRealizarVBFinalAbogadoApplication, RealizarVBFinalAbogadoApplication>();
+            services.AddScoped<IValidarCondicionesDesembolsoApplication, ValidarCondicionesDesembolsoApplication>();
+            services.AddScoped<IRealizarGestionComercialApplication, RealizarGestionComercialApplication>();
+            services.AddScoped<IRealizarDevolucionEPApplication, RealizarDevolucionEPApplication>();
             services.AddScoped<IRevisarEpAbogadoApplication, RevisarEpAbogadoApplication>();
 
             return services;
@@ -372,6 +376,10 @@ namespace Multibanca.Register.IoC.Multibanca
             services.AddScoped<IRealizarEntregaEpFirmadaRepository, RealizarEntregaEpFirmadaRepository>();
             services.AddScoped<IRealizarRecepcionBoletaRepository, RealizarRecepcionBoletaRepository>();
             services.AddScoped<IRealizarEPRegistradasRepository, RealizarEPRegistradasRepository>();
+            services.AddScoped<IRealizarVBFinalAbogadoRepository, RealizarVBFinalAbogadoRepository>();
+            services.AddScoped<IValidarCondicionesDesembolsoRepository, ValidarCondicionesDesembolsoRepository>();
+            services.AddScoped<IRealizarGestionComercialRepository, RealizarGestionComercialRepository>();
+            services.AddScoped<IRealizarDevolucionEPRepository, RealizarDevolucionEPRepository>();
             services.AddScoped<IRevisarEpAbogadoRepository, RevisarEpAbogadoRepository>();
 
             return services;
