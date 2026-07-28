@@ -29,8 +29,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_excepcion_desembolso_expediente
 -- Permisos
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.excepcion_desembolso TO multibanca;
 GRANT USAGE, SELECT ON SEQUENCE public.excepcion_desembolso_id_seq TO multibanca;
-GRANT EXECUTE ON FUNCTION public.usp_select_excepcion_desembolso_bbva(BIGINT) TO multibanca;
-
 
 -- ============================================================
 -- Registro en cat_actividades_ws (bandeja)
