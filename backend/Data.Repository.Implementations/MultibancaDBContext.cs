@@ -184,6 +184,9 @@ namespace Data.Repository.Implementations
         public DbSet<realizar_entrega_ep_firmada_entity> realizar_entrega_ep_firmada { get; set; }
         public DbSet<realizar_recepcion_boleta_entity> realizar_recepcion_boleta { get; set; }
         public DbSet<realizar_ep_registradas_entity> realizar_ep_registradas { get; set; }
+        public DbSet<excepcion_desembolso_entity> excepcion_desembolso { get; set; }
+        public DbSet<vobo_gerencia_coh_entity> vobo_gerencia_coh { get; set; }
+        public DbSet<revision_marcacion_cobertura_entity> revision_marcacion_cobertura { get; set; }
         public DbSet<realizar_vb_final_abogado_entity> realizar_vb_final_abogado { get; set; }
         public DbSet<validar_condiciones_desembolso_entity> validar_condiciones_desembolso { get; set; }
         public DbSet<realizar_gestion_comercial_entity> realizar_gestion_comercial { get; set; }
@@ -356,6 +359,12 @@ namespace Data.Repository.Implementations
                 modelBuilder.Entity<realizar_recepcion_boleta_entity>());
             realizar_ep_registradas_entity_config.SetEntityBuilder(
                 modelBuilder.Entity<realizar_ep_registradas_entity>());
+            excepcion_desembolso_entity_config.SetEntityBuilder(
+                modelBuilder.Entity<excepcion_desembolso_entity>());
+            vobo_gerencia_coh_entity_config.SetEntityBuilder(
+                modelBuilder.Entity<vobo_gerencia_coh_entity>());
+            revision_marcacion_cobertura_entity_config.SetEntityBuilder(
+                modelBuilder.Entity<revision_marcacion_cobertura_entity>());
             realizar_vb_final_abogado_entity_config.SetEntityBuilder(
                 modelBuilder.Entity<realizar_vb_final_abogado_entity>());
             validar_condiciones_desembolso_entity_config.SetEntityBuilder(

@@ -1,0 +1,61 @@
+namespace Multibanca.Domain.Models.Multibanca.BBVA.Escrituracion;
+
+public class revision_marcacion_cobertura_bbva
+{
+    public long id { get; set; }
+    public long id_expediente { get; set; }
+    public string id_actividad { get; set; } = "BBVA_ESCRITURACION_REVISAR_MARCACION_COBERTURA";
+
+    // CA05 — Notificación a Colocaciones (bloqueante, CA08)
+    public string? email_area_colocaciones { get; set; }
+
+    // Identificación
+    public string? consecutivo { get; set; }
+    public string? tipo_documento { get; set; }
+    public string? numero_documento { get; set; }
+    public string? tipo_tramite { get; set; }
+    public string? nombre { get; set; }
+
+    // Proyecto / Constructora (Diligencia SITCAR)
+    public string? constructora { get; set; }
+    public string? proyecto { get; set; }
+    public DateTime? fecha_aceptacion_plataforma { get; set; }
+    public string? tipo_vivienda { get; set; }
+
+    // Valores y obligación
+    public decimal? valor_subsidio { get; set; }
+    public string? numero_obligacion { get; set; }
+    public DateTime? fecha_desembolso { get; set; }
+    public DateTime? fecha_proximo_canon { get; set; }
+    public decimal? valor_desembolso { get; set; }
+    public decimal? intereses_corrientes { get; set; }
+    public decimal? capital { get; set; }
+    public decimal? seguros { get; set; }
+    public decimal? cuota_mensual { get; set; }
+    public int? plazo { get; set; }
+    public string? observacion { get; set; }
+
+    // Solicitud / Respuesta de marcación (SITCAR)
+    public DateTime? fecha_solicitud_marcacion { get; set; }
+    public string? hora_solicitud_marcacion { get; set; }
+    public DateTime? fecha_respuesta_marcacion { get; set; }
+    public string? hora_respuesta_marcacion { get; set; }
+    public string? responsable_m5 { get; set; }
+
+    // Resolución
+    public string? no_resolucion { get; set; }
+    public DateTime? fecha_resolucion { get; set; }
+    public DateTime? fecha_envio_resolucion { get; set; }
+    public string? estado_proceso { get; set; }
+
+    // CA07 — Observaciones generales
+    public string? observaciones { get; set; }
+
+    // Campos de auditoría (explícitos, sin heredar de base_auditoria)
+    public bool is_active { get; set; }
+    public bool row_status { get; set; }
+    public int created_by { get; set; }
+    public DateTime created_date { get; set; }
+    public int? modified_by { get; set; }
+    public DateTime? modified_date { get; set; }
+}

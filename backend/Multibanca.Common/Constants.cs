@@ -287,6 +287,8 @@ namespace Multibanca.Common
             public const string TipoBoleta_L44 = "L44_TIPO_BOLETA";
             public const string OficinaRegistro_L45 = "L45_OFICINA_REGISTRO";
             public const string Notarias_L46 = "L46_NOTARIAS";
+            public const string TipoViviendaBbv107 = "TIPO_VIVIENDA_BBV107";
+            public const string EstadoProcesoBbv107 = "ESTADO_PROCESO_BBV107";
         }
 
         // ============================================================
@@ -319,7 +321,11 @@ namespace Multibanca.Common
             public const string EscrituracionRealizarCausacion = "BBVA_ESCRITURACION_REALIZAR_CAUSACION";
             public const string EscrituracionRealizarRecepcionBoleta = "BBVA_ESCRITURACION_REALIZAR_RECEPCION_BOLETA";
             public const string EscrituracionRealizarEPRegistradas = "BBVA_ESCRITURACION_REALIZAR_EP_REGISTRADAS";
+            public const string EscrituracionRealizarExcepcionDesembolso = "BBVA_ESCRITURACION_REALIZAR_EXCEPCION_DESEMBOLSO";
             public const string EscrituracionRealizarVBFinalAbogado = "BBVA_ESCRITURACION_REALIZAR_VB_FINAL_ABOGADO";
+            public const string EscrituracionVoBoGerenciaApplication = "BBVA_ESCRITURACION_REALIZAR_VOBO_GERENCIA_COH";
+            public const string EscrituracionRevisarMarcacionCobertura = "BBVA_ESCRITURACION_REVISAR_MARCACION_COBERTURA";
+            public const string EscrituracionValidarCondicionesDesembolso = "BBVA_ESCRITURACION_VALIDAR_CONDICIONES_DESEMBOLSO";
             public const string EscrituracionValidarCondicionesDesembolso = "BBVA_ESCRITURACION_VALIDAR_CONDICIONES_DESEMBOLSO";
             public const string EscrituracionGestionarControlGarantias = "BBVA_ESCRITURACION_GESTIONAR_CONTROL_GARANTIAS";
             public const string EscrituracionRealizarDevolucionEP = "BBVA_ESCRITURACION_REALIZAR_DEVOLUCION_EP";
@@ -352,6 +358,10 @@ namespace Multibanca.Common
             public const string RecepcionBoletaEPRegistradas = "BBVA_ESCRITURACION_TR_RECEPCION_BOLETA_EP_REGISTRADAS";
             public const string RecepcionBoletaExcepcionDesembolso = "BBVA_ESCRITURACION_TR_RECEPCION_BOLETA_EXCEPCION_DESEMBOLSO";
 
+            // BBVA Escrituración — Realizar Excepción Desembolso
+            public const string ExcepcionDesembolsoVoBoGerencia = "BBVA_ESCRITURACION_TR_EXCEPCION_DESEMBOLSO_VOBO_GERENCIA";
+            public const string ExcepcionDesembolsoValidarCondiciones = "BBVA_ESCRITURACION_TR_EXCEPCION_DESEMBOLSO_VALIDAR_CONDICIONES";
+
             // BBVA Escrituración — Realizar EP Registradas
             public const string EPRegistradasVBFinalAbogado = "BBVA_ESCRITURACION_TR_EP_REGISTRADAS_VB_FINAL_ABOGADO";
 
@@ -378,6 +388,12 @@ namespace Multibanca.Common
             // BBVA Escrituración — Revisar EP Abogado (BBV-130)
             public const string RevisarEPAFirmarRepLegal = "TR_REVISAR_EP_FIRMAR_REP_LEGAL";
             public const string RevisarEPADevolucion = "TR_REVISAR_EP_DEVOLUCION";
+
+            // BBVA Escrituración — Realizar Vobo Gerencia COH (BBV-141)
+            public const string VoboGerenciaCohExcepcionDesembolso = "BBVA_ESCRITURACION_TR_VOBO_GERENCIA_COH_EXCEPCION_DESEMBOLSO";
+
+            // BBVA Escrituración — Revisar Marcación de Cobertura (BBV-107)
+            public const string MarcacionCoberturaValidarCondiciones = "BBVA_ESCRITURACION_TR_MARCACION_COBERTURA_VALIDAR_CONDICIONES";
         }
 
         // ============================================================

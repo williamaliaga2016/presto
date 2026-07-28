@@ -119,6 +119,9 @@ import ValidarCondicionesDesembolsoPage from "@/features/actividades/validar_con
 import RealizarGestionComercialPage from "@/features/actividades/realizar_gestion_comercial/pages/realizar_gestion_comercial_page";
 import RealizarDevolucionEPPage from "@/features/actividades/realizar_devolucion_ep/pages/realizar_devolucion_ep_page";
 import RevisarEpAbogadoPage from "@/features/actividades/revisar_ep_abogado/pages/revisar_ep_abogado_page";
+import ExcepcionDesembolsoPage from "@/features/actividades/excepcion_desembolso/pages/excepcion_desembolso_page";
+import RealizarVoboGerenciaCohPage from "@/features/actividades/realizar_vobo_gerencia_coh/pages/realizar_vobo_gerencia_coh_page";
+import RevisarMarcacionCoberturaPage from "@/features/actividades/revisar_marcacion_cobertura/pages/revisar_marcacion_cobertura_page";
 
 export default function AppRouter() {
   const { isAuthenticated } = useAuth();
@@ -265,6 +268,9 @@ export default function AppRouter() {
             <Route path="realizar_gestion_comercial/:id_expediente" element={<RealizarGestionComercialPage />} />
             <Route path="realizar_devolucion_ep/:id_expediente" element={<RealizarDevolucionEPPage />} />
             <Route path="revisar_ep_abogado/:id_expediente" element={<RevisarEpAbogadoPage />} />
+            <Route path="excepcion_desembolso/:id_expediente" element={<ExcepcionDesembolsoPage />} />
+            <Route path="realizar_vobo_gerencia_coh/:id_expediente" element={<RealizarVoboGerenciaCohPage />} />
+            <Route path="revisar_marcacion_cobertura/:id_expediente" element={<RevisarMarcacionCoberturaPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>
