@@ -1,64 +1,47 @@
-# BBV-141 Realizar Vobo Gerencia COH (Escrituración y Garantías)
+# Descripción
 
-> Documento convertido desde PDF para edición y análisis en Kiro.
+**Yo como:** Gerente COH.
 
-<!-- --- PAGE 1 --- -->
+**Deseo:** Acceder a la actividad "Realizar Vobo Gerencia COH" para visualizar la información heredada del caso, emitir mi visto bueno confirmando el Vobo Gerencial y justificar mi decisión en caso de rechazo.
 
-
-ene, 1628 [#88V-141] HU-Reaizar Vobo Gerencia COH (Escrturacén y Garantias)
-Epica - Presto Escrituración y Garantías BBVA Legalización (ssv.12
-$, [BBV-141] HU - Realizar Vobo Gerencia COH (Escrituración y Garantías) creada: 25jun/26 Actualizada: 30/Jun/26
-Proyecto: BBVA - Colombia
-Principal: Épica - Presto Escrituración y Garantías BBVA Legalización
-Tipo Historia Prioridad. Media
-Etiquetas: BBVA_LEGALIZACION
-Tiempo Trabajado: Desconocido
-
-## Descripción
-
-**Yo como:** Gerente COH
 **Para:** Avanzar el flujo hacia la realización de la excepción del desembolso a cargo del Comercial y visualice mi respuesta.
 
-## Alcance
+# Alcance
 
+Esta funcionalidad corresponde a la pantalla transaccional de formalización donde el Gerente COH interactúa. La interfaz consolida la información trabajada por el comercial en la actividad previa. Su núcleo funcional es capturar el dictamen del vobo gerencial mediante un campo de parametrización específica y aplicar el enrutamiento por cualquier decisión hacia el comercial.
 
-## Criterios de aceptación y reglas de negocio
+# Criterios de Aceptación - Reglas de Negocio
 
-+ CAO1 (Criterio Global Transversal):
-1. El sistema debe renderzary mantener la estructura visual de los grupos de datos exactamente igual a como venían de las actividades
-anteriores (heredando la vista de Escrituración y Garantias).
-3. El sistema debe incorporar el contenedor para "Funciones Transversales", dividido en Expediente Digital (para visualizar la minuta/escritura)
-y Trazabilidad/Bitácora
-4. Funcionalidad de Botones de Acción: Opciones de "Guardado" y "Transición / Avanzar”
-5. Trazablidad: Al ejecular "Avanzar, se registrará en la bitácora: Fecha, Actividad (Fimar Rep. Legal, Usuario Ejecutor (Representante
-Legal), Concepto de Firma y Observaciones
-+ CA02 (Acordeón "Vobo Gerencia COH" y Datos Heredados): El sistema debe desplegar un acordeón centra nombrado "Vobo Gerencia COH".
-En este bloque se mostrar, en estricto modo de solo lectura
-+ CA03 (Campos Transaccionales de Firma): El acordeón hablará los siguientes campos operativos para el Gerente COH.
-o Concepto: Lista desplegable dictamen: “Favorable"y "No Favorable"
-obligatorio:
-+ Observaciones: Campo de texto libre.
-+ CADA (Enrutamiento por Favorable/No Favorable): Al accionar "Avanzar con el concepto "Favorable" o "No Favorable’, el sistema realiza
-its: cbergestionatam.aiassian noir issueviews:ssue-him/BBV-141VBBV-141 hi 1
+## CA01 (Criterio Global Transversal)
 
+1. El sistema debe renderizar y mantener la estructura visual de los grupos de datos exactamente igual a como venían de las actividades anteriores (heredando la vista de Escrituración y Garantías).
+2. El sistema debe renderizar en la cabecera la "Información General" (estrictamente de solo lectura con los datos más recientes).
+3. El sistema debe incorporar el contenedor para "Funciones Transversales", dividido en **Expediente Digital** (para visualizar la minuta/escritura) y **Trazabilidad/Bitácora**.
+4. **Funcionalidad de Botones de Acción:** Opciones de "Guardado" y "Transición / Avanzar".
+5. **Trazabilidad:** Al ejecutar "Avanzar", se registrará en la bitácora: Fecha, Actividad (Firmar Rep. Legal), Usuario Ejecutor (Representante Legal), Concepto de Firma y Observaciones.
 
-<!-- --- PAGE 2 --- -->
+## CA02 (Acordeón "Vobo Gerencia COH" y Datos Heredados)
 
+El sistema debe desplegar un acordeón central nombrado "Vobo Gerencia COH".
 
-877726, 15:28 [#88V-141] HU - Realizar Vobo Gerencia COH (Escrituración y Garantías)
-< Avanza ala actividad de “Realizar Excepción Desembolso" a cargo del Comercial
+En este bloque se mostrará, en estricto modo de **solo lectura**.
 
-## Modelo de datos
+## CA03 (Campos Transaccionales de Firma)
 
-Editable (Sk | Obligatorio (Sh
-Campo Tipo de Dato Reglas de Negocio / Origen
-i Pp No) No) a 9 9
-Datos Horedados Vero No Ss Procargados de la actividad de Realizar Excopción
-Consolidados Desembolso
-Lista
-Concepto si si Valores: "Favorable", "NO Favorable"
-Desplegable
-Observaciones Texto (Área) si Condicionado Obligatorio si Concepto = "Escritura NO firmada" para
-detalara novedad,
-reeSfe027afdded15031546c6921c49 1484800265
-hitpsebergestion tam atlassian nelsijiaissueviews:ssue-htm/BBV-141V/BBV-141 him! ze
+- **Concepto:** Lista desplegable dictamen: *"Favorable"* y *"No Favorable"*.
+- **Despliegue de Novedades:** Si el concepto seleccionado es *"No Favorable"*, el sistema debe convertir el campo observaciones como obligatorio:
+  - **Observaciones:** Campo de texto libre.
+
+## CA04 (Enrutamiento por Favorable/No Favorable)
+
+Al accionar "Avanzar" con el concepto *"Favorable"* o *"No Favorable"*, el sistema realiza:
+
+- Avanza a la actividad de “Realizar Excepción Desembolso” a cargo del Comercial.
+
+# Modelado de Datos
+
+| Campo | Tipo de Dato | Editable (Sí-No) | Obligatorio (Sí-No) | Reglas de Negocio / Origen |
+|---|---|---|---|---|
+| Datos Heredados Consolidados | Varios | No | Sí | Precargados de la actividad de Realizar Excepción Desembolso. |
+| Concepto | Lista Desplegable | Sí | Sí | Valores: "Favorable", "NO Favorable". |
+| Observaciones | Texto (Área) | Sí | Condicionado | **Obligatorio** si Concepto = "Escritura NO firmada" para detallar la novedad. |

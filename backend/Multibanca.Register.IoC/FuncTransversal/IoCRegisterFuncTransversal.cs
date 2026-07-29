@@ -28,6 +28,7 @@ namespace Multibanca.Register.IoC.FuncTransversal
             services.AddScoped<IExpedienteDigitalApplication, ExpedienteDigitalApplication>();
             services.AddScoped<IBitacoraApplication, BitacoraApplication>();
             services.AddScoped<IHistorialExpedienteApplication, HistorialExpedienteApplication>();
+            services.AddScoped<IEmailNotificationApplication, EmailNotificationApplication>();
 
             return services;
         }
