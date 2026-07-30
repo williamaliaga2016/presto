@@ -3,9 +3,11 @@ using Common.Application.Implementations;
 using Data.Repository.Implementations;
 using Data.Repository.Interfaces.Entities.Multibanca.BBVA.Escrituracion;
 using Data.Repository.Interfaces.Repositories.Multibanca.BBVA.Escrituracion;
+using Framework.WorkFlow.Application.Interfaces;
 using Framework.WorkFlow.Common.DTO;
 using Multibanca.Application.Interfaces.Common;
 using Multibanca.Application.Interfaces.FuncTransversal;
+using Multibanca.Application.Interfaces.Multibanca;
 using Multibanca.Application.Interfaces.Multibanca.BBVA.Escrituracion;
 using Multibanca.Application.Interfaces.Workflow;
 using Multibanca.Common;
@@ -28,9 +30,10 @@ public class ExcepcionDesembolsoApplication
     // Dependencias
     private readonly IMapper _mapper;
     private readonly ICommonApplication _commonApplication;
-
     private readonly IWorkflowApplication _workflowApplication;
     private readonly IBitacoraApplication _bitacoraApplication;
+    private readonly IActividadesApplication _actividadesApplication;
+    private readonly IActivityWorkflowApplication _activityWorkflowApplication;
 
     public ExcepcionDesembolsoApplication(
         MultibancaDBContext multibancaDBContext,
@@ -38,13 +41,17 @@ public class ExcepcionDesembolsoApplication
         IMapper mapper,
         ICommonApplication commonApplication,
         IWorkflowApplication workflowApplication,
-        IBitacoraApplication bitacoraApplication)
+        IBitacoraApplication bitacoraApplication,
+        IActividadesApplication actividadesApplication,
+        IActivityWorkflowApplication activityWorkflowApplication)
         : base(multibancaDBContext, repository, mapper)
     {
         _mapper = mapper;
         _commonApplication = commonApplication;
         _workflowApplication = workflowApplication;
         _bitacoraApplication = bitacoraApplication;
+        _actividadesApplication = actividadesApplication;
+        _activityWorkflowApplication = activityWorkflowApplication;
     }
 
     public async Task<ExcepcionDesembolsoResponse> GetByExpediente(long idExpediente)
@@ -137,13 +144,34 @@ public class ExcepcionDesembolsoApplication
         }
         else
         {
-            // No requiere VoBo → Validar Condiciones Desembolso
-            var transitionId = transitions.FirstOrDefault(x => x.name == TransicionValidarCondicionesDesembolso)?.transition_id
-                ?? throw new InvalidOperationException($"No se encontró la transición '{TransicionValidarCondicionesDesembolso}' en el workflow.");
+            // No requiere VoBo → AND-JOIN: verificar si ruta larga (VB Final) ya completó
+            bool vbFinalCompletado = await _actividadesApplication.IsCompleteActivity(
+                idExpediente, Constants.ActividadesBBVA.EscrituracionRealizarVBFinalAbogado);
 
-            var resultado = await _workflowApplication.AvanzarActividad(transitionId, folio, userId);
-            actividadesCreadas.AddRange(resultado);
-            destinoActividad = "Validar Condiciones Desembolso";
+            if (vbFinalCompletado)
+            {
+                // Ambas rutas completaron → Validar Condiciones Desembolso
+                var transitionId = transitions.FirstOrDefault(x => x.name == TransicionValidarCondicionesDesembolso)?.transition_id
+                    ?? throw new InvalidOperationException($"No se encontró la transición '{TransicionValidarCondicionesDesembolso}' en el workflow.");
+
+                var resultado = await _workflowApplication.AvanzarActividad(transitionId, folio, userId);
+                actividadesCreadas.AddRange(resultado);
+                destinoActividad = "Validar Condiciones Desembolso";
+            }
+            else
+            {
+                // Ruta larga aún en curso → completar esta actividad y esperar
+                // VB Final al terminar verificará que Excepción ya completó y creará Validar Condiciones
+                await _actividadesApplication.CompletarActividad(
+                    (await _actividadesApplication.ObtenerActividadPorExpedienteActividad(
+                        idExpediente, ActividadExcepcionDesembolso)).id, (long)userId);
+
+                // También actualizar case_activities para que el workflow engine no la recree
+                await _activityWorkflowApplication.UpdateCaseActivityStatus(
+                    "Completed", idExpediente, ActividadExcepcionDesembolso, null);
+
+                destinoActividad = "Esperando ruta larga (VB Final Abogado) — AND-JOIN";
+            }
         }
 
         // Registrar bitácora

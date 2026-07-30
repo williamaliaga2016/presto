@@ -4,6 +4,7 @@ using Data.Repository.Implementations;
 using Data.Repository.Interfaces.Entities.Multibanca.BBVA.Escrituracion;
 using Data.Repository.Interfaces.Repositories.Multibanca.BBVA;
 using Data.Repository.Interfaces.Repositories.Multibanca.BBVA.Escrituracion;
+using Framework.WorkFlow.Application.Interfaces;
 using Framework.WorkFlow.Common.DTO;
 using Multibanca.Application.Interfaces.Common;
 using Multibanca.Application.Interfaces.FuncTransversal;
@@ -36,6 +37,7 @@ public class FirmarRepLegalApplication
 
     // Constante para tipo desembolso
     private const string TipoDesembolsoEscritura = "ESCRITURA";
+    private const string TipoDesembolsoBoleta = "BOLETA";
 
     // Tipos de crédito que aplican excepción desembolso
     private static readonly string[] TiposExcepcionDesembolso = new[]
@@ -57,6 +59,7 @@ public class FirmarRepLegalApplication
     private readonly IValidarInformacionRepository _validarInformacionRepository;
     private readonly ITradicionesConocidasRepository _tradicionesRepository;
     private readonly IActividadesApplication _actividadesApplication;
+    private readonly IActivityWorkflowApplication _activityWorkflowApplication;
 
     public FirmarRepLegalApplication(
         MultibancaDBContext multibancaDBContext,
@@ -67,7 +70,8 @@ public class FirmarRepLegalApplication
         IBitacoraApplication bitacoraApplication,
         IValidarInformacionRepository validarInformacionRepository,
         ITradicionesConocidasRepository tradicionesRepository,
-        IActividadesApplication actividadesApplication)
+        IActividadesApplication actividadesApplication,
+        IActivityWorkflowApplication activityWorkflowApplication)
         : base(multibancaDBContext, firmarRepLegalRepository, mapper)
     {
         _mapper = mapper;
@@ -77,6 +81,7 @@ public class FirmarRepLegalApplication
         _validarInformacionRepository = validarInformacionRepository;
         _tradicionesRepository = tradicionesRepository;
         _actividadesApplication = actividadesApplication;
+        _activityWorkflowApplication = activityWorkflowApplication;
     }
 
     public async Task<firmar_rep_legal?> GetByExpediente(long idExpediente)
@@ -147,8 +152,12 @@ public class FirmarRepLegalApplication
             var resultadoParalelo = await _workflowApplication.AvanzarActividad(transEntrega, folio, userId);
             actividadesCreadas.AddRange(resultadoParalelo);
 
-            // Evaluar condición de Excepción Desembolso (se crea manualmente, no por workflow)
-            if (await AplicaExcepcionDesembolso(idExpediente))
+            // Evaluar si aplica Excepción de Desembolso → crear manualmente desde código
+            Console.WriteLine($"[DEBUG BBV-91] Evaluando AplicaExcepcionDesembolso para expediente {idExpediente}...");
+            bool aplicaExcepcion = await AplicaExcepcionDesembolso(idExpediente);
+            Console.WriteLine($"[DEBUG BBV-91] Resultado: {aplicaExcepcion}");
+
+            if (aplicaExcepcion)
             {
                 try
                 {
@@ -156,7 +165,7 @@ public class FirmarRepLegalApplication
                     {
                         id_expediente = idExpediente,
                         id_actividad = Constants.ActividadesBBVA.EscrituracionRealizarExcepcionDesembolso,
-                        id_rol = 0, // Se asignará por el CommonApplication
+                        id_rol = 0,
                         id_usuario = 0,
                         descripcion = "Realizar Excepción Desembolso",
                         status = "Nueva",
@@ -165,23 +174,34 @@ public class FirmarRepLegalApplication
                         fecha_alta = DateTime.Now
                     };
 
-                    // Asignar rol y usuario según cat_actividades_ws
                     var asignacion = await _commonApplication.AsignarActividad(idExpediente, "COMERCIAL");
                     excepcionActividad.id_rol = (int)asignacion.id_rol;
                     excepcionActividad.id_usuario = (int)asignacion.id_usuario;
 
-                    var created = _actividadesApplication.Create(excepcionActividad, userId);
-                    actividadesCreadas.Add(new AssignActivityDTO
+                    _actividadesApplication.Create(excepcionActividad, userId);
+
+                    // Registrar en case_activities para que el workflow engine la reconozca
+                    var caseActivity = new business_activity_DTO
                     {
-                        id_actividad = created.id_actividad,
+                        case_id = idExpediente,
+                        activity_id = Constants.ActividadesBBVA.EscrituracionRealizarExcepcionDesembolso,
+                        secuence = "002.001",
                         display_name = "Realizar Excepción Desembolso",
-                        id_rol = (int)created.id_rol,
-                        id_usuario = (int)created.id_usuario
-                    });
+                        name = "Realizar Excepción Desembolso",
+                        status = "New",
+                        date_processed = DateTime.Now,
+                        performer = "COMERCIAL",
+                        from_activity = ActividadFirmarRepLegal,
+                        task_form_type = "UserDefined",
+                        task_form_uri = "realizar_excepcion_desembolso"
+                    };
+                    await _activityWorkflowApplication.CreateCaseActivity(caseActivity);
+
+                    Console.WriteLine($"[DEBUG BBV-91] Excepción Desembolso creada exitosamente (actividades + case_activities)");
                 }
                 catch (Exception ex)
                 {
-                    // No bloquear el flujo principal si falla la creación de Excepción
+                    Console.WriteLine($"[DEBUG BBV-91] ERROR al crear Excepción: {ex.Message}");
                     _bitacoraApplication.Create(new bitacora
                     {
                         id_expediente = idExpediente,

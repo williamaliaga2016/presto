@@ -374,6 +374,9 @@ namespace Data.Repository.Implementations
             realizar_devolucion_ep_entity_config.SetEntityBuilder(
                 modelBuilder.Entity<realizar_devolucion_ep_entity>());
 
+            // tradiciones_conocidas — tabla para evaluar excepción de desembolso
+            modelBuilder.Entity<tradiciones_conocidas_entity>().ToTable("tradiciones_conocidas");
+
             base.OnModelCreating(modelBuilder);
             gestion_rectificatoria_escritura_firmada_postventa_entity_config.SetEntityBuilder(modelBuilder.Entity<gestion_rectificatoria_escritura_firmada_postventa_entity>());
         }

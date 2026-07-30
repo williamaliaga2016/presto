@@ -29,18 +29,18 @@ export default function EntregaEpSection({
         required
       />
 
-      {/* ¿Aplica Excepción? — solo lectura, calculado en backend */}
+      {/* Aplica Excepción — solo lectura, calculado en backend */}
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-semibold uppercase tracking-wide text-slate-700">
-          ¿Aplica Excepción de Desembolso?
+          Excepción de Desembolso
         </label>
         <div className={`px-3 py-2 rounded border text-sm font-medium ${
           form.aplica_excepcion === 'SI'
             ? 'bg-yellow-50 border-yellow-300 text-yellow-800'
             : 'bg-gray-50 border-gray-300 text-gray-700'
         }`}>
-          {form.aplica_excepcion === 'SI' ? 'SÍ — Aplica excepción' :
-           form.aplica_excepcion === 'NO' ? 'NO — No aplica' :
+          {form.aplica_excepcion === 'SI' ? 'Aplicó excepción de desembolso' :
+           form.aplica_excepcion === 'NO' ? 'No aplicó excepción' :
            'Pendiente de cálculo...'}
         </div>
         <span className="text-xs text-gray-500">

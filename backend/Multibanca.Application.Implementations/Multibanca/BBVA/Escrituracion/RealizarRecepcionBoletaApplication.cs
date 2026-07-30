@@ -4,14 +4,17 @@ using Data.Repository.Implementations;
 using Data.Repository.Interfaces.Entities.Multibanca.BBVA.Escrituracion;
 using Data.Repository.Interfaces.Repositories.Multibanca.BBVA;
 using Data.Repository.Interfaces.Repositories.Multibanca.BBVA.Escrituracion;
+using Framework.WorkFlow.Application.Interfaces;
 using Framework.WorkFlow.Common.DTO;
 using Multibanca.Application.Implementations.Helpers;
 using Multibanca.Application.Interfaces.Common;
 using Multibanca.Application.Interfaces.FuncTransversal;
+using Multibanca.Application.Interfaces.Multibanca;
 using Multibanca.Application.Interfaces.Multibanca.BBVA.Escrituracion;
 using Multibanca.Application.Interfaces.Workflow;
 using Multibanca.Common;
 using Multibanca.Domain.Models.FuncTransversal;
+using Multibanca.Domain.Models.Multibanca;
 using Multibanca.Domain.Models.Multibanca.BBVA.Escrituracion;
 using Multibanca.DTO.Common;
 
@@ -43,6 +46,12 @@ public class RealizarRecepcionBoletaApplication
     private readonly IBitacoraApplication _bitacoraApplication;
     private readonly IValidarInformacionRepository _validarInformacionRepository;
     private readonly IFirmarEscrituraClienteRepository _firmarEscrituraClienteRepository;
+    private readonly ITradicionesConocidasRepository _tradicionesRepository;
+    private readonly IActividadesApplication _actividadesApplication;
+    private readonly IActivityWorkflowApplication _activityWorkflowApplication;
+
+    // Constante tipo desembolso
+    private const string TipoDesembolsoBoleta = "BOLETA";
 
     public RealizarRecepcionBoletaApplication(
         MultibancaDBContext multibancaDBContext,
@@ -52,7 +61,10 @@ public class RealizarRecepcionBoletaApplication
         IWorkflowApplication workflowApplication,
         IBitacoraApplication bitacoraApplication,
         IValidarInformacionRepository validarInformacionRepository,
-        IFirmarEscrituraClienteRepository firmarEscrituraClienteRepository)
+        IFirmarEscrituraClienteRepository firmarEscrituraClienteRepository,
+        ITradicionesConocidasRepository tradicionesRepository,
+        IActividadesApplication actividadesApplication,
+        IActivityWorkflowApplication activityWorkflowApplication)
         : base(multibancaDBContext, repository, mapper)
     {
         _mapper = mapper;
@@ -61,6 +73,9 @@ public class RealizarRecepcionBoletaApplication
         _bitacoraApplication = bitacoraApplication;
         _validarInformacionRepository = validarInformacionRepository;
         _firmarEscrituraClienteRepository = firmarEscrituraClienteRepository;
+        _tradicionesRepository = tradicionesRepository;
+        _actividadesApplication = actividadesApplication;
+        _activityWorkflowApplication = activityWorkflowApplication;
     }
 
     public async Task<object?> GetByExpediente(long idExpediente)
@@ -74,7 +89,7 @@ public class RealizarRecepcionBoletaApplication
         // Calcular aplica_excepcion
         var validarInfo = await _validarInformacionRepository.GetByExpediente(idExpediente);
         string? tipoCredito = validarInfo?.tipo_credito;
-        formulario.aplica_excepcion = CalcularAplicaExcepcion(tipoCredito);
+        formulario.aplica_excepcion = await CalcularAplicaExcepcionAsync(idExpediente, tipoCredito);
 
         // Datos heredados
         var firmarEscritura = await _firmarEscrituraClienteRepository.GetByExpediente(idExpediente);
@@ -200,7 +215,7 @@ public class RealizarRecepcionBoletaApplication
 
         // Calcular aplica_excepcion
         var validarInfo = await _validarInformacionRepository.GetByExpediente(idExpediente);
-        formulario.aplica_excepcion = CalcularAplicaExcepcion(validarInfo?.tipo_credito);
+        formulario.aplica_excepcion = await CalcularAplicaExcepcionAsync(idExpediente, validarInfo?.tipo_credito);
 
         // Validar campos obligatorios
         ValidarCamposObligatorios(formulario);
@@ -217,20 +232,57 @@ public class RealizarRecepcionBoletaApplication
         actividadesCreadas.AddRange(resultadoEP);
 
         // Si aplica excepción, también crear actividad paralela
+        // Solo si NO fue creada ya por el Parallel de Firmar Rep. Legal
         if (formulario.aplica_excepcion == "SI")
         {
-            var transitionIdExcepcion = transitions.FirstOrDefault(x => x.name == TransicionExcepcionDesembolso)?.transition_id;
+            bool yaExisteExcepcion = await _actividadesApplication.ExisteActividad(
+                idExpediente, Constants.ActividadesBBVA.EscrituracionRealizarExcepcionDesembolso);
 
-            if (transitionIdExcepcion != null)
+            if (!yaExisteExcepcion)
             {
                 try
                 {
-                    var resultadoExcepcion = await _workflowApplication.AvanzarActividad(transitionIdExcepcion, folio, userId);
-                    actividadesCreadas.AddRange(resultadoExcepcion);
+                    var excepcionActividad = new actividades
+                    {
+                        id_expediente = idExpediente,
+                        id_actividad = Constants.ActividadesBBVA.EscrituracionRealizarExcepcionDesembolso,
+                        id_rol = 0,
+                        id_usuario = 0,
+                        descripcion = "Realizar Excepción Desembolso",
+                        status = "Nueva",
+                        activo = true,
+                        fecha_asignacion = DateTime.Now,
+                        fecha_alta = DateTime.Now
+                    };
+
+                    var asignacion = await _commonApplication.AsignarActividad(idExpediente, "COMERCIAL");
+                    excepcionActividad.id_rol = (int)asignacion.id_rol;
+                    excepcionActividad.id_usuario = (int)asignacion.id_usuario;
+
+                    _actividadesApplication.Create(excepcionActividad, userId);
+
+                    // Registrar en case_activities para que el workflow engine la reconozca
+                    var caseActivity = new business_activity_DTO
+                    {
+                        case_id = idExpediente,
+                        activity_id = Constants.ActividadesBBVA.EscrituracionRealizarExcepcionDesembolso,
+                        secuence = "002.001",
+                        display_name = "Realizar Excepción Desembolso",
+                        name = "Realizar Excepción Desembolso",
+                        status = "New",
+                        date_processed = DateTime.Now,
+                        performer = "COMERCIAL",
+                        from_activity = ActividadRecepcionBoleta,
+                        task_form_type = "UserDefined",
+                        task_form_uri = "realizar_excepcion_desembolso"
+                    };
+                    await _activityWorkflowApplication.CreateCaseActivity(caseActivity);
+
+                    Console.WriteLine($"[DEBUG BBV-93] Excepción Desembolso creada desde Recepción Boleta (actividades + case_activities)");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[WARN] No se pudo crear actividad paralela de excepción: {ex.Message}");
+                    Console.WriteLine($"[WARN] No se pudo crear actividad de excepción desde Recepción Boleta: {ex.Message}");
                 }
             }
         }
@@ -243,12 +295,25 @@ public class RealizarRecepcionBoletaApplication
 
     // ======================== Métodos privados ========================
 
-    private static string CalcularAplicaExcepcion(string? tipoCredito)
+    private async Task<string> CalcularAplicaExcepcionAsync(long idExpediente, string? tipoCredito)
     {
         if (string.IsNullOrWhiteSpace(tipoCredito))
             return "NO";
 
-        // TODO: Agregar validación de tipo_desembolso = BOLETA cuando exista la paramétrica
+        // Obtener código_proyecto del expediente
+        var validarInfo = await _validarInformacionRepository.GetByExpediente(idExpediente);
+        string? codigoProyecto = validarInfo?.codigo_proyecto;
+        if (string.IsNullOrEmpty(codigoProyecto)) return "NO";
+
+        // Buscar en tradiciones_conocidas
+        var tradicion = await _tradicionesRepository.GetByCodigoProyecto(codigoProyecto);
+        if (tradicion == null) return "NO";
+
+        // Verificar tipo_desembolso = "BOLETA"
+        if (!string.Equals(tradicion.tipo_desembolso, TipoDesembolsoBoleta, StringComparison.OrdinalIgnoreCase))
+            return "NO";
+
+        // Verificar tipo_credito en la lista
         return TiposExcepcionBoleta.Contains(tipoCredito, StringComparer.OrdinalIgnoreCase)
             ? "SI"
             : "NO";

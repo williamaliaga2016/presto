@@ -296,3 +296,172 @@ if (vbFinalCompletado)
 else
     → Esperar (no crear nada)
 ```
+
+
+---
+
+## 10. Segundo origen: Realizar Recepción Boleta (BBV-93)
+
+La misma actividad "Realizar Excepción Desembolso" puede crearse desde **Recepción Boleta** cuando el tipo de desembolso es BOLETA.
+
+Las condiciones son **mutuamente excluyentes** con las de Firmar Rep. Legal:
+
+| Origen | Tipo Desembolso | Tipos de Crédito |
+|--------|----------------|-----------------|
+| Firmar Rep. Legal (Parallel) | `ESCRITURA` | 7 tipos (Constructor Individual, Hipotecario CXI/Usado, Leasing Nuevo/Usado/CXI, Remodelación) |
+| Recepción Boleta | `BOLETA` | 3 tipos (Leasing Usado, Hipotecario Usado, Remodelación Para Ampliar/Hipotecar) |
+
+Un expediente solo puede tener UNO de los dos tipos de desembolso, por lo que nunca se duplica la Excepción.
+
+### Lógica en Recepción Boleta (BBV-93)
+
+```csharp
+// Constantes
+private const string TipoDesembolsoBoleta = "BOLETA";
+
+private static readonly string[] TiposExcepcionDesembolsoBoleta = new[]
+{
+    "LEASING_USADO",
+    "HIPOTECARIO_USADO",
+    "REMODELACION_AMPLIAR_HIPOTECAR"
+};
+```
+
+### Flujo en el Avanzar de Recepción Boleta
+
+```
+Recepción Boleta → Avanzar
+    │
+    ├─ SIEMPRE → Realizar EP Registradas (ruta principal)
+    │
+    └─ CONDICIONAL → ¿Aplica Excepción Desembolso (BOLETA)?
+          │
+          ├─ Paso 1: Buscar codigo_proyecto en tabla tradiciones_conocidas
+          ├─ Paso 2: Si existe → verificar tipo_desembolso = "BOLETA"
+          ├─ Paso 3: Si BOLETA → verificar tipo_credito en lista de 3 tipos
+          │
+          └─ Si las 3 condiciones se cumplen:
+                → Crear Excepción Desembolso en paralelo
+```
+
+### Implementación (mismo patrón que Firmar Rep. Legal)
+
+```csharp
+// En RealizarRecepcionBoletaApplication.Avanzar:
+
+// 1. Siempre avanzar a EP Registradas (vía workflow)
+var resultado = await _workflowApplication.AvanzarActividad(transIdEPRegistradas, folio, userId);
+actividadesCreadas.AddRange(resultado);
+
+// 2. Evaluar si aplica Excepción Desembolso (BOLETA)
+if (await AplicaExcepcionDesembolsoBoleta(idExpediente))
+{
+    // Verificar que no exista ya (por si acaso)
+    bool yaExiste = await _actividadesApplication.ExisteActividad(
+        idExpediente, Constants.ActividadesBBVA.EscrituracionRealizarExcepcionDesembolso);
+    
+    if (!yaExiste)
+    {
+        // Crear manualmente (misma lógica que Firmar Rep. Legal usaba antes del Parallel)
+        var excepcionActividad = new actividades { ... };
+        var asignacion = await _commonApplication.AsignarActividad(idExpediente, "COMERCIAL");
+        // ... crear la actividad ...
+    }
+}
+
+private async Task<bool> AplicaExcepcionDesembolsoBoleta(long idExpediente)
+{
+    var validarInfo = await _validarInformacionRepository.GetByExpediente(idExpediente);
+    string? codigoProyecto = validarInfo?.codigo_proyecto;
+    if (string.IsNullOrEmpty(codigoProyecto)) return false;
+
+    var tradicion = await _tradicionesRepository.GetByCodigoProyecto(codigoProyecto);
+    if (tradicion == null) return false;
+
+    if (!string.Equals(tradicion.tipo_desembolso, TipoDesembolsoBoleta, StringComparison.OrdinalIgnoreCase))
+        return false;
+
+    string? tipoCredito = validarInfo?.tipo_credito;
+    return !string.IsNullOrEmpty(tipoCredito)
+        && TiposExcepcionDesembolsoBoleta.Contains(tipoCredito, StringComparer.OrdinalIgnoreCase);
+}
+```
+
+### AND-JOIN aplica igual
+
+Cuando Excepción Desembolso (creada desde Recepción Boleta) avanza, la lógica de AND-JOIN es la misma:
+- Verificar si VB Final Abogado ya completó
+- Si sí → crear Validar Condiciones
+- Si no → solo completar Excepción y esperar
+
+### Archivos a modificar
+
+| Archivo | Cambio |
+|---------|--------|
+| `Constants.cs` | Agregar `TipoDesembolsoBoleta = "BOLETA"` |
+| `RealizarRecepcionBoletaApplication.cs` | Inyectar `ITradicionesConocidasRepository` + `IValidarInformacionRepository`, agregar lógica condicional |
+| Script SQL (transición) | Agregar transición de Recepción Boleta → Excepción Desembolso (si se usa workflow) o crear desde código |
+
+### Nota sobre workflow vs código
+
+Como la Excepción se crea condicionalmente y Recepción Boleta NO tiene nodo Parallel, se recomienda **crear desde código** (mismo approach que se intentó inicialmente en Firmar Rep. Legal). Aquí SÍ funciona porque la actividad de Recepción Boleta no habrá completado aún al momento de crear Excepción — el workflow aún está disponible para la transición principal (EP Registradas).
+
+Alternativa: usar un Parallel en el workflow desde Recepción Boleta también. Evaluar con el equipo de workflow.
+
+
+---
+
+## 11. FIX: Registro en case_activities (Opción B)
+
+### Problema
+
+Cuando la actividad "Realizar Excepción Desembolso" se crea desde **código** (no desde el motor de workflow), solo se inserta en la tabla `actividades` pero NO en `case_activities`. Esto causa que:
+
+1. `CapturarDatosFolio` falla porque llama `sp_get_info_folio` que busca en `case_activities`
+2. `AvanzarActividad` no puede completar la transición porque el workflow engine no reconoce la actividad
+
+### Solución implementada
+
+Después de insertar en `actividades`, también llamar a `IActivityWorkflowApplication.CreateCaseActivity()` para registrar en `case_activities`.
+
+### Código (aplicado en FirmarRepLegalApplication y RealizarRecepcionBoletaApplication)
+
+```csharp
+// 1. Inyectar IActivityWorkflowApplication
+private readonly IActivityWorkflowApplication _activityWorkflowApplication;
+
+// 2. Después de crear en tabla actividades:
+_actividadesApplication.Create(excepcionActividad, userId);
+
+// 3. Registrar en case_activities para que el workflow engine la reconozca
+var caseActivity = new business_activity_DTO
+{
+    case_id = idExpediente,
+    activity_id = Constants.ActividadesBBVA.EscrituracionRealizarExcepcionDesembolso,
+    secuence = "002.001",
+    display_name = "Realizar Excepción Desembolso",
+    name = "Realizar Excepción Desembolso",
+    status = "New",
+    date_processed = DateTime.Now,
+    performer = "COMERCIAL",
+    from_activity = ActividadOrigen, // FirmarRepLegal o RecepcionBoleta según caso
+    task_form_type = "UserDefined",
+    task_form_uri = "realizar_excepcion_desembolso"
+};
+await _activityWorkflowApplication.CreateCaseActivity(caseActivity);
+```
+
+### Casuísticas validadas
+
+| Escenario | Resultado esperado |
+|-----------|-------------------|
+| Excepción avanza primero → VB Final después | VB Final crea Validar Condiciones |
+| VB Final avanza primero → Excepción después | Excepción crea Validar Condiciones |
+| No aplica excepción | VB Final avanza directo a Validar Condiciones |
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `FirmarRepLegalApplication.cs` | Inyectar `IActivityWorkflowApplication`, llamar `CreateCaseActivity` tras crear Excepción |
+| `RealizarRecepcionBoletaApplication.cs` | Mismo patrón para el caso BOLETA |
