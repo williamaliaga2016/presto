@@ -49,24 +49,3 @@ GRANT EXECUTE ON FUNCTION public.usp_select_realizar_devolucion_ep_bbva(BIGINT) 
 INSERT INTO public.cat_actividades_ws (actividad, id_actividad, id_proceso, proceso, id_role, tipo, page, etapa, tiempo_promedio, is_active, row_status, created_by, created_date)
 SELECT 'Realizar Devolución EP', 'BBVA_ESCRITURACION_REALIZAR_DEVOLUCION_EP', 'WP_BBVA_CONTACTO_CLIENTE', 'Escrituración', 1, 'actividad', 'realizar_devolucion_ep', '1', 1, true, true, 'admin', NOW()
 WHERE NOT EXISTS (SELECT 1 FROM cat_actividades_ws WHERE id_actividad = 'BBVA_ESCRITURACION_REALIZAR_DEVOLUCION_EP');
-
--- xpdl_transitions — 4 destinos de salida de Devolución EP
-INSERT INTO public.xpdl_transitions (transition_id, name, from_activity, to_activity, condition, workflow_process_id)
-SELECT 'BBVA_ESCRITURACION_TR_DEVOLUCION_EP_GESTION_COMERCIAL', 'BBVA_ESCRITURACION_TR_DEVOLUCION_EP_GESTION_COMERCIAL',
-       'BBVA_ESCRITURACION_REALIZAR_DEVOLUCION_EP', 'BBVA_ESCRITURACION_REALIZAR_GESTION_COMERCIAL', 'Otherwise', 'WP_BBVA_CONTACTO_CLIENTE'
-WHERE NOT EXISTS (SELECT 1 FROM public.xpdl_transitions WHERE transition_id = 'BBVA_ESCRITURACION_TR_DEVOLUCION_EP_GESTION_COMERCIAL');
-
-INSERT INTO public.xpdl_transitions (transition_id, name, from_activity, to_activity, condition, workflow_process_id)
-SELECT 'BBVA_ESCRITURACION_TR_DEVOLUCION_EP_FIRMAR_ESCRITURA', 'BBVA_ESCRITURACION_TR_DEVOLUCION_EP_FIRMAR_ESCRITURA',
-       'BBVA_ESCRITURACION_REALIZAR_DEVOLUCION_EP', 'BBVA_ESCRITURACION_FIRMAR_ESCRITURA_CLIENTE_CE5FAC2F', 'Otherwise', 'WP_BBVA_CONTACTO_CLIENTE'
-WHERE NOT EXISTS (SELECT 1 FROM public.xpdl_transitions WHERE transition_id = 'BBVA_ESCRITURACION_TR_DEVOLUCION_EP_FIRMAR_ESCRITURA');
-
-INSERT INTO public.xpdl_transitions (transition_id, name, from_activity, to_activity, condition, workflow_process_id)
-SELECT 'BBVA_ESCRITURACION_TR_DEVOLUCION_EP_FIRMAR_REP_LEGAL', 'BBVA_ESCRITURACION_TR_DEVOLUCION_EP_FIRMAR_REP_LEGAL',
-       'BBVA_ESCRITURACION_REALIZAR_DEVOLUCION_EP', 'BBVA_ESCRITURACION_FIRMAR_REP_LEGAL', 'Otherwise', 'WP_BBVA_CONTACTO_CLIENTE'
-WHERE NOT EXISTS (SELECT 1 FROM public.xpdl_transitions WHERE transition_id = 'BBVA_ESCRITURACION_TR_DEVOLUCION_EP_FIRMAR_REP_LEGAL');
-
-INSERT INTO public.xpdl_transitions (transition_id, name, from_activity, to_activity, condition, workflow_process_id)
-SELECT 'BBVA_ESCRITURACION_TR_DEVOLUCION_EP_EP_REGISTRADAS', 'BBVA_ESCRITURACION_TR_DEVOLUCION_EP_EP_REGISTRADAS',
-       'BBVA_ESCRITURACION_REALIZAR_DEVOLUCION_EP', 'BBVA_ESCRITURACION_REALIZAR_EP_REGISTRADAS', 'Otherwise', 'WP_BBVA_CONTACTO_CLIENTE'
-WHERE NOT EXISTS (SELECT 1 FROM public.xpdl_transitions WHERE transition_id = 'BBVA_ESCRITURACION_TR_DEVOLUCION_EP_EP_REGISTRADAS');

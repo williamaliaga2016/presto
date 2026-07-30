@@ -63,31 +63,3 @@ WHERE NOT EXISTS (SELECT 1 FROM cat_actividades_ws WHERE id_actividad = 'BBVA_ES
 INSERT INTO public.cat_actividades_ws (actividad, id_actividad, id_proceso, proceso, id_role, tipo, page, etapa, tiempo_promedio, is_active, row_status, created_by, created_date)
 SELECT 'Realizar Excepción Desembolso', 'BBVA_ESCRITURACION_REALIZAR_EXCEPCION_DESEMBOLSO', 'WP_BBVA_CONTACTO_CLIENTE', 'Escrituración', 1, 'actividad', 'realizar_excepcion_desembolso', '1', 1, true, true, 'admin', NOW()
 WHERE NOT EXISTS (SELECT 1 FROM cat_actividades_ws WHERE id_actividad = 'BBVA_ESCRITURACION_REALIZAR_EXCEPCION_DESEMBOLSO');
-
--- ============================================================
--- xpdl_transitions — Firmar Rep. Legal (4 transiciones)
--- ============================================================
-
--- 1. NO firmada → Devolución EP
-INSERT INTO public.xpdl_transitions (transition_id, name, from_activity, to_activity, condition, workflow_process_id)
-SELECT 'BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_DEVOLUCION', 'BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_DEVOLUCION',
-       'BBVA_ESCRITURACION_FIRMAR_REP_LEGAL', 'BBVA_ESCRITURACION_REALIZAR_DEVOLUCION_EP', 'Otherwise', 'WP_BBVA_CONTACTO_CLIENTE'
-WHERE NOT EXISTS (SELECT 1 FROM public.xpdl_transitions WHERE transition_id = 'BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_DEVOLUCION');
-
--- 2. Firmada → Entrega EP Firmada (paralelo)
-INSERT INTO public.xpdl_transitions (transition_id, name, from_activity, to_activity, condition, workflow_process_id)
-SELECT 'BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_ENTREGA_EP', 'BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_ENTREGA_EP',
-       'BBVA_ESCRITURACION_FIRMAR_REP_LEGAL', 'BBVA_ESCRITURACION_REALIZAR_ENTREGA_EP_FIRMADA', 'Otherwise', 'WP_BBVA_CONTACTO_CLIENTE'
-WHERE NOT EXISTS (SELECT 1 FROM public.xpdl_transitions WHERE transition_id = 'BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_ENTREGA_EP');
-
--- 3. Firmada → Preformalizar (paralelo)
-INSERT INTO public.xpdl_transitions (transition_id, name, from_activity, to_activity, condition, workflow_process_id)
-SELECT 'BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_PREFORMALIZAR', 'BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_PREFORMALIZAR',
-       'BBVA_ESCRITURACION_FIRMAR_REP_LEGAL', 'BBVA_ESCRITURACION_PREFORMALIZAR', 'Otherwise', 'WP_BBVA_CONTACTO_CLIENTE'
-WHERE NOT EXISTS (SELECT 1 FROM public.xpdl_transitions WHERE transition_id = 'BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_PREFORMALIZAR');
-
--- 4. Firmada + condición → Excepción Desembolso (paralelo condicional)
-INSERT INTO public.xpdl_transitions (transition_id, name, from_activity, to_activity, condition, workflow_process_id)
-SELECT 'BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_EXCEPCION_DESEMBOLSO', 'BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_EXCEPCION_DESEMBOLSO',
-       'BBVA_ESCRITURACION_FIRMAR_REP_LEGAL', 'BBVA_ESCRITURACION_REALIZAR_EXCEPCION_DESEMBOLSO', 'Otherwise', 'WP_BBVA_CONTACTO_CLIENTE'
-WHERE NOT EXISTS (SELECT 1 FROM public.xpdl_transitions WHERE transition_id = 'BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_EXCEPCION_DESEMBOLSO');
