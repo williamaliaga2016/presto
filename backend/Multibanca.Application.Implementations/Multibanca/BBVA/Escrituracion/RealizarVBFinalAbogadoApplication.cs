@@ -4,6 +4,7 @@ using Data.Repository.Implementations;
 using Data.Repository.Interfaces.Entities.Multibanca.BBVA.Escrituracion;
 using Data.Repository.Interfaces.Repositories.Multibanca.BBVA.Escrituracion;
 using Data.Repository.Interfaces.Repositories.Multibanca.BBVA;
+using Framework.WorkFlow.Application.Interfaces;
 using Framework.WorkFlow.Common.DTO;
 using Multibanca.Application.Interfaces.Common;
 using Multibanca.Application.Interfaces.FuncTransversal;
@@ -31,6 +32,7 @@ public class RealizarVBFinalAbogadoApplication
     private readonly IWorkflowApplication _workflowApplication;
     private readonly IBitacoraApplication _bitacoraApplication;
     private readonly IActividadesApplication _actividadesApplication;
+    private readonly IActivityWorkflowApplication _activityWorkflowApplication;
     private readonly IRealizarEntregaEpFirmadaRepository _entregaEpRepository;
     private readonly IRealizarRecepcionBoletaRepository _recepcionBoletaRepository;
     private readonly IRealizarEPRegistradasRepository _epRegistradasRepository;
@@ -45,6 +47,7 @@ public class RealizarVBFinalAbogadoApplication
         IWorkflowApplication workflowApplication,
         IBitacoraApplication bitacoraApplication,
         IActividadesApplication actividadesApplication,
+        IActivityWorkflowApplication activityWorkflowApplication,
         IRealizarEntregaEpFirmadaRepository entregaEpRepository,
         IRealizarRecepcionBoletaRepository recepcionBoletaRepository,
         IRealizarEPRegistradasRepository epRegistradasRepository,
@@ -57,6 +60,7 @@ public class RealizarVBFinalAbogadoApplication
         _workflowApplication = workflowApplication;
         _bitacoraApplication = bitacoraApplication;
         _actividadesApplication = actividadesApplication;
+        _activityWorkflowApplication = activityWorkflowApplication;
         _entregaEpRepository = entregaEpRepository;
         _recepcionBoletaRepository = recepcionBoletaRepository;
         _epRegistradasRepository = epRegistradasRepository;
@@ -231,6 +235,34 @@ public class RealizarVBFinalAbogadoApplication
             else
             {
                 // Escenario B: Sin excepción, origen regular → Validar Condiciones Desembolso
+                // AND-JOIN: Solo crear Validar Condiciones si la ruta corta (Excepción Desembolso) ya completó o no aplica
+                bool existeExcepcion = await _actividadesApplication.ExisteActividad(
+                    idExpediente, Constants.ActividadesBBVA.EscrituracionRealizarExcepcionDesembolso);
+
+                if (existeExcepcion)
+                {
+                    bool excepcionCompletada = await _actividadesApplication.IsCompleteActivity(
+                        idExpediente, Constants.ActividadesBBVA.EscrituracionRealizarExcepcionDesembolso);
+
+                    if (!excepcionCompletada)
+                    {
+                        // Excepción aún en curso → completar VB Final y esperar
+                        // Cuando Excepción complete, verá VB Final completado y creará Validar Condiciones
+                        var actVBFinal = await _actividadesApplication.ObtenerActividadPorExpedienteActividad(
+                            idExpediente, ActividadVBFinalAbogado);
+                        if (actVBFinal != null && actVBFinal.id > 0)
+                            await _actividadesApplication.CompletarActividad(actVBFinal.id, (long)userId);
+
+                        // También actualizar case_activities para que el workflow engine no la recree
+                        await _activityWorkflowApplication.UpdateCaseActivityStatus(
+                            "Completed", idExpediente, ActividadVBFinalAbogado, null);
+
+                        RegistrarBitacora(idExpediente, userId, formulario, "VB Final completado. Esperando Excepción Desembolso (AND-JOIN)");
+                        return actividadesCreadas;
+                    }
+                }
+
+                // Excepción completada o no aplica → avanzar a Validar Condiciones
                 transicionSeleccionada = TransicionValidarDesembolso;
                 destinoActividad = "Validar Condiciones Desembolso";
             }

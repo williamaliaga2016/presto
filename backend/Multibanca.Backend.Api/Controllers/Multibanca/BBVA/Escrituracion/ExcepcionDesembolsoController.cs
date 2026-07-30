@@ -74,12 +74,8 @@ public class ExcepcionDesembolsoController : ControllerBase
             var userId = GetUserId();
             var result = await ApplicationProvider.Avanzar(id_expediente, userId);
 
-            if (result.Count > 0)
-            {
-                return Ok(new { status = true, detail = result, message = "Actividad avanzada correctamente." });
-            }
-
-            return Ok(new { status = false, detail = (object?)null, message = "No se pudo avanzar la actividad." });
+            // result vacío puede significar AND-JOIN (esperando ruta larga) — es exitoso
+            return Ok(new { status = true, detail = result, message = result.Count > 0 ? "Actividad avanzada correctamente." : "Excepción completada. Esperando finalización de ruta larga para crear Validar Condiciones." });
         }
         catch (InvalidOperationException ex)
         {

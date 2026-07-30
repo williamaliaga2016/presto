@@ -22,7 +22,6 @@ public class RealizarEntregaEpFirmadaApplication
 {
     // Constantes de transición
     private const string TransicionRecepcionBoleta = Constants.TransicionesBBVA.EntregaEpFirmadaRecepcionBoleta;
-    private const string TransicionExcepcionDesembolso = Constants.TransicionesBBVA.EntregaEpFirmadaExcepcionDesembolso;
 
     // ID de la actividad actual
     private static readonly string ActividadEntregaEpFirmada = Constants.ActividadesBBVA.EscrituracionRealizarEntregaEpFirmada;
@@ -155,25 +154,9 @@ public class RealizarEntregaEpFirmadaApplication
         var resultadoBoleta = await _workflowApplication.AvanzarActividad(transitionIdBoleta, folio, userId);
         actividadesCreadas.AddRange(resultadoBoleta);
 
-        // CA02/CA05 — Si aplica excepción, también crear actividad paralela
-        if (formulario.aplica_excepcion == "SI")
-        {
-            var transitionIdExcepcion = transitions.FirstOrDefault(x => x.name == TransicionExcepcionDesembolso)?.transition_id;
-
-            if (transitionIdExcepcion != null)
-            {
-                try
-                {
-                    var resultadoExcepcion = await _workflowApplication.AvanzarActividad(transitionIdExcepcion, folio, userId);
-                    actividadesCreadas.AddRange(resultadoExcepcion);
-                }
-                catch (Exception ex)
-                {
-                    // No bloquear el flujo principal si falla la excepción paralela
-                    Console.WriteLine($"[WARN] No se pudo crear actividad paralela de excepción: {ex.Message}");
-                }
-            }
-        }
+        // CA02/CA05 — Excepción de desembolso es solo informativa aquí.
+        // La actividad de Excepción ya fue creada por el Parallel de Firmar Rep. Legal.
+        // Este CU solo muestra el campo aplica_excepcion como lectura.
 
         // Registrar bitácora
         RegistrarBitacora(idExpediente, userId, formulario, actividadesCreadas);

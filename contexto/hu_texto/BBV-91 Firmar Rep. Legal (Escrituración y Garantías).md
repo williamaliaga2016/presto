@@ -1,78 +1,129 @@
-# BBV-91 Firmar Rep. Legal (Escrituración y Garantías)
+# BBV-91 - HU - Actividad Firmar Rep. Legal (Escrituración y Garantías)
 
-> Documento convertido desde PDF para edición y análisis en Kiro.
+## Información General
 
-<!-- --- PAGE 1 --- -->
-
-
-07726, 15:28 {#8BV-91] HU - Actividad Fimar Rep. Legal (Escrituración y Garantias)
-Epica - Presto Escrituración y Garantías BBVA Legalización (ssv.12
-1, [BBV-91] HU - Actividad Firmar Rep. Legal (Escrituración y Garantías) creada: 02jun26 Actualizada: 17Jun/26
-Proyecto: BBVA - Colombia
-Principal: Épica - Presto Escrituración y Garantías BBVA Legalización
-Tipo Historia Prioridad. Media
-Etiquetas: BBVA_LEGALIZACION
-Tiempo Trabajado: Desconocido
+| Campo | Valor |
+|---|---|
+| Épica | Presto Escrituración y Garantías BBVA Legalización |
+| Historia | BBV-91 |
+| Estado | Tareas por hacer |
+| Proyecto | BBVA - Colombia |
+| Tipo | Historia |
+| Prioridad | Media |
+| Informador | Jorge Andres Garzon Paez |
+| Persona asignada | Jorge Andres Garzon Paez |
+| Resolución | Sin resolver |
+| Etiquetas | BBVA_LEGALIZACION |
 
 ## Descripción
 
 **Yo como:** Representante Legal.
-**Para:** Avanzar el flujo hacia la entrega de la escritura firmada, o enrutar adecuadamente las devoluciones hacia la preformalización y Realizar Entrega
-EP Firmada ola revisión del abogado, según coresponda,
+
+**Deseo:** Acceder al acordeón **“Firmar Rep. Legal”** para visualizar la información heredada del caso, emitir mi visto bueno confirmando si la Escritura Pública fue firmada o no, y justificar mi decisión en caso de rechazo.
+
+**Para:** Avanzar el flujo hacia la entrega de la escritura firmada, o enrutar adecuadamente las devoluciones hacia la preformalización y Realizar Entrega EP Firmada o la revisión del abogado, según corresponda.
 
 ## Alcance
 
-Esta funcionalidad corresponde a la pantalla transaccional de formalización donde el Representante Legal interactúa. La interfaz consolida la
-dela firma mediante un campo de parametizacién específica y aplicar una compuerta lógica de enrutamiento: ss firma, elfjo avanza hacia
+Esta funcionalidad corresponde a la pantalla transaccional de formalización donde el Representante Legal interactúa.
 
-## Criterios de aceptación y reglas de negocio
+La interfaz consolida la información trabajada por las instancias previas —Abogado, Prorrata y/o Leasing— en modo de **solo lectura**.
 
-+ CAO1 (Criterio Global Transversal):
-anteriores (heredando la vista de Escrituración y Garantías).
-2. El sistema debe renderizar en la cabecera la "información General" (estctamente de solo lectura con los datos más recientes)
-3. El sistema debe incorporar el contenedor para "Funciones Transversales”, dividido en Expediente Digital (para visualizar la minuta/escritura)
-y Trazabilidad/Bitácora
-4. Funcionalidad de Botones de Acción: Opciones de "Guardado" y “Transición / Avanzar"
-5. Trazablidad: Al ejecutar "Avanzar, se registrará en a bicora: Fecha, Actividad (Fimar Rep. Lega), Usuario Ejecutor (Representante
-Legal), Concepto de Firma y Observaciones
-+ CA02 (Acordeón "Firmar Rep. Legal” y Datos Heredados): El sistema debe desplegar un acordeón central nombrado "Firmar Rep. Legal”. En
-(Datos del Cliente, Datos dela Notaría, VoBo Prorata, Liquidación Leasing y Concepto de Revisión EP del Abogado)
-+ CA03 (Campos Transaccionales de Firma): El acordeón habitar los siguientes campos operativas para el Representante Lega
-o Concepto: Lista desplegable alimentada por la Parametría(L41) on las opciones estrictas: “Escntura fmada Conforme"y "Escritura NO
-firmada”.
-hitpsliergeston tam atassia.neisiiraisuevievsissue-ht/BEV.91/B8V-91 i ve
+Su núcleo funcional es capturar el dictamen de la firma mediante un campo de parametrización específica y aplicar una compuerta lógica de enrutamiento:
 
+- Si se firma, el flujo avanza hacia Vivienda y Preformalización.
+- Si no se firma, el sistema retorna al Analista de Vivienda.
 
-<!-- --- PAGE 2 --- -->
+## Criterios de Aceptación - Reglas de Negocio
 
+### CA01 - Criterio Global Transversal
 
-877726, 15:23 [#8BV.91] HU - Actividad Firmar Rep. Legal (Escrituración y Garantias)
-© Despliegue de Novedades: Si el concepto seleccionado es "Escritura NO firmada", el sistema debe renderizar dinámicamente tres campos
-obligatorios
-+ Tipología: Lista desplegable almentada por la Parametría(L42)
-+ Casulstica: Lista desplegable alimentada pora Parametía(L43)
-+ Observaciones: Campo de texto libre.
-+ CA04 (Enrutamiento por Dovolución / Escritura NO firmada): Al accionar "Avanzar" con el concepto “Escritura NO firmada”, el sistema realiza
-+ CAOS (Enrutamiento de Avance / Escritura Firmada): Al accionar "Avanzar" con el concepto "Escritura firmada Conforme”, el sistema transitará el
-Entrega EP Firmada" cargo del analista de vivienda,
-+ CAOS - Obligatoriedad de Justificación: No será posible avanzar una tarea con concepto "Escritura NO firmada? si as stas de tipología y
+1. Mantener la estructura visual heredada de las actividades anteriores.
+2. Mostrar la sección **Información General** en modo solo lectura.
+3. Incorporar:
+   - Expediente Digital.
+   - Trazabilidad/Bitácora.
+4. Incluir botones de **Guardado** y **Transición / Avanzar**.
+5. Al avanzar, registrar en bitácora:
+   - Fecha.
+   - Actividad `Firmar Rep. Legal`.
+   - Usuario ejecutor `Representante Legal`.
+   - Concepto de firma.
+   - Observaciones.
 
-## Modelo de datos
+### CA02 - Acordeón “Firmar Rep. Legal” y Datos Heredados
 
-Editable (Si- | Obligatorio (Si ,
-m Tipo de 0: Reglas de Negocio / Origen
-Campo ipo de Dato No) No) teglas de Negocio / Origer
-Datos Heredados ' Precargados de las revisiones de Abogado, Leasing y Prrrata
-Varios No sí
-Consolidados Solo lectura
-concept (Firma) Lista si S Parametra (L41). Valores: "Escritura frmada Conforme",
-'oncepto (Firma) Desplegable "Escritura NO firmada".
-poto Lista : concicionado _ Obligatorio si Concepto ="Escrtura NO firmada”. Parametra
-ipologia Demas |! ondiionado ORNS
-. Lista Obligatorio si Concepto = "Escritura NO firmada". Parametía
-Casuística Desplegable sí Condicionado. Les)
-Observaciones Texto (Área) SÍ Condicionado — Obligatorio si Concepto = "Escritura NO firmada” para detalla
-la novedad.
-Generado alas Mon Jul 06 20:23:04 UTC 2026 por Michael Pulido usando JIRA 1001.0.0-SNAPSHOT100292-
-rev.c6te927afdde4 1503 16460632049 148480265,
-hitps:ebergestionJtamatlassian netsijiaissueviews:ssue-himl/BBV-91/BBV-91 html ze
+El sistema debe desplegar el acordeón **“Firmar Rep. Legal”** y mostrar en modo solo lectura:
+
+- Datos del cliente.
+- Datos de la notaría.
+- VoBo Prorrata.
+- Liquidación Leasing.
+- Concepto de Revisión EP del Abogado.
+
+### CA03 - Campos Transaccionales de Firma
+
+#### Concepto
+
+Lista desplegable basada en la parametría **L41**:
+
+- `Escritura firmada Conforme`
+- `Escritura NO firmada`
+
+#### Despliegue de Novedades
+
+Si el concepto es **Escritura NO firmada**, mostrar obligatoriamente:
+
+- **Tipología** — parametría L42.
+- **Casuística** — parametría L43.
+- **Observaciones** — texto libre.
+
+### CA04 - Enrutamiento por Escritura NO firmada
+
+Al avanzar con el concepto **Escritura NO firmada**:
+
+- El flujo avanza a **Realizar Devolución EP**.
+- La tarea se asigna al **Analista de Vivienda**.
+
+### CA05 - Enrutamiento por Escritura firmada
+
+Al avanzar con el concepto **Escritura firmada Conforme**, el sistema debe disparar en paralelo:
+
+- **Preformalizar**, a cargo del Analista de Desembolso.
+- **Realizar Entrega EP Firmada**, a cargo del Analista de Vivienda.
+
+### CA06 - Obligatoriedad de Justificación
+
+No se podrá avanzar con el concepto **Escritura NO firmada** si no se han seleccionado:
+
+- Tipología.
+- Casuística.
+
+## Modelado de Datos
+
+| Campo | Tipo de Dato | Editable | Obligatorio | Reglas de Negocio / Origen |
+|---|---|---:|---:|---|
+| Datos Heredados Consolidados | Varios | No | Sí | Precargados de Abogado, Leasing y Prorrata. Solo lectura. |
+| Concepto (Firma) | Lista desplegable | Sí | Sí | Parametría L41. |
+| Tipología | Lista desplegable | Sí | Condicionado | Obligatorio si el concepto es `Escritura NO firmada`. Parametría L42. |
+| Casuística | Lista desplegable | Sí | Condicionado | Obligatorio si el concepto es `Escritura NO firmada`. Parametría L43. |
+| Observaciones | Texto (Área) | Sí | Condicionado | Obligatorio si el concepto es `Escritura NO firmada`. |
+
+## Resumen del Flujo
+
+```text
+Firmar Rep. Legal
+        |
+        v
+Seleccionar concepto
+      /         \
+Conforme       NO firmada
+   |               |
+   v               v
+Preformalizar   Tipología
++               Casuística
+Entrega EP      Observaciones
+Firmada             |
+                    v
+          Realizar Devolución EP
+```

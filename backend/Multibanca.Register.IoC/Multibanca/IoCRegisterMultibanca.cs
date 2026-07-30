@@ -383,6 +383,7 @@ namespace Multibanca.Register.IoC.Multibanca
             services.AddScoped<IValidarCondicionesDesembolsoRepository, ValidarCondicionesDesembolsoRepository>();
             services.AddScoped<IRealizarGestionComercialRepository, RealizarGestionComercialRepository>();
             services.AddScoped<IRealizarDevolucionEPRepository, RealizarDevolucionEPRepository>();
+            services.AddScoped<ITradicionesConocidasRepository, TradicionesConocidasRepository>();
             services.AddScoped<IRevisarEpAbogadoRepository, RevisarEpAbogadoRepository>();
             services.AddScoped<IExcepcionDesembolsoRepository, ExcepcionDesembolsoRepository>();
             services.AddScoped<IVoboGerenciaCohRepository, VoboGerenciaCohRepository>();

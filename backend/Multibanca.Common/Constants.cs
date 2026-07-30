@@ -319,9 +319,9 @@ namespace Multibanca.Common
             public const string EscrituracionRevisarEPAbogado = "BBVA_ESCRITURACION_REVISAR_EP_ABOGADO";
             public const string EscrituracionVBProrrata = "BBVA_ESCRITURACION_VB_PRORRATA";
             public const string EscrituracionRealizarCausacion = "BBVA_ESCRITURACION_REALIZAR_CAUSACION";
+            public const string EscrituracionRealizarExcepcionDesembolso = "BBVA_ESCRITURACION_REALIZAR_EXCEPCION_DESEMBOLSO";
             public const string EscrituracionRealizarRecepcionBoleta = "BBVA_ESCRITURACION_REALIZAR_RECEPCION_BOLETA";
             public const string EscrituracionRealizarEPRegistradas = "BBVA_ESCRITURACION_REALIZAR_EP_REGISTRADAS";
-            public const string EscrituracionRealizarExcepcionDesembolso = "BBVA_ESCRITURACION_REALIZAR_EXCEPCION_DESEMBOLSO";
             public const string EscrituracionRealizarVBFinalAbogado = "BBVA_ESCRITURACION_REALIZAR_VB_FINAL_ABOGADO";
             public const string EscrituracionVoBoGerenciaApplication = "BBVA_ESCRITURACION_REALIZAR_VOBO_GERENCIA_COH";
             public const string EscrituracionRevisarMarcacionCobertura = "BBVA_ESCRITURACION_REVISAR_MARCACION_COBERTURA";
@@ -329,6 +329,7 @@ namespace Multibanca.Common
             public const string EscrituracionGestionarControlGarantias = "BBVA_ESCRITURACION_GESTIONAR_CONTROL_GARANTIAS";
             public const string EscrituracionRealizarDevolucionEP = "BBVA_ESCRITURACION_REALIZAR_DEVOLUCION_EP";
             public const string EscrituracionRealizarGestionComercial = "BBVA_ESCRITURACION_REALIZAR_GESTION_COMERCIAL";
+            public const string EscrituracionPreformalizar = "BBVA_ESCRITURACION_PREFORMALIZAR";
             public const string EscrituracionGestionarEscalamientos = "BBVA_ESCRITURACION_GESTIONAR_ESCALAMIENTOS";
         }
 
@@ -348,6 +349,8 @@ namespace Multibanca.Common
             // TODO: Reemplazar con los nombres reales de transición del XPDL
             public const string FirmarRepLegalEntregaEP = "BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_ENTREGA_EP";
             public const string FirmarRepLegalDevolucion = "BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_DEVOLUCION";
+            public const string FirmarRepLegalPreformalizar = "BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_PREFORMALIZAR";
+            public const string FirmarRepLegalExcepcionDesembolso = "BBVA_ESCRITURACION_TR_FIRMAR_REP_LEGAL_EXCEPCION_DESEMBOLSO";
 
             // BBVA Escrituración — Realizar Entrega EP Firmada
             public const string EntregaEpFirmadaRecepcionBoleta = "BBVA_ESCRITURACION_TR_ENTREGA_EP_RECEPCION_BOLETA";
